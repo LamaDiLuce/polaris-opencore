@@ -1,0 +1,5 @@
+.vscode/*
+!.vscode/*.sample.json
+.github
+.git
+libraries/readme.txt
