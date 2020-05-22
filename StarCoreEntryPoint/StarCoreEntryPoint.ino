@@ -1,10 +1,3 @@
-/*
-   Starting Development Date: 02/02/2019
-   Description: Star Core Entry Point
-   Developer: Dario Concilio
-   Company: Crystal Cave s.n.c.
-*/
-
 #include "StarCoreEntryPoint.h"
 
 #define BUILD "1.9.12"

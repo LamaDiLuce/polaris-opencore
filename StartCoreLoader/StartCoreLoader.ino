@@ -1,9 +1,3 @@
-/*
-   Starting Development Date: 02/02/2019
-   Description: Star Core loader
-   Developer: Dario Concilio
-*/
-
 #include <SerialFlash.h>
 #include <SPI.h>
 #include <Wire.h>
