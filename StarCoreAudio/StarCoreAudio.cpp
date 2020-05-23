@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "StarCoreAudio.h"
+#include <string.h>
 
 //Costructor
 StarCoreAudio::StarCoreAudio()
@@ -156,49 +157,10 @@ void StarCoreAudio::swing()
 
             int clashId = random(1, 8);
 
-            switch (clashId)
-            {
-            case 1:
-            {
-                soundPlayFlashFXRaw.play("SWING_1_0.RAW");
-            }
-            break;
-            case 2:
-            {
-                soundPlayFlashFXRaw.play("SWING_2_0.RAW");
-            }
-            break;
-            case 3:
-            {
-                soundPlayFlashFXRaw.play("SWING_3_0.RAW");
-            }
-            break;
-            case 4:
-            {
-                soundPlayFlashFXRaw.play("SWING_4_0.RAW");
-            }
-            break;
-            case 5:
-            {
-                soundPlayFlashFXRaw.play("SWING_5_0.RAW");
-            }
-            break;
-            case 6:
-            {
-                soundPlayFlashFXRaw.play("SWING_6_0.RAW");
-            }
-            break;
-            case 7:
-            {
-                soundPlayFlashFXRaw.play("SWING_7_0.RAW");
-            }
-            break;
-            case 8:
-            {
-                soundPlayFlashFXRaw.play("SWING_8_0.RAW");
-            }
-            break;
-            }
+            std::string s = std::to_string(clashId);
+            char const *pchar = s.c_str();  //use char const* as target type
+
+            soundPlayFlashFXRaw.play("SWING_" + s.c_str() + "_0.RAW");
         }
     }
 }

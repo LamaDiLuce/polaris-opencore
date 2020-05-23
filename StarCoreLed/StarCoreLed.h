@@ -80,6 +80,7 @@ private:
                           {0, 0, 0, 0}};    //OFF
 
   String decodeColorSetId(int colorSetId);
+  int setColorDelta(int color);
 };
 
 #endif

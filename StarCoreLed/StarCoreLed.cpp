@@ -1,16 +1,10 @@
 #include "Arduino.h"
 #include "StarCoreLed.h"
 
-//Costructor
 StarCoreLed::StarCoreLed()
 {
 }
 
-/*
- * Public Methods
- */
-
-//Init
 void StarCoreLed::init(bool pDebug)
 {
     debugMode = pDebug;
@@ -40,57 +34,12 @@ void StarCoreLed::init(bool pDebug)
 
 String StarCoreLed::decodeColorSetId(int colorSetId)
 {
-    String output = "";
-    switch (colorSetId)
-    {
-    case RED:
-    {
-        output = "RED";
-    }
-    break;
-    case GREEN:
-    {
-        output = "GREEN";
-    }
-    break;
-    case BLUE:
-    {
-        output = "BLUE";
-    }
-    break;
-    case YELLOW:
-    {
-        output = "YELLOW";
-    }
-    break;
-    case ACQUA:
-    {
-        output = "ACQUA";
-    }
-    break;
-    case PURPLE:
-    {
-        output = "PURPLE";
-    }
-    break;
-    case ORANGE:
-    {
-        output = "ORANGE";
-    }
-    break;
-    case WHITE:
-    {
-        output = "WHITE";
-    }
-    break;
-    case OFF:
-    {
-        output = "OFF";
-    }
-    break;
-    }
+    char *colors[] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
 
-    return output;
+    if (colorSetId <= sizeof(colors))
+        return colors[colorSetId];
+
+    return "OFF";
 }
 
 void StarCoreLed::getCurrentColorSet()
@@ -119,6 +68,7 @@ void StarCoreLed::getCurrentColorSet()
 
     logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
 }
+
 void StarCoreLed::setCurrentColorSet(int colorSetId)
 {
     logger.writeLine("Saving colorset...");
@@ -145,54 +95,22 @@ void StarCoreLed::changeColor(int colorSetId)
     }
 }
 
+int StarCoreLed::setColorDelta(int color)
+{
+    return (color < 0) ? 0 : (color > 255) ? 255 : color;
+}
+
 void StarCoreLed::setGradientColor(int red, int green, int blue, int white)
 {
-    if (red < 0)
-    {
-        red = 0;
-    }
-    if (green < 0)
-    {
-        green = 0;
-    }
-    if (blue < 0)
-    {
-        blue = 0;
-    }
-    if (white < 0)
-    {
-        white = 0;
-    }
-    if (red > 255)
-    {
-        red = 255;
-    }
-    if (green > 255)
-    {
-        green = 255;
-    }
-    if (blue > 255)
-    {
-        blue = 255;
-    }
-    if (white > 255)
-    {
-        white = 255;
-    }
-    if (!COMMON_GND)
-    {
-        analogWrite(PIN_RED, red);
-        analogWrite(PIN_GREEN, green);
-        analogWrite(PIN_BLUE, blue);
-        analogWrite(PIN_WHITE, white);
-    }
-    else
-    {
-        analogWrite(PIN_RED, 255 - red);
-        analogWrite(PIN_GREEN, 255 - green);
-        analogWrite(PIN_BLUE, 255 - blue);
-        analogWrite(PIN_WHITE, 255 - white);
-    }
+    red = setColorDelta(red);
+    green = setColorDelta(green);
+    blue = setColorDelta(blue);
+    white = setColorDelta(white);
+
+    analogWrite(PIN_RED, !COMMON_GND ? red : 255 - red);
+    analogWrite(PIN_GREEN, !COMMON_GND ? green : 255 - green);
+    analogWrite(PIN_BLUE, !COMMON_GND ? blue : 255 - blue);
+    analogWrite(PIN_WHITE, !COMMON_GND ? white : 255 - white);
 
     gradientColorSet = {red, green, blue, white};
 }
@@ -244,6 +162,7 @@ void StarCoreLed::fadeOut()
 
     turnOff();
 }
+
 void StarCoreLed::fadeIn()
 {
     logger.writeLine("fadeIn");
@@ -264,6 +183,7 @@ void StarCoreLed::fadeIn()
 
     changeColor(currentColorSetId);
 }
+
 void StarCoreLed::clash()
 {
     logger.writeLine("Clash:");
