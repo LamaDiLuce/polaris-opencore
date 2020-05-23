@@ -34,12 +34,12 @@ void StarCoreLed::init(bool pDebug)
 
 String StarCoreLed::decodeColorSetId(int colorSetId)
 {
-    char *colors[] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
+    String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
 
-    if (colorSetId <= sizeof(colors))
+    if (colorSetId <= (int) sizeof(colors))
         return colors[colorSetId];
 
-    return "OFF";
+    return OFF;
 }
 
 void StarCoreLed::getCurrentColorSet()
