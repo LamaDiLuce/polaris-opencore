@@ -1,9 +1,9 @@
 #include "Arduino.h"
-#include "StarCoreAudio.h"
+#include "CoreAudio.h"
 #include <string.h>
 
 //Costructor
-StarCoreAudio::StarCoreAudio()
+CoreAudio::CoreAudio()
 {
 }
 
@@ -12,7 +12,7 @@ StarCoreAudio::StarCoreAudio()
  */
 
 //Init
-void StarCoreAudio::init(bool pDebug)
+void CoreAudio::init(bool pDebug)
 {
     debugMode = pDebug;
     logger.init(debugMode);
@@ -51,7 +51,7 @@ void StarCoreAudio::init(bool pDebug)
     //randomSeed(analogRead(0));
 }
 
-void StarCoreAudio::arm()
+void CoreAudio::arm()
 {
     if ((status == Status::waitArm) ||
         (status == Status::waitArmWithChangeColor) ||
@@ -69,7 +69,7 @@ void StarCoreAudio::arm()
     }
 }
 
-void StarCoreAudio::disarm()
+void CoreAudio::disarm()
 {
     if (status == Status::armed)
     {
@@ -78,7 +78,7 @@ void StarCoreAudio::disarm()
     }
 }
 
-void StarCoreAudio::clash()
+void CoreAudio::clash()
 {
     if (status == Status::armed)
     {
@@ -94,7 +94,7 @@ void StarCoreAudio::clash()
     }
 }
 
-void StarCoreAudio::swing()
+void CoreAudio::swing()
 {
     if ((status == Status::armed) && (!swinging))
     {
@@ -111,7 +111,7 @@ void StarCoreAudio::swing()
     }
 }
 
-void StarCoreAudio::checkHum()
+void CoreAudio::checkHum()
 {
     if (status == Status::armed)
     {
@@ -126,7 +126,7 @@ void StarCoreAudio::checkHum()
     }
 }
 
-void StarCoreAudio::checkArming()
+void CoreAudio::checkArming()
 {
     if ((status == Status::arming) ||
         (status == Status::armingWithChangeColor))
@@ -139,7 +139,7 @@ void StarCoreAudio::checkArming()
     }
 }
 
-void StarCoreAudio::checkDisarming()
+void CoreAudio::checkDisarming()
 {
     if (status == Status::disarming)
     {
@@ -151,7 +151,7 @@ void StarCoreAudio::checkDisarming()
     }
 }
 
-void StarCoreAudio::changeColorMode()
+void CoreAudio::changeColorMode()
 {
     if ((status == Status::waitArmWithChangeColor) && (!changeColorStarted))
     {
@@ -165,7 +165,7 @@ void StarCoreAudio::changeColorMode()
     }
 }
 
-void StarCoreAudio::checkPowerAmp()
+void CoreAudio::checkPowerAmp()
 {
     if ((status == Status::disarmed) ||
         (status == Status::disarmedInRecharge) ||
@@ -180,7 +180,7 @@ void StarCoreAudio::checkPowerAmp()
     }
 }
 
-void StarCoreAudio::beep()
+void CoreAudio::beep()
 {
     digitalWrite(POWER_AMP_PIN, HIGH);
     delay(250);
@@ -191,7 +191,7 @@ void StarCoreAudio::beep()
 }
 
 //Process loop
-void StarCoreAudio::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
+void CoreAudio::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
                          bool &rNeedArm, bool &rNeedDisarm)
 {
     status = rStatus;

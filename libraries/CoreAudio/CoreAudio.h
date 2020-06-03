@@ -4,8 +4,8 @@
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
-#include "Logging.h"
-#include "StarCoreCommon.h"
+#include "CoreLogging.h"
+#include "CoreCommon.h"
 
 //Flash
 #define CS_PIN 10
@@ -23,14 +23,14 @@
 #define BEEP_FREQUENCY 1000
 #define AUDIO_BLOCK 16
 
-#ifndef StarCoreAudio_h
-#define StarCoreAudio_h
+#ifndef CoreAudio_h
+#define CoreAudio_h
 
-class StarCoreAudio
+class CoreAudio
 {
   public:
     //Costructor
-    StarCoreAudio();
+    CoreAudio();
     //Init
     void init(bool debug);
     //Process loop
@@ -53,7 +53,7 @@ class StarCoreAudio
     AudioConnection *patchMixerDac = NULL;
 
     bool debugMode = false;
-    Logging logger;
+    CoreLogging logger;
     SerialFlashFile file;
 
     bool swinging = false;

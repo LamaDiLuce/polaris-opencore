@@ -1,8 +1,8 @@
 #include "Arduino.h"
-#include "Logging.h"
+#include "CoreLogging.h"
 
 //Constructor
-Logging::Logging()
+CoreLogging::CoreLogging()
 {
 }
 
@@ -11,7 +11,7 @@ Logging::Logging()
  */
 
 //Int
-void Logging::init(bool debug)
+void CoreLogging::init(bool debug)
 {
 	debug_mode = debug;
 	if (debug_mode)
@@ -23,7 +23,7 @@ void Logging::init(bool debug)
 }
 
 //Write message without return
-void Logging::write(String message)
+void CoreLogging::write(String message)
 {
 
 	if (debug_mode)
@@ -31,7 +31,7 @@ void Logging::write(String message)
 }
 
 //Write message with return
-void Logging::writeLine(String message, String prefix)
+void CoreLogging::writeLine(String message, String prefix)
 {
 
 	if (debug_mode)
@@ -45,7 +45,7 @@ void Logging::writeLine(String message, String prefix)
 }
 
 //Write label + value (String) with return
-void Logging::writeParamString(String param, String value, String prefix)
+void CoreLogging::writeParamString(String param, String value, String prefix)
 {
 
 	if (debug_mode)
@@ -61,7 +61,7 @@ void Logging::writeParamString(String param, String value, String prefix)
 }
 
 //Write label + value (int) with return
-void Logging::writeParamInt(String param, int value, String prefix)
+void CoreLogging::writeParamInt(String param, int value, String prefix)
 {
 
 	if (debug_mode)
@@ -77,7 +77,7 @@ void Logging::writeParamInt(String param, int value, String prefix)
 }
 
 //Write status decoded with return
-void Logging::writeParamStatus(Status status, String prefix)
+void CoreLogging::writeParamStatus(Status status, String prefix)
 {
 	if (debug_mode)
 	{
@@ -143,7 +143,7 @@ void Logging::writeParamStatus(Status status, String prefix)
 }
 
 //Write label + value (float) with return
-void Logging::writeParamFloat(String param, float value, String prefix)
+void CoreLogging::writeParamFloat(String param, float value, String prefix)
 {
 
 	if (debug_mode)
@@ -159,7 +159,7 @@ void Logging::writeParamFloat(String param, float value, String prefix)
 }
 
 //Write label + value (long) with return
-void Logging::writeParamLong(String param, long value, String prefix)
+void CoreLogging::writeParamLong(String param, long value, String prefix)
 {
 
 	if (debug_mode)

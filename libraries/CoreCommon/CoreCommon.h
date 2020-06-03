@@ -1,5 +1,5 @@
-#ifndef StarCoreCommon_h
-#define StarCoreCommon_h
+#ifndef CoreCommon_h
+#define CoreCommon_h
 
 enum Status
 {

@@ -1,15 +1,15 @@
 #include "Arduino.h"
-#include "StarCoreCommon.h"
+#include "CoreCommon.h"
 
 #ifndef Logging_h
 #define Logging_h
 
-class Logging
+class CoreLogging
 {
 	public:
 
 		//Constructor
-		Logging();
+		CoreLogging();
 		//Init
 		void init(bool debug);
 		//Write message without return

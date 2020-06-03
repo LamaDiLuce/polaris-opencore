@@ -1,28 +1,27 @@
 #include "Arduino.h"
 #include <SPI.h>
 #include <Wire.h>
-#include <Logging.h>
-
-#include "StarCoreAudio.h"
-#include "StarCoreSensor.h"
-#include "StarCoreLed.h"
-#include "StarCoreRecharge.h"
-#include "StarCoreCommon.h"
+#include <CoreLogging.h>
+#include "CoreAudio.h"
+#include "CoreSensor.h"
+#include "CoreLed.h"
+#include "CoreRecharge.h"
+#include "CoreCommon.h"
 
 #define BAUD_RATE 9600
 #define STX 0x02
 #define ETX 0x03
 #define REQUEST_VER 'V'
 
-#ifndef StarCoreEntryPoint_h
-#define StarCoreEntryPoint_h
+#ifndef CoreEntryPoint_h
+#define CoreEntryPoint_h
 
-class StarCoreEntryPoint
+class CoreEntryPoint
 {
     public:
 
         //Costructor
-        StarCoreEntryPoint();
+        CoreEntryPoint();
         //Init
         void init(bool debug, String build, String serial);
         //Process loop
@@ -42,11 +41,11 @@ class StarCoreEntryPoint
         String build = "";
         String serial = "";
         String incomingMessage = "";
-        StarCoreAudio audioModule;
-        StarCoreSensor sensorModule;
-        StarCoreLed ledModule;
-        StarCoreRecharge rechargeModule;
-        Logging logger;
+        CoreAudio audioModule;
+        CoreSensor sensorModule;
+        CoreLed ledModule;
+        CoreRecharge rechargeModule;
+        CoreLogging logger;
         Requests request;
 
         void processIncomingMessage(String message);

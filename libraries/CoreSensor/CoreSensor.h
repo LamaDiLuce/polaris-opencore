@@ -1,9 +1,10 @@
 #include "Arduino.h"
-#include "LSM6DS3.h"
 #include "Wire.h"
 #include "SPI.h"
-#include "Logging.h"
-#include "StarCoreCommon.h"
+#include "CoreLogging.h"
+#include "CoreCommon.h"
+#include "SparkFunLSM6DS3.h"
+
 
 #define PROTOTYPE false
 
@@ -11,7 +12,7 @@
 #define IMU_INT1_PIN 0
 #define SDO_PIN 17
 
-//STARCORE
+//Core
 #define SWING_THRESHOLD 90 //AVG of 3 gyro axes
 #define VERTICAL_ACC 8.0
 #define VERTICAL_ARM -6.0
@@ -25,14 +26,14 @@
 
 #define FILTER_SENSOR_ITEMS 20
 
-#ifndef StarCoreSensor_h
-#define StarCoreSensor_h
+#ifndef CoreSensor_h
+#define CoreSensor_h
 
-class StarCoreSensor
+class CoreSensor
 {
 public:
   //Costructor
-  StarCoreSensor();
+  CoreSensor();
   //Init
   void init(bool debug);
   //Process loop
@@ -47,11 +48,10 @@ public:
 
 private:
   bool debugMode = false;
-  Logging logger;
-  LSM6DS3Core core;
-  LSM6DS3 device;
+  CoreLogging logger;
 
   FilterSensor filterSensorData = {0, 0.0, 0.0};
+  LSM6DS3 device;
 
   unsigned long time;
 
