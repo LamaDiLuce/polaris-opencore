@@ -1,6 +1,6 @@
 #include "Arduino.h"
-#include "Logging.h"
-#include "StarCoreCommon.h"
+#include "CoreLogging.h"
+#include "CoreCommon.h"
 
 #define CHARGE_PIN 13
 #define STANDBY_PIN 15
@@ -9,14 +9,14 @@
 #define BLINK_RECHARGE_STATUS_TIME 8000
 #define BLINK_RECHARGED_STATUS_TIME 12000
 
-#ifndef StarCoreRecharge_h
-#define StarCoreRecharge_h
+#ifndef CoreRecharge_h
+#define CoreRecharge_h
 
-class StarCoreRecharge
+class CoreRecharge
 {
 public:
   //Costructor
-  StarCoreRecharge();
+  CoreRecharge();
   //Init
   void init(bool debug);
   //Process loop
@@ -24,7 +24,7 @@ public:
 
 private:
   bool debugMode = false;
-  Logging logger;
+  CoreLogging logger;
   unsigned long time;
   Status currentStatus;
   NeedBlinkRecharge currentNeedBlinkRechargeStatus = {false, 0};

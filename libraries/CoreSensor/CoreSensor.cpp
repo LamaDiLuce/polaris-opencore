@@ -1,17 +1,16 @@
 #include "Arduino.h"
-#include "StarCoreSensor.h"
+#include "CoreSensor.h"
 
 //Costructor
-StarCoreSensor::StarCoreSensor()
+CoreSensor::CoreSensor()
 {
 }
-
 /*
  * Public Methods
  */
 
 //Init
-void StarCoreSensor::init(bool pDebug)
+void CoreSensor::init(bool pDebug)
 {
     debugMode = pDebug;
     logger.init(debugMode);
@@ -22,7 +21,7 @@ void StarCoreSensor::init(bool pDebug)
     Wire.setSDA(18);
     Wire.setSCL(19);
 
-    core.init(I2C_MODE, 0x6B);
+    LSM6DS3Core core(I2C_MODE, 0x6B);
 
     logger.write("Init device: ");
     device.begin();
@@ -64,7 +63,7 @@ void StarCoreSensor::init(bool pDebug)
 }
 
 //Get if need exec swing event
-bool StarCoreSensor::needSwing()
+bool CoreSensor::needSwing()
 {
     gyroAvg = abs((device.readFloatGyroX() + device.readFloatGyroY() + device.readFloatGyroZ()) / 3.0);
     //max1 = max(abs(device.readFloatGyroX()), abs(device.readFloatGyroY()));
@@ -74,7 +73,7 @@ bool StarCoreSensor::needSwing()
 }
 
 //Get if need exec clash event
-bool StarCoreSensor::needClash()
+bool CoreSensor::needClash()
 {
     bool needClashEvent = false;
 
@@ -89,12 +88,12 @@ bool StarCoreSensor::needClash()
     return needClashEvent;
 }
 
-int StarCoreSensor::getInt1Pin()
+int CoreSensor::getInt1Pin()
 {
     return IMU_INT1_PIN;
 }
 
-bool StarCoreSensor::containVertical(float pValue)
+bool CoreSensor::containVertical(float pValue)
 {
     /*
     logger.write(minValue);
@@ -109,7 +108,7 @@ bool StarCoreSensor::containVertical(float pValue)
     //return ((checkValue >= minValue) && (checkValue <= maxValue));
 }
 
-bool StarCoreSensor::containArm(float pValue)
+bool CoreSensor::containArm(float pValue)
 {
     /*
     logger.write(minValue);
@@ -121,7 +120,7 @@ bool StarCoreSensor::containArm(float pValue)
     return ((pValue >= minArmValue) && (pValue <= maxArmValue));
 }
 
-bool StarCoreSensor::containHorizontal(float pValue)
+bool CoreSensor::containHorizontal(float pValue)
 {
 
     logger.write("containHorizontal: ");
@@ -134,7 +133,7 @@ bool StarCoreSensor::containHorizontal(float pValue)
     return ((pValue >= minHValue) && (pValue <= maxHValue));
 }
 
-bool StarCoreSensor::needArm()
+bool CoreSensor::needArm()
 {
     if ((status == Status::disarmed) ||
         ((status == Status::disarmedInRecharge) && debugMode))
@@ -215,7 +214,7 @@ bool StarCoreSensor::needArm()
     return false;
 }
 
-bool StarCoreSensor::needDisarm()
+bool CoreSensor::needDisarm()
 {
     if (status == Status::armed)
     {
@@ -240,12 +239,12 @@ bool StarCoreSensor::needDisarm()
     return false;
 }
 
-Status StarCoreSensor::getStatus()
+Status CoreSensor::getStatus()
 {
     return status;
 }
 
-void StarCoreSensor::updateAverageHorizontalData()
+void CoreSensor::updateAverageHorizontalData()
 {
     if (filterSensorData.readingCount == FILTER_SENSOR_ITEMS)
     {
@@ -280,7 +279,7 @@ void StarCoreSensor::updateAverageHorizontalData()
 }
 
 //Process loop
-void StarCoreSensor::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
+void CoreSensor::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
                           bool &rVerticalPosition, bool &rNeedArm, bool &rHorizontalPosition,
                           bool &rNeedDisarm)
 {

@@ -1,8 +1,8 @@
 #include "Arduino.h"
-#include "StarCoreRecharge.h"
+#include "CoreRecharge.h"
 
 //Costructor
-StarCoreRecharge::StarCoreRecharge()
+CoreRecharge::CoreRecharge()
 {
 }
 
@@ -11,7 +11,7 @@ StarCoreRecharge::StarCoreRecharge()
  */
 
 //Init
-void StarCoreRecharge::init(bool pDebug)
+void CoreRecharge::init(bool pDebug)
 {
     debugMode = pDebug;
     logger.init(debugMode);
@@ -22,7 +22,7 @@ void StarCoreRecharge::init(bool pDebug)
 }
 
 //Checking if recharge is active
-NeedBlinkRecharge StarCoreRecharge::needBlinkRecharge()
+NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
 {
     NeedBlinkRecharge result = {false, 0};
 
@@ -74,7 +74,7 @@ NeedBlinkRecharge StarCoreRecharge::needBlinkRecharge()
 }
 
 //Looping status
-void StarCoreRecharge::loop(Status &rStatus, NeedBlinkRecharge &rNeedBlinkRecharge)
+void CoreRecharge::loop(Status &rStatus, NeedBlinkRecharge &rNeedBlinkRecharge)
 {
     currentStatus = rStatus;
     currentNeedBlinkRechargeStatus = rNeedBlinkRecharge;

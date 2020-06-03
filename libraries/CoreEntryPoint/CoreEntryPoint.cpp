@@ -1,8 +1,8 @@
 #include "Arduino.h"
-#include "StarCoreEntryPoint.h"
+#include "CoreEntryPoint.h"
 
 //Costructor
-StarCoreEntryPoint::StarCoreEntryPoint()
+CoreEntryPoint::CoreEntryPoint()
 {
 }
 
@@ -11,7 +11,7 @@ StarCoreEntryPoint::StarCoreEntryPoint()
  */
 
 //Init
-void StarCoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
+void CoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
 {
     debugMode = pDebug;
     build = pBuild;
@@ -31,7 +31,7 @@ void StarCoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
 }
 
 //Process loop
-void StarCoreEntryPoint::loop()
+void CoreEntryPoint::loop()
 {
     sensorModule.loop(needSwingEvent, needClashEvent, status, verticalPosition,
                       needArmEvent, horizontalPosition, needDisarmEvent);
@@ -45,7 +45,7 @@ void StarCoreEntryPoint::loop()
     checkSerials();
 }
 
-void StarCoreEntryPoint::releaseStatus()
+void CoreEntryPoint::releaseStatus()
 {
     needSwingEvent = false;
     needClashEvent = false;
@@ -53,17 +53,17 @@ void StarCoreEntryPoint::releaseStatus()
     needArmEvent = false;
 }
 
-int StarCoreEntryPoint::getInt1Pin()
+int CoreEntryPoint::getInt1Pin()
 {
     return sensorModule.getInt1Pin();
 }
 
-void StarCoreEntryPoint::incrementInt1ISR()
+void CoreEntryPoint::incrementInt1ISR()
 {
     sensorModule.int1Status++;
 }
 
-void StarCoreEntryPoint::checkSerials()
+void CoreEntryPoint::checkSerials()
 {
     int incomingByte;
 
@@ -90,7 +90,7 @@ void StarCoreEntryPoint::checkSerials()
     }
 }
 
-void StarCoreEntryPoint::processIncomingMessage(String pIncomingMessage)
+void CoreEntryPoint::processIncomingMessage(String pIncomingMessage)
 {
     if (pIncomingMessage == "V")
     {

@@ -1,7 +1,7 @@
 #include "Arduino.h"
-#include "StarCoreCommon.h"
+#include "CoreCommon.h"
 #include <EEPROM.h>
-#include "Logging.h"
+#include "CoreLogging.h"
 
 //LED RGBW
 #define PIN_RED 3
@@ -22,14 +22,14 @@
 #define CLASH_COLOR_FOR_WHITE ACQUA
 #define CLASH_COLOR_FOR_NO_WHITE WHITE
 
-#ifndef StarCoreLed_h
-#define StarCoreLed_h
+#ifndef CoreLed_h
+#define CoreLed_h
 
-class StarCoreLed
+class CoreLed
 {
 public:
   //Costructor
-  StarCoreLed();
+  CoreLed();
   //Init
   void init(bool debug);
   //Process loop
@@ -51,7 +51,7 @@ public:
 
 private:
   bool debugMode = false;
-  Logging logger;
+  CoreLogging logger;
   bool startedEvent = false;
   int currentColorSetId = OFF;
   int currentChangeColorSetId = OFF;
@@ -69,15 +69,16 @@ private:
   NeedBlinkRecharge currentBlinkRechargeStatus = {false, 0};
 
   //COLORSET
-  ColorLed colorSet[9] = {{255, 0, 0, 0},   //RED
-                          {0, 255, 0, 0},   //GREEN
-                          {0, 0, 255, 0},   //BLUE
-                          {100, 255, 0, 60},  //YELLOW
-                          {0, 255, 240, 80}, //ACQUA
-                          {35, 10, 255, 10},  //PURPLE
-                          {150, 255, 0, 20},  //ORANGE
-                          {25, 170, 150, 255},   //WHITE
-                          {0, 0, 0, 0}};    //OFF
+  ColorLed colorSet[9] = {
+      {255, 0, 0, 0},      //RED
+      {0, 255, 0, 0},      //GREEN
+      {0, 0, 255, 0},      //BLUE
+      {100, 255, 0, 60},   //YELLOW
+      {0, 255, 240, 80},   //ACQUA
+      {35, 10, 255, 10},   //PURPLE
+      {150, 255, 0, 20},   //ORANGE
+      {25, 170, 150, 255}, //WHITE
+      {0, 0, 0, 0}};       //OFF
 
   String decodeColorSetId(int colorSetId);
   int setColorDelta(int color);

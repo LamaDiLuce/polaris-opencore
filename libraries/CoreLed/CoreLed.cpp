@@ -1,11 +1,11 @@
 #include "Arduino.h"
-#include "StarCoreLed.h"
+#include "CoreLed.h"
 
-StarCoreLed::StarCoreLed()
+CoreLed::CoreLed()
 {
 }
 
-void StarCoreLed::init(bool pDebug)
+void CoreLed::init(bool pDebug)
 {
     debugMode = pDebug;
     logger.init(debugMode);
@@ -32,7 +32,7 @@ void StarCoreLed::init(bool pDebug)
     turnOff();
 }
 
-String StarCoreLed::decodeColorSetId(int colorSetId)
+String CoreLed::decodeColorSetId(int colorSetId)
 {
     String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
 
@@ -42,7 +42,7 @@ String StarCoreLed::decodeColorSetId(int colorSetId)
     return OFF;
 }
 
-void StarCoreLed::getCurrentColorSet()
+void CoreLed::getCurrentColorSet()
 {
     if (EEPROM.read(0) == CHECK_VALUE)
     {
@@ -69,7 +69,7 @@ void StarCoreLed::getCurrentColorSet()
     logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
 }
 
-void StarCoreLed::setCurrentColorSet(int colorSetId)
+void CoreLed::setCurrentColorSet(int colorSetId)
 {
     logger.writeLine("Saving colorset...");
     //logger.write(decodeColorSetId(colorSetId));
@@ -81,7 +81,7 @@ void StarCoreLed::setCurrentColorSet(int colorSetId)
     //logger.writeLine(": OK");
 }
 
-void StarCoreLed::changeColor(int colorSetId)
+void CoreLed::changeColor(int colorSetId)
 {
     analogWrite(PIN_RED, !COMMON_GND ? colorSet[colorSetId].red : 255 - colorSet[colorSetId].red);
     analogWrite(PIN_GREEN, !COMMON_GND ? colorSet[colorSetId].green : 255 - colorSet[colorSetId].green);
@@ -95,12 +95,12 @@ void StarCoreLed::changeColor(int colorSetId)
     }
 }
 
-int StarCoreLed::setColorDelta(int color)
+int CoreLed::setColorDelta(int color)
 {
     return (color < 0) ? 0 : (color > 255) ? 255 : color;
 }
 
-void StarCoreLed::setGradientColor(int red, int green, int blue, int white)
+void CoreLed::setGradientColor(int red, int green, int blue, int white)
 {
     red = setColorDelta(red);
     green = setColorDelta(green);
@@ -115,12 +115,12 @@ void StarCoreLed::setGradientColor(int red, int green, int blue, int white)
     gradientColorSet = {red, green, blue, white};
 }
 
-void StarCoreLed::turnOff()
+void CoreLed::turnOff()
 {
     changeColor(OFF);
 }
 
-void StarCoreLed::blink()
+void CoreLed::blink()
 {
     if (!alreadyBlinked)
     {
@@ -131,7 +131,7 @@ void StarCoreLed::blink()
     }
 }
 
-void StarCoreLed::changeColorBlink()
+void CoreLed::changeColorBlink()
 {
     if (!alreadyBlinked)
     {
@@ -142,7 +142,7 @@ void StarCoreLed::changeColorBlink()
     }
 }
 
-void StarCoreLed::fadeOut()
+void CoreLed::fadeOut()
 {
     logger.writeLine("fadeOut");
 
@@ -163,7 +163,7 @@ void StarCoreLed::fadeOut()
     turnOff();
 }
 
-void StarCoreLed::fadeIn()
+void CoreLed::fadeIn()
 {
     logger.writeLine("fadeIn");
 
@@ -184,7 +184,7 @@ void StarCoreLed::fadeIn()
     changeColor(currentColorSetId);
 }
 
-void StarCoreLed::clash()
+void CoreLed::clash()
 {
     logger.writeLine("Clash:");
     logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
@@ -193,7 +193,7 @@ void StarCoreLed::clash()
     changeColor(currentColorSetId);
 }
 
-void StarCoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
+void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 {
     if (currentStatus == Status::disarmedInRecharge)
     {
@@ -205,7 +205,7 @@ void StarCoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 }
 
 //Process loop
-void StarCoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
+void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
                        bool &rNeedArm, bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge)
 {
     if ((currentStatus == waitArmWithChangeColorNext) &&
