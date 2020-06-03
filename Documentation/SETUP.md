@@ -69,32 +69,139 @@ Now you should be able to code without issues for the project.
 Now we will set up the project in the **Arduino IDE** so that we can **Compile** / **Verify** and **Deploy** the project into the **Polaris**.
 
 Just open the **Arduino IDE**.
-Then go to "**File** > **Open**" or hit "**Ctrl + O**" and navigate to your **project folder** > **"StarCoreEntryPoint"** and open the file **StarCoreEntryPoint.ino**.
+Then go to "**File** > **Open**" or hit "**Ctrl + O**" and navigate to your **project folder** > **"CoreEntryPoint"** and open the file **CoreEntryPoint.ino**.
 
 Now we need to configure the project so it actually can be built for our board.
 
 Go to "**Tools**" and:
 
-1. Set **Board** to "**Teensy 3.2 / 3.1**.
-2. Set **USB Type** to **USB**.
-3. Set **CPU Speed** to **72 Mhz**.
-4. Set **Optimize** to **Faster**.
-5. Set **Keyboard Layout** to **US English**.
+1. Set **Board** to "**Teensy 3.2 / 3.1**".
+2. Set **USB Type** to "**USB**".
+3. Set **CPU Speed** to "**72 Mhz**".
+4. Set **Optimize** to "**Faster**".
+5. Set **Keyboard Layout** to "**US English**".
 6. If you have connected the **Polaris** to your computer via USB, you can also pick the **COM port** where it is connected on **Port**.
 
 Now we need to gather the custom libraries that we are building in this project. 
 
 Go to "**File** > **Preferences**" or hit "**Ctrl + ,**" and inside of Sketchbook location, place the location of your **project folder** and press **OK**.
 
-Now, if you go to "**File** > **Sketchbook**", you should see **StarCoreEntryPoint** and **StartCoreLoader**. That only means that the libraries are available for the compiler.
+Now, if you go to "**File** > **Sketchbook**", you should see "**CoreEntryPoint**" and "**StartCoreLoader**". That only means that the libraries are available for the compiler.
 
 Now you can click on the "**Check**" symbol to **verify** the project by building it.
 
 The first time you build the project, you will probably see warnings related to external libraries we are using. Don't mind those as they are only warnings and won't break the compilation.
 
-Once you can see the message "**Done compiling** you are good to go.
+Once you can see the message "**Done compiling**" you are good to go.
 
-To push the code to your **Polaris**, you will need to press the **Arrow** symbol to **Upload** the code to the board. 
+To push the code to your **Polaris**, you will need to press the "**Arrow**" symbol to **Upload** the code to the board. 
 
 There will be a noise produced by your **Polaris** and your computer (disconnection and connection of a USB device sound) that indicates that the firmware has been uploaded to the **Polaris**.
 
+## Linux setup
+
+The following setup guide is intended for 64-bit Debian/Ubuntu based distros and has been tested on Ubuntu 20.04 and Linux Mint 19.3. Since most of the software is fetched straight from the Internet, it can be easily adapted for pretty much any other distro/package manager out there. 
+
+### IDE Setup
+
+No IDE is strictly enforced but **Visual Studio Code** is strongly recommended, being it accessible and cross-platform. You can download and install Visual Studio Code following one of the installation options described [here](https://code.visualstudio.com/docs/setup/linux).
+
+### Git setup
+
+You will need Git to contribute to this project. You can use Git from the command line but if you feel the need of a GUI client [SmartGit](https://www.syntevo.com/smartgit/) and [GitKraken](https://www.gitkraken.com/) are popular cross-platform options. To install Git using the **apt** package manager, enter the following commands in a terminal window:
+
+1. Install Git:
+    ```
+    $ sudo apt update
+    $ sudo apt install git
+    ```
+2. Verify installation (should output the version of the git package installed):
+    ```
+    $ sudo git --version
+    ```
+    
+### Arduino IDE setup
+You will need to install the **Arduino IDE** to compile and upload this project to your Anima EVO board.
+1. Download the latest version of the Arduino IDE for Linux (1.8.12 at the time of writing) either from [here](http://www.arduino.cc/en/Main/Software) or using the command line:
+    ```
+    $ cd /tmp
+    $ wget https://downloads.arduino.cc/arduino-1.8.12-linux64.tar.xz
+    ```
+2. Extract the Arduino IDE archive:
+    ```
+    $ tar -xvf arduino-1.8.12-linux64.tar.xz
+    $ rm arduino-1.8.12-linux64.tar.xz
+    ```
+3. Install the Arduino IDE to a location of your choice (for the purpose of this guide the folder `~/.local/arduino-1.8.12/` will be used):
+    ```
+    $ mv arduino-1.8.12/ ~/.local/arduino-1.8.12/
+    $ cd ~/.local/arduino-1.8.12/
+    $ sudo ./install.sh 
+    ```
+4. Add your user to the **dialout** group so that it can access the serial ports to upload sketches:
+    ```
+    $ sudo usermod -a -G dialout $USER
+    ```
+
+### Teensyduino setup
+To compile the project you will also need to install the **Teensyduino** software add-on for Arduino.
+1. Set up a udev rule to give non-root users permission to use Teensy devices. Download and install the following [udev rule file](https://www.pjrc.com/teensy/49-teensy.rules) either manually or using the command line:
+    ```
+    $ wget https://www.pjrc.com/teensy/49-teensy.rules
+    $ sudo cp 49-teensy.rules /etc/udev/rules.d/
+    ```
+2. Download and launch the latest version of the Teensyduino installer (1.52 at the time of writing) either from [here](https://www.pjrc.com/teensy/td_download.html) or using the command line:
+    ```
+    $ wget https://www.pjrc.com/teensy/td_152/TeensyduinoInstall.linux64
+    $ chmod +x TeensyduinoInstall.linux64
+    $ ./TeensyduinoInstall.linux64
+    ```
+3. Follow the installer instructions to complete the Teensyduino installation (you will be asked to select the Arduino IDE install location you chose earlier).
+
+## Project configuration
+### Cloning the repository
+You can clone the project repository from the command line:
+```
+$ git clone https://github.com/LamaDiLuce/polaris-opencore.git
+```
+### Visual Studio Code configuration
+Once you have a local copy of the repository on your machine, you can open the project in **Visual Studio Code** by simply typing `code .` from the project root folder:
+```
+$ cd polaris-opencore
+$ code .
+```
+Then you can install the suggested VS Code extensions and configure the editor to start coding:
+1. Install the **C/C++** and (optionally) **Platform.IO** extensions for VS Code as descibed in the [Windows setup guide](#visual-studio-code-configuration).
+2. Install the boilerplate C/C++ configuration file for Linux. 
+    * If you have chosen `~/.local/arduino-1.8.12/` as your Arduino IDE 1.8.12 installation folder, then the sample configuration file should work out-of-the-box. 
+        ```
+        $ cd .vscode
+        $ cp c_cpp_properties.linux.sample.json c_cpp_properties.json
+        ```
+    * Otherwise, if you have installed the Arduino IDE to a different location or you are using a different version, you need to update your **c_cpp_properties.json** file to reflect your system configuration. Execute the following command substituting `<ARDUINO_INSTALL_DIR>` with the path to your Arduino installation folder.
+        ```
+        $ cd .vscode
+        $ sed -e "s,~/.local/arduino-1.8.12,<ARDUINO_INSTALL_DIR>,g" c_cpp_properties.linux.sample.json c_cpp_properties.json
+        ```
+
+### Arduino IDE configuration
+Follow these steps to **Compile** / **Verify** and **Deploy** the project into your **Polaris** using the **Arduino IDE**:
+1. Open the project in the **Arduino IDE**:
+    ```
+    $ cd polaris-opencore
+    $ arduino CoreEntryPoint/CoreEntryPoint.ino
+    ```
+2. Configure the project so it actually can be built for our board. Under the **Tools** menu:
+    1. Set **Board** to "**Teensy 3.2 / 3.1**".
+    2. Set **USB Type** to "**Serial**".
+    3. Set **CPU Speed** to "**72 Mhz**".
+    4. Set **Optimize** to "**Faster**".
+    5. Set **Keyboard Layout** to "**US English**".
+3. Gather the custom libraries that we are building in this project:
+    1. Go to "**File** > **Preferences**" and in "**Sketchbook**" place the location of your **project folder**, then press **OK**.
+    2. You can verify that the libraries are now made available for the compiler by going to "**File** > **Sketchbook**": you should see "**CoreEntryPoint**" and "**CoreLoader**".
+4. You can **Compile** / **Verify** the project by clicking on the "**Check**" symbol. The first time you build the project, you will probably see warnings related to external libraries we are using. Don't mind those as they are only warnings and won't break the compilation. Once you can see the message "**Done compiling**" you are good to go.
+5. To push the code to your **Polaris**:
+    1. Connect the **Polaris** via USB.
+    2. Pick the **serial port** to which the **Polaris** is connected by selecting it under "**Tools** > **Port**". It should be listed as something like "**/dev/ttyACM* (Teensy)**".
+    3. Press the "**Arrow**" symbol to **Upload** the code to the board. 
