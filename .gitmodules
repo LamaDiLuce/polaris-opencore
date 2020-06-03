@@ -1,0 +1,3 @@
+[submodule "libraries/LSM6DS3"]
+	path = libraries/LSM6DS3
+	url = https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library.git
