@@ -15,7 +15,7 @@ void CoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
 {
     debugMode = pDebug;
     build = pBuild;
-    serial = pSerial;
+    serial = kinetisUID(); //was software, =pSerial;
 
     Serial.begin(BAUD_RATE); //It needs for PC communication services
 
@@ -63,6 +63,20 @@ void CoreEntryPoint::incrementInt1ISR()
     sensorModule.int1Status++;
 }
 
+
+void CoreEntryPoint::kinetisUID(uint32_t *uid)
+{ uid[0] = SIM_UIDMH;
+	uid[1] = SIM_UIDML;
+	uid[2] = SIM_UIDL;
+}
+const char* CoreEntryPoint::kinetisUID(void)
+{ uint32_t uid[3];
+		static char uidString[27];
+		kinetisUID(uid);
+		sprintf(uidString, "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
+		return uidString;
+}
+
 void CoreEntryPoint::checkSerials()
 {
     int incomingByte;
@@ -77,7 +91,7 @@ void CoreEntryPoint::checkSerials()
             //audioModule.beep();
             incomingMessage = "";
         }
-        else if (incomingByte == (byte)ETX)
+        else if ((incomingByte == (byte)ETX) || (incomingByte == (byte)LF))
         {
             
             processIncomingMessage(incomingMessage);
