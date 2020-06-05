@@ -2,7 +2,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <Audio.h>
-#include "LSM6DS3.h"
+#include "SparkFunLSM6DS3.h"
 
 // GUItool: begin automatically generated code
 AudioSynthWaveformSine   sine1;          //xy=178,354
