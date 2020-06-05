@@ -17,6 +17,8 @@ You can download the GitHub Desktop for Windows [here](https://desktop.github.co
 
 You can download Arduino for Windows directly from [here](https://www.arduino.cc/en/Main/Software). *
 
+Please, make sure that you install the Arduino IDE from the **installer**. Not the **Windows App Store**.
+
 ### Teensyduino setup
 
 You will also need to install **Teensyduino**, which can be downloaded [here](https://www.pjrc.com/teensy/td_download.html). *
@@ -62,6 +64,12 @@ Look for the **Arduino** Extension and the **C/C++** Extension. The extension **
 
 ![Extensions to install in VSCode](Images/Setup/vscode-extensions-to-install.jpg)
 
+Now you will need to download the **git submodule** libraries that this project needs. To do so go to **Terminal** > **New Terminal**. Make sure that you are on the project's root folder and then write:
+
+```
+git submodule update
+```
+
 Now you should be able to code without issues for the project.
 
 ### Arduino IDE configuration
@@ -86,7 +94,7 @@ Now we need to gather the custom libraries that we are building in this project.
 
 Go to "**File** > **Preferences**" or hit "**Ctrl + ,**" and inside of Sketchbook location, place the location of your **project folder** and press **OK**.
 
-Now, if you go to "**File** > **Sketchbook**", you should see "**CoreEntryPoint**" and "**StartCoreLoader**". That only means that the libraries are available for the compiler.
+Now, if you go to "**File** > **Sketchbook**", you should see "**CoreEntryPoint**" and "**CoreLoader**". That only means that the libraries are available for the compiler.
 
 Now you can click on the "**Check**" symbol to **verify** the project by building it.
 
@@ -162,7 +170,7 @@ To compile the project you will also need to install the **Teensyduino** softwar
 ### Cloning the repository
 You can clone the project repository from the command line:
 ```
-$ git clone https://github.com/LamaDiLuce/polaris-opencore.git
+$ git clone https://github.com/LamaDiLuce/polaris-opencore.git && cd polaris-opencore && git submodule update
 ```
 ### Visual Studio Code configuration
 Once you have a local copy of the repository on your machine, you can open the project in **Visual Studio Code** by simply typing `code .` from the project root folder:
