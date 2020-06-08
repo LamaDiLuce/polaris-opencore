@@ -18,10 +18,10 @@
 #define FADE_DELAY_CLASH 15
 #define TIME_BLINK_WAITARM 200
 #define TIME_BLINK_WAITARM_WITH_COLOR 500
+#define TIME_CHARGE_SECUENCE_BLINK 300
 #define CLASH_TIME 200
 #define CLASH_COLOR_FOR_WHITE ACQUA
 #define CLASH_COLOR_FOR_NO_WHITE WHITE
-
 #ifndef CoreLed_h
 #define CoreLed_h
 
@@ -48,6 +48,7 @@ public:
   void blink();
   void changeColorBlink();
   void blinkRecharge(NeedBlinkRecharge needBlinkRecharge);
+  void displayChargeSecuence();
 
 private:
   bool debugMode = false;
