@@ -57,6 +57,7 @@ struct FilterSensor
 
 struct NeedBlinkRecharge
 {
+    bool chargeSecuence;
     bool needRecharge;
     int colorRecharge;
 };

@@ -131,6 +131,18 @@ void CoreLed::blink()
     }
 }
 
+void CoreLed::displayChargeSecuence(){
+    changeColor(RED);
+    delay(TIME_CHARGE_SECUENCE_BLINK);
+    changeColor (GREEN);
+    delay(TIME_CHARGE_SECUENCE_BLINK);
+    changeColor (BLUE);
+    delay(TIME_CHARGE_SECUENCE_BLINK);
+    changeColor (WHITE);
+    delay(TIME_CHARGE_SECUENCE_BLINK);
+    turnOff();
+}
+
 void CoreLed::changeColorBlink()
 {
     if (!alreadyBlinked)
@@ -269,6 +281,10 @@ void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
     {
         fadeOut();
         rNeedDisarm = false;
+    }
+
+    if(currentBlinkRechargeStatus.chargeSecuence){
+        displayChargeSecuence();
     }
 
     if (currentBlinkRechargeStatus.needRecharge)
