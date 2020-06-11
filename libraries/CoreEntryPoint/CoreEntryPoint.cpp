@@ -6,16 +6,12 @@ CoreEntryPoint::CoreEntryPoint()
 {
 }
 
-/*
- * Public Methods
- */
-
 //Init
 void CoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
 {
     debugMode = pDebug;
     build = pBuild;
-    serial = kinetisUID(); //was software, =pSerial;
+    serial = kinetisUID();
 
     Serial.begin(BAUD_RATE); //It needs for PC communication services
 
@@ -63,18 +59,20 @@ void CoreEntryPoint::incrementInt1ISR()
     sensorModule.int1Status++;
 }
 
-
 void CoreEntryPoint::kinetisUID(uint32_t *uid)
-{ uid[0] = SIM_UIDMH;
-	uid[1] = SIM_UIDML;
-	uid[2] = SIM_UIDL;
+{
+    uid[0] = SIM_UIDMH;
+    uid[1] = SIM_UIDML;
+    uid[2] = SIM_UIDL;
 }
-const char* CoreEntryPoint::kinetisUID(void)
-{ uint32_t uid[3];
-		static char uidString[27];
-		kinetisUID(uid);
-		sprintf(uidString, "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
-		return uidString;
+
+const char *CoreEntryPoint::kinetisUID(void)
+{
+    uint32_t uid[3];
+    static char uidString[27];
+    kinetisUID(uid);
+    sprintf(uidString, "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
+    return uidString;
 }
 
 void CoreEntryPoint::checkSerials()
@@ -83,7 +81,6 @@ void CoreEntryPoint::checkSerials()
 
     if (Serial.available() > 0)
     {
-        
         incomingByte = Serial.read();
         //Serial.print(String(incomingByte);
         if (incomingByte == (byte)STX)
@@ -93,7 +90,6 @@ void CoreEntryPoint::checkSerials()
         }
         else if ((incomingByte == (byte)ETX) || (incomingByte == (byte)LF))
         {
-            
             processIncomingMessage(incomingMessage);
             incomingMessage = "";
         }
@@ -113,6 +109,56 @@ void CoreEntryPoint::processIncomingMessage(String pIncomingMessage)
         Serial.println(build);
         Serial.print("Serial Number: ");
         Serial.println(serial);
+        Serial.print("SerialFlash connecting...\n");
+        SerialFlash.opendir();
+        unsigned char buf[256];
+        Serial.println("Files on memory:");
+
+        while (1)
+        {
+            //List all files to PC
+            char filename[64];
+            uint32_t filesize;
+
+            if (SerialFlash.readdir(filename, sizeof(filename), filesize))
+            {
+                Serial.print(filename);
+                Serial.print(" ");
+                spaces(20 - strlen(filename));
+                Serial.print(" (");
+                Serial.print(filesize);
+                Serial.print(")\n");
+            }
+            else
+            {
+                break; // no more files
+            }
+        }
+
+        Serial.println("Read Chip Identification:");
+        SerialFlash.readID(buf);
+        Serial.print("  JEDEC ID:     ");
+        Serial.print(buf[0], HEX);
+        Serial.print(" ");
+        Serial.print(buf[1], HEX);
+        Serial.print(" ");
+        Serial.println(buf[2], HEX);
+        Serial.print("  Memory Size:  ");
+        uint32_t chipsize = SerialFlash.capacity(buf);
+        Serial.print(chipsize);
+        Serial.println(" bytes");
+        Serial.print("  Block Size:   ");
+        Serial.print(SerialFlash.blockSize());
+        Serial.println(" bytes");
+
         Serial.write(ETX);
+    }
+}
+
+void CoreEntryPoint::spaces(int num)
+{
+    for (int i = 0; i < num; i++)
+    {
+        Serial.print(" ");
     }
 }

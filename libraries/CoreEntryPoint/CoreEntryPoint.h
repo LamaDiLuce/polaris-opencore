@@ -54,6 +54,7 @@ class CoreEntryPoint
         Requests request;
 
         void processIncomingMessage(String message);
+        void spaces(int num);
 
         //STATUS
         bool needClashEvent;
