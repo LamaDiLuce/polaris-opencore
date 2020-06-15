@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Arduino.h"
-#include "CoreCommon.h"
+#include <Arduino.h>
 #include <EEPROM.h>
+
+#include "CoreCommon.h"
 #include "CoreLogging.h"
 
 //LED RGBW

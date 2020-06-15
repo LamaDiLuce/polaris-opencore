@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "CoreLed.h"
 
 CoreLed::CoreLed()
@@ -15,18 +14,6 @@ void CoreLed::init(bool pDebug)
     pinMode(PIN_BLUE, OUTPUT);
     pinMode(PIN_WHITE, OUTPUT);
 
-    /*
-    if (debugMode)
-    {
-        logger.writeLine("Test led:");
-        for (int i = 0; i < COLORS; i++)
-        {
-            logger.writeLine(decodeColorSetId(i));
-            setColor(i, false);
-            delay(1000);
-        }
-    }
-    */
     getCurrentColorSet();
 
     turnOff();
@@ -36,7 +23,7 @@ String CoreLed::decodeColorSetId(int colorSetId)
 {
     String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
 
-    if (colorSetId <= (int) sizeof(colors))
+    if (colorSetId < int(sizeof(colors) / sizeof(colors[0])))
         return colors[colorSetId];
 
     return OFF;
@@ -72,13 +59,10 @@ void CoreLed::getCurrentColorSet()
 void CoreLed::setCurrentColorSet(int colorSetId)
 {
     logger.writeLine("Saving colorset...");
-    //logger.write(decodeColorSetId(colorSetId));
     EEPROM.write(REG_COLORSET, colorSetId);
     EEPROM.write(REG_CHECK, CHECK_VALUE);
 
     getCurrentColorSet();
-
-    //logger.writeLine(": OK");
 }
 
 void CoreLed::changeColor(int colorSetId)
@@ -158,7 +142,6 @@ void CoreLed::fadeOut()
 {
     logger.writeLine("fadeOut");
 
-    //changeColor(currentColorSetId);
     singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
     singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
     singleStepColorSet.blue = currentColorSet.blue / FADE_DELAY;

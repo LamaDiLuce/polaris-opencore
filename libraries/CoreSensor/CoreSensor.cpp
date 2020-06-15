@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "CoreSensor.h"
 
 //Costructor
@@ -21,14 +20,8 @@ void CoreSensor::init(bool pDebug)
     Wire.setSDA(18);
     Wire.setSCL(19);
 
-    LSM6DS3Core core(I2C_MODE, 0x6B);
-
     logger.write("Init device: ");
-    device.begin();
-    logger.writeLine("OK");
-
-    logger.write("Init core: ");
-    if (core.beginCore() != 0)
+    if (device.begin() != 0)
     {
         logger.writeLine("Error");
     }
@@ -39,15 +32,15 @@ void CoreSensor::init(bool pDebug)
         dataToWrite |= LSM6DS3_ACC_GYRO_FS_XL_2g;
         dataToWrite |= LSM6DS3_ACC_GYRO_ODR_XL_416Hz;
 
-        errorAccumulator += core.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, dataToWrite);
-        errorAccumulator += core.readRegister(&dataToWrite, LSM6DS3_ACC_GYRO_CTRL4_C);
+        errorAccumulator += device.writeRegister(LSM6DS3_ACC_GYRO_CTRL1_XL, dataToWrite);
+        errorAccumulator += device.readRegister(&dataToWrite, LSM6DS3_ACC_GYRO_CTRL4_C);
         dataToWrite &= ~((uint8_t)LSM6DS3_ACC_GYRO_BW_SCAL_ODR_ENABLED);
 
-        errorAccumulator += core.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, 0x0E);
-        errorAccumulator += core.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, CLASH_TRESHOLD); //min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
-        errorAccumulator += core.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, 0x7F);
-        errorAccumulator += core.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, 0x80);
-        errorAccumulator += core.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, 0x48);
+        errorAccumulator += device.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, 0x0E);
+        errorAccumulator += device.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, CLASH_TRESHOLD); //min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
+        errorAccumulator += device.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, 0x7F);
+        errorAccumulator += device.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, 0x80);
+        errorAccumulator += device.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, 0x48);
 
         if (errorAccumulator)
         {
@@ -66,8 +59,6 @@ void CoreSensor::init(bool pDebug)
 bool CoreSensor::needSwing()
 {
     gyroAvg = abs((device.readFloatGyroX() + device.readFloatGyroY() + device.readFloatGyroZ()) / 3.0);
-    //max1 = max(abs(device.readFloatGyroX()), abs(device.readFloatGyroY()));
-    //max2 = max(abs(device.readFloatGyroZ()), max1);
     logger.writeParamFloat("AVG for SWING", gyroAvg);
     return gyroAvg > SWING_THRESHOLD;
 }
@@ -79,7 +70,6 @@ bool CoreSensor::needClash()
 
     if (int1Status > 0)
     {
-        //delay(300);
         needClashEvent = (int1Status == 1);
 
         int1Status = 0;
@@ -95,41 +85,16 @@ int CoreSensor::getInt1Pin()
 
 bool CoreSensor::containVertical(float pValue)
 {
-    /*
-    logger.write(minValue);
-    logger.write("=>");
-    logger.write(pValue);
-    logger.write("<=");
-    logger.writeLine(maxValue);
-    */
-    //logger.writeParamFloat("VERTICAL ACC Z", pValue);
-    //int checkValue = (int)pValue;
     return ((pValue >= minValue) && (pValue <= maxValue));
-    //return ((checkValue >= minValue) && (checkValue <= maxValue));
 }
 
 bool CoreSensor::containArm(float pValue)
 {
-    /*
-    logger.write(minValue);
-    logger.write("=>");
-    logger.write(pValue);
-    logger.write("<=");
-    logger.writeLine(maxValue);
-    */
     return ((pValue >= minArmValue) && (pValue <= maxArmValue));
 }
 
 bool CoreSensor::containHorizontal(float pValue)
 {
-
-    logger.write("containHorizontal: ");
-    logger.write(minHValue);
-    logger.write("=>");
-    logger.write(pValue);
-    logger.write("<=");
-    logger.writeLine(maxHValue);
-
     return ((pValue >= minHValue) && (pValue <= maxHValue));
 }
 
@@ -150,7 +115,6 @@ bool CoreSensor::needArm()
             {
                 logger.writeLine("Waiting arm...");
                 status = Status::waitArm;
-                //logger.writeParamStatus(status);
                 time = millis();
             }
         }
@@ -164,7 +128,6 @@ bool CoreSensor::needArm()
             if (containArm(valueAccel))
             {
                 logger.writeLine("Request arm...");
-                //delay(100);
                 isVerticalPosition = false;
                 lastIsVerticalPosition = false;
                 return true;
@@ -176,7 +139,6 @@ bool CoreSensor::needArm()
             status = Status::waitArmWithChangeColor;
             logger.writeLine("Waiting arm with change color...");
             time = millis();
-            //status = Status::disarmed;
             lastIsVerticalPosition = isVerticalPosition;
             return false;
         }
@@ -189,7 +151,6 @@ bool CoreSensor::needArm()
             if (containArm(valueAccel))
             {
                 logger.writeLine("Request arm and change color...");
-                //delay(100);
                 status = Status::armingWithChangeColor;
                 isVerticalPosition = false;
                 lastIsVerticalPosition = false;
@@ -202,14 +163,11 @@ bool CoreSensor::needArm()
             status = Status::waitArmWithChangeColorNext;
             logger.writeLine("Waiting arm with change next color...");
             time = millis();
-            //status = Status::disarmed;
+
             lastIsVerticalPosition = isVerticalPosition;
             return false;
         }
     }
-
-    //logger.writeParamStatus(status);
-
     lastIsVerticalPosition = isVerticalPosition;
     return false;
 }
@@ -243,8 +201,6 @@ void CoreSensor::updateAverageHorizontalData()
 {
     if (filterSensorData.readingCount == FILTER_SENSOR_ITEMS)
     {
-        //valueAccel = filterSensorData.progressAverageValue;
-        //filterSensorData.previousAverageValue = valueAccel;
         filterSensorData.previousAverageValue = filterSensorData.progressAverageValue;
 
         filterSensorData.readingCount = 0;
@@ -282,7 +238,6 @@ void CoreSensor::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
 
     if (status == Status::armed)
     {
-        //valueAccel = PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ();
         updateAverageHorizontalData();
         isHorizontalPosition = containHorizontal(filterSensorData.previousAverageValue);
         rHorizontalPosition = isHorizontalPosition;
@@ -303,7 +258,6 @@ void CoreSensor::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
         {
             valueAccel = PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ();
             rVerticalPosition = containVertical(valueAccel);
-            //delay(10);
             isVerticalPosition = rVerticalPosition;
         }
         rNeedArm = needArm();
@@ -313,8 +267,4 @@ void CoreSensor::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
     }
 
     rStatus = status;
-
-    //logger.writeParamFloat("Accel Z", PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ());
-
-    //logger.writeParamStatus(status);
 }

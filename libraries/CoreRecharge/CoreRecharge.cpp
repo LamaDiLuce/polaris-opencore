@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "CoreRecharge.h"
 
 //Costructor

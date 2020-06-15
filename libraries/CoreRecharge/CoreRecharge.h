@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Arduino.h"
+#include <Arduino.h>
+
 #include "CoreLogging.h"
 #include "CoreCommon.h"
 

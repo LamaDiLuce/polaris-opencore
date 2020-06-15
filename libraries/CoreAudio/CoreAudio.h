@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+
 #include "CoreLogging.h"
 #include "CoreCommon.h"
 
@@ -45,11 +46,11 @@ class CoreAudio
     AudioPlaySerialflashRaw soundPlayFlashFXRaw;
     AudioMixer4 mainMixer;
     AudioOutputAnalog outputDac;
-    AudioConnection *patchSineMixer = NULL;
-    AudioConnection *patchFlashMixer = NULL;
-    AudioConnection *patchFlashFXMixer = NULL;
+    AudioConnection* patchSineMixer = nullptr;
+    AudioConnection* patchFlashMixer = nullptr;
+    AudioConnection* patchFlashFXMixer = nullptr;
 
-    AudioConnection *patchMixerDac = NULL;
+    AudioConnection* patchMixerDac = nullptr;
 
     bool debugMode = false;
     CoreLogging logger;

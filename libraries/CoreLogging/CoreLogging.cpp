@@ -14,12 +14,6 @@ CoreLogging::CoreLogging()
 void CoreLogging::init(bool debug)
 {
 	debug_mode = debug;
-	if (debug_mode)
-	{
-		//Serial.begin(9600);
-		while (!Serial)
-			;
-	}
 }
 
 //Write message without return

@@ -82,10 +82,8 @@ void CoreEntryPoint::checkSerials()
     if (Serial.available() > 0)
     {
         incomingByte = Serial.read();
-        //Serial.print(String(incomingByte);
         if (incomingByte == (byte)STX)
         {
-            //audioModule.beep();
             incomingMessage = "";
         }
         else if ((incomingByte == ETX) || (incomingByte == LF))
