@@ -239,11 +239,6 @@ bool CoreSensor::needDisarm()
     return false;
 }
 
-Status CoreSensor::getStatus()
-{
-    return status;
-}
-
 void CoreSensor::updateAverageHorizontalData()
 {
     if (filterSensorData.readingCount == FILTER_SENSOR_ITEMS)

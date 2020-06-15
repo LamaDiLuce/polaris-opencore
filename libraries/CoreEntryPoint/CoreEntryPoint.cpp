@@ -7,7 +7,7 @@ CoreEntryPoint::CoreEntryPoint()
 }
 
 //Init
-void CoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
+void CoreEntryPoint::init(bool pDebug, String pBuild)
 {
     debugMode = pDebug;
     build = pBuild;
@@ -66,13 +66,13 @@ void CoreEntryPoint::kinetisUID(uint32_t *uid)
     uid[2] = SIM_UIDL;
 }
 
-const char *CoreEntryPoint::kinetisUID(void)
+String CoreEntryPoint::kinetisUID()
 {
     uint32_t uid[3];
-    static char uidString[27];
+    char uidString[27];
     kinetisUID(uid);
-    sprintf(uidString, "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
-    return uidString;
+    snprintf(uidString, sizeof(uidString), "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
+    return String(uidString);
 }
 
 void CoreEntryPoint::checkSerials()
@@ -88,7 +88,7 @@ void CoreEntryPoint::checkSerials()
             //audioModule.beep();
             incomingMessage = "";
         }
-        else if ((incomingByte == (byte)ETX) || (incomingByte == (byte)LF))
+        else if ((incomingByte == ETX) || (incomingByte == LF))
         {
             processIncomingMessage(incomingMessage);
             incomingMessage = "";

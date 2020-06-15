@@ -31,7 +31,7 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
         if (currentStatus == Status::disarmed)
         {
             currentStatus = Status::disarmedInRecharge;
-            result.chargeSecuence = true;
+            result.chargeSequence = true;
             time = millis();
         }
 
@@ -43,7 +43,7 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
                 {
                     logger.writeParamString("Is Charge Pin High", "YES");
                     logger.writeParamLong("Recharging", millis() - time);
-                    result.chargeSecuence = false;
+                    result.chargeSequence = false;
                     result.needRecharge = true;
                     result.colorRecharge = RECHARGE_COLOR;
                     time = millis();
@@ -56,7 +56,7 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
                 {
                     logger.writeParamString("Is StandBy Pin High", "YES");
                     logger.writeParamLong("Recharged", millis() - time);
-                    result.chargeSecuence = false;
+                    result.chargeSequence = false;
                     result.needRecharge = true;
                     result.colorRecharge = RECHARGED_COLOR;
                     time = millis();

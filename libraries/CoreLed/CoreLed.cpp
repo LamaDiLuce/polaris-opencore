@@ -220,8 +220,8 @@ void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
                        bool &rNeedArm, bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge)
 {
-    if ((currentStatus == waitArmWithChangeColorNext) &&
-        (rStatus == waitArmWithChangeColor))
+    if ((currentStatus == Status::waitArmWithChangeColorNext) &&
+        (rStatus == Status::waitArmWithChangeColor))
     {
         alreadyBlinked = false;
     }
@@ -283,7 +283,7 @@ void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
         rNeedDisarm = false;
     }
 
-    if(currentBlinkRechargeStatus.chargeSecuence){
+    if(currentBlinkRechargeStatus.chargeSequence){
         displayChargeSecuence();
     }
 

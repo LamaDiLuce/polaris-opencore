@@ -1,6 +1,6 @@
 #pragma once
 
-enum Status
+enum class Status
 {
     disarmed = 0,
     armed = 1,
@@ -14,7 +14,7 @@ enum Status
     disarmedInRecharge = 9
 };
 
-enum Requests
+enum class Requests
 {
     lowClash = 0,
     highCLash = 1,
@@ -56,7 +56,7 @@ struct FilterSensor
 
 struct NeedBlinkRecharge
 {
-    bool chargeSecuence;
+    bool chargeSequence;
     bool needRecharge;
     int colorRecharge;
 };
