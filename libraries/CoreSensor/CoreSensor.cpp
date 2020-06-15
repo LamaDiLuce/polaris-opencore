@@ -9,10 +9,8 @@ CoreSensor::CoreSensor()
  */
 
 //Init
-void CoreSensor::init(bool pDebug)
+void CoreSensor::init()
 {
-    debugMode = pDebug;
-    logger.init(debugMode);
 
     pinMode(SDO_PIN, OUTPUT);
     digitalWrite(SDO_PIN, HIGH);
@@ -20,10 +18,10 @@ void CoreSensor::init(bool pDebug)
     Wire.setSDA(18);
     Wire.setSCL(19);
 
-    logger.write("Init device: ");
+    CoreLogging::write("Init device: ");
     if (device.begin() != 0)
     {
-        logger.writeLine("Error");
+        CoreLogging::writeLine("Error");
     }
     else
     {
@@ -44,11 +42,11 @@ void CoreSensor::init(bool pDebug)
 
         if (errorAccumulator)
         {
-            logger.writeLine("Configuration problem");
+            CoreLogging::writeLine("Configuration problem");
         }
         else
         {
-            logger.writeLine("OK");
+            CoreLogging::writeLine("OK");
         }
     }
 
@@ -59,7 +57,7 @@ void CoreSensor::init(bool pDebug)
 bool CoreSensor::needSwing()
 {
     gyroAvg = abs((device.readFloatGyroX() + device.readFloatGyroY() + device.readFloatGyroZ()) / 3.0);
-    logger.writeParamFloat("AVG for SWING", gyroAvg);
+    CoreLogging::writeParamFloat("AVG for SWING", gyroAvg);
     return gyroAvg > SWING_THRESHOLD;
 }
 
@@ -101,19 +99,19 @@ bool CoreSensor::containHorizontal(float pValue)
 bool CoreSensor::needArm()
 {
     if ((status == Status::disarmed) ||
-        ((status == Status::disarmedInRecharge) && debugMode))
+        ((status == Status::disarmedInRecharge) && DEBUG))
     {
         if ((!lastIsVerticalPosition) && (isVerticalPosition))
         {
             time = millis();
-            logger.writeLine("Start vertical position...");
+            CoreLogging::writeLine("Start vertical position...");
         }
 
         if ((lastIsVerticalPosition) && (isVerticalPosition))
         {
             if (millis() - time > TIME_FOR_ARM)
             {
-                logger.writeLine("Waiting arm...");
+                CoreLogging::writeLine("Waiting arm...");
                 status = Status::waitArm;
                 time = millis();
             }
@@ -127,7 +125,7 @@ bool CoreSensor::needArm()
 
             if (containArm(valueAccel))
             {
-                logger.writeLine("Request arm...");
+                CoreLogging::writeLine("Request arm...");
                 isVerticalPosition = false;
                 lastIsVerticalPosition = false;
                 return true;
@@ -137,7 +135,7 @@ bool CoreSensor::needArm()
         {
             //Starting change color mode
             status = Status::waitArmWithChangeColor;
-            logger.writeLine("Waiting arm with change color...");
+            CoreLogging::writeLine("Waiting arm with change color...");
             time = millis();
             lastIsVerticalPosition = isVerticalPosition;
             return false;
@@ -150,7 +148,7 @@ bool CoreSensor::needArm()
             valueAccel = PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ();
             if (containArm(valueAccel))
             {
-                logger.writeLine("Request arm and change color...");
+                CoreLogging::writeLine("Request arm and change color...");
                 status = Status::armingWithChangeColor;
                 isVerticalPosition = false;
                 lastIsVerticalPosition = false;
@@ -161,7 +159,7 @@ bool CoreSensor::needArm()
         {
             //Starting AGAIN change color mode with next colorset
             status = Status::waitArmWithChangeColorNext;
-            logger.writeLine("Waiting arm with change next color...");
+            CoreLogging::writeLine("Waiting arm with change next color...");
             time = millis();
 
             lastIsVerticalPosition = isVerticalPosition;
@@ -222,10 +220,10 @@ void CoreSensor::updateAverageHorizontalData()
                 (filterSensorData.progressAverageValue + data) / 2.0;
         }
 
-        logger.writeParamFloat("ReadingCount", filterSensorData.readingCount);
-        logger.writeParamFloat("Accel", data);
-        logger.writeParamFloat("progressAverageValue", filterSensorData.progressAverageValue);
-        logger.writeParamFloat("previousAverageValue", filterSensorData.previousAverageValue);
+        CoreLogging::writeParamFloat("ReadingCount", filterSensorData.readingCount);
+        CoreLogging::writeParamFloat("Accel", data);
+        CoreLogging::writeParamFloat("progressAverageValue", filterSensorData.progressAverageValue);
+        CoreLogging::writeParamFloat("previousAverageValue", filterSensorData.previousAverageValue);
     }
 }
 
@@ -251,10 +249,10 @@ void CoreSensor::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
              (status == Status::waitArm) ||
              (status == Status::waitArmWithChangeColor) ||
              (status == Status::waitArmWithChangeColorNext) ||
-             ((status == Status::disarmedInRecharge) && debugMode))
+             ((status == Status::disarmedInRecharge) && DEBUG))
     {
         if ((status == Status::disarmed) ||
-            ((status == Status::disarmedInRecharge) && debugMode))
+            ((status == Status::disarmedInRecharge) && DEBUG))
         {
             valueAccel = PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ();
             rVerticalPosition = containVertical(valueAccel);

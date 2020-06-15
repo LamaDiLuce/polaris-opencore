@@ -32,7 +32,7 @@ class CoreAudio
     //Costructor
     CoreAudio();
     //Init
-    void init(bool debug);
+    void init();
     //Process loop
     void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus, bool &rNeedArm, bool &rNeedDisarm);
     //Commands
@@ -52,8 +52,6 @@ class CoreAudio
 
     AudioConnection* patchMixerDac = nullptr;
 
-    bool debugMode = false;
-    CoreLogging logger;
     SerialFlashFile file;
 
     bool swinging = false;

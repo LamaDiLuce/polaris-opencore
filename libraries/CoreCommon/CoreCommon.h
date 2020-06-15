@@ -1,5 +1,7 @@
 #pragma once
 
+static constexpr bool DEBUG = false;
+
 enum class Status
 {
     disarmed = 0,

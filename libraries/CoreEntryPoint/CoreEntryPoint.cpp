@@ -7,23 +7,19 @@ CoreEntryPoint::CoreEntryPoint()
 }
 
 //Init
-void CoreEntryPoint::init(bool pDebug, String pBuild)
+void CoreEntryPoint::init(String pBuild)
 {
-    debugMode = pDebug;
     build = pBuild;
     serial = kinetisUID();
 
     Serial.begin(BAUD_RATE); //It needs for PC communication services
+    CoreLogging::writeParamString("Build", build);
+    CoreLogging::writeParamString("Serial Number", serial);
 
-    logger.init(debugMode);
-
-    logger.writeParamString("Build", build);
-    logger.writeParamString("Serial Number", serial);
-
-    audioModule.init(debugMode);
-    sensorModule.init(debugMode);
-    ledModule.init(debugMode);
-    rechargeModule.init(debugMode);
+    audioModule.init();
+    sensorModule.init();
+    ledModule.init();
+    rechargeModule.init();
 }
 
 //Process loop

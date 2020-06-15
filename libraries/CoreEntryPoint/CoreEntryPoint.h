@@ -4,12 +4,12 @@
 #include <SPI.h>
 #include <Wire.h>
 
+#include "CoreCommon.h"
 #include "CoreLogging.h"
 #include "CoreAudio.h"
 #include "CoreSensor.h"
 #include "CoreLed.h"
 #include "CoreRecharge.h"
-#include "CoreCommon.h"
 
 #define BAUD_RATE 9600
 static constexpr int STX = 0x02;
@@ -22,7 +22,7 @@ public:
     //Costructor
     CoreEntryPoint();
     //Init
-    void init(bool debug, String build);
+    void init(String build);
     //Process loop
     void loop();
     //Support
@@ -39,15 +39,14 @@ public:
     String kinetisUID();
 
 private:
-    bool debugMode = false;
-    String build = "";
-    String serial = "";
-    String incomingMessage = "";
+
+    String build;
+    String serial;
+    String incomingMessage;
     CoreAudio audioModule;
     CoreSensor sensorModule;
     CoreLed ledModule;
     CoreRecharge rechargeModule;
-    CoreLogging logger;
     Requests request;
 
     void processIncomingMessage(String message);

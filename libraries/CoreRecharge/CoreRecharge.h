@@ -18,13 +18,11 @@ public:
   //Costructor
   CoreRecharge();
   //Init
-  void init(bool debug);
+  void init();
   //Process loop
   void loop(Status &rStatus, NeedBlinkRecharge &rNeedBlinkRecharge);
 
 private:
-  bool debugMode = false;
-  CoreLogging logger;
   unsigned long time;
   Status currentStatus;
   NeedBlinkRecharge currentNeedBlinkRechargeStatus = {false, 0};

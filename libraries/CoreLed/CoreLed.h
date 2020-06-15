@@ -32,7 +32,7 @@ public:
   //Costructor
   CoreLed();
   //Init
-  void init(bool debug);
+  void init();
   //Process loop
   void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus, bool &rNeedArm,
             bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge);
@@ -52,8 +52,6 @@ public:
   void displayChargeSecuence();
 
 private:
-  bool debugMode = false;
-  CoreLogging logger;
   bool startedEvent = false;
   int currentColorSetId = OFF;
   int currentChangeColorSetId = OFF;

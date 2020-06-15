@@ -34,7 +34,7 @@ public:
   //Costructor
   CoreSensor();
   //Init
-  void init(bool debug);
+  void init();
   //Process loop
   void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
             bool &rVerticalPosition, bool &rNeedArm, bool &rHorizontalPosition,
@@ -45,8 +45,6 @@ public:
   int getInt1Pin();
 
 private:
-  bool debugMode = false;
-  CoreLogging logger;
 
   FilterSensor filterSensorData = {0, 0.0, 0.0};
   LSM6DS3 device;

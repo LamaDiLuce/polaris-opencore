@@ -4,10 +4,8 @@ CoreLed::CoreLed()
 {
 }
 
-void CoreLed::init(bool pDebug)
+void CoreLed::init()
 {
-    debugMode = pDebug;
-    logger.init(debugMode);
 
     pinMode(PIN_RED, OUTPUT);
     pinMode(PIN_GREEN, OUTPUT);
@@ -53,12 +51,12 @@ void CoreLed::getCurrentColorSet()
     }
     clashColorSet = colorSet[clashColorSetId];
 
-    logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
+    CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
 }
 
 void CoreLed::setCurrentColorSet(int colorSetId)
 {
-    logger.writeLine("Saving colorset...");
+    CoreLogging::writeLine("Saving colorset...");
     EEPROM.write(REG_COLORSET, colorSetId);
     EEPROM.write(REG_CHECK, CHECK_VALUE);
 
@@ -74,8 +72,8 @@ void CoreLed::changeColor(int colorSetId)
 
     if (colorSetId != OFF)
     {
-        logger.write("Change color: ");
-        logger.writeLine(decodeColorSetId(colorSetId));
+        CoreLogging::write("Change color: ");
+        CoreLogging::writeLine(decodeColorSetId(colorSetId));
     }
 }
 
@@ -108,7 +106,7 @@ void CoreLed::blink()
 {
     if (!alreadyBlinked)
     {
-        logger.writeLine("Blink");
+        CoreLogging::writeLine("Blink");
         changeColor(WHITE);
         delay(TIME_BLINK_WAITARM);
         turnOff();
@@ -131,7 +129,7 @@ void CoreLed::changeColorBlink()
 {
     if (!alreadyBlinked)
     {
-        logger.writeLine("Blink change color");
+        CoreLogging::writeLine("Blink change color");
         changeColor(currentChangeColorSetId);
         delay(TIME_BLINK_WAITARM_WITH_COLOR);
         turnOff();
@@ -140,7 +138,7 @@ void CoreLed::changeColorBlink()
 
 void CoreLed::fadeOut()
 {
-    logger.writeLine("fadeOut");
+    CoreLogging::writeLine("fadeOut");
 
     singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
     singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
@@ -160,7 +158,7 @@ void CoreLed::fadeOut()
 
 void CoreLed::fadeIn()
 {
-    logger.writeLine("fadeIn");
+    CoreLogging::writeLine("fadeIn");
 
     setGradientColor(0, 0, 0, 0);
     singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
@@ -181,8 +179,8 @@ void CoreLed::fadeIn()
 
 void CoreLed::clash()
 {
-    logger.writeLine("Clash:");
-    logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
+    CoreLogging::writeLine("Clash:");
+    CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
     changeColor(clashColorSetId);
     delay(CLASH_TIME);
     changeColor(currentColorSetId);
@@ -192,7 +190,7 @@ void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 {
     if (currentStatus == Status::disarmedInRecharge)
     {
-        logger.writeLine("Blink recharging");
+        CoreLogging::writeLine("Blink recharging");
         changeColor(needBlinkRecharge.colorRecharge);
         delay(BLINK_TIME);
         changeColor(OFF);
@@ -249,8 +247,8 @@ void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
 
     if (rNeedArm)
     {
-        logger.writeParamString("Led", "NeedArm");
-        logger.writeParamStatus(currentStatus);
+        CoreLogging::writeParamString("Led", "NeedArm");
+        CoreLogging::writeParamStatus(currentStatus);
         if (currentStatus == Status::armingWithChangeColor)
         {
             setCurrentColorSet(currentChangeColorSetId);
