@@ -1,10 +1,11 @@
+#pragma once
+
 #include "Arduino.h"
 #include "Wire.h"
 #include "SPI.h"
 #include "CoreLogging.h"
 #include "CoreCommon.h"
 #include "SparkFunLSM6DS3.h"
-
 
 #define PROTOTYPE false
 
@@ -25,9 +26,6 @@
 #define CLASH_TRESHOLD 0x0A //min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
 
 #define FILTER_SENSOR_ITEMS 20
-
-#ifndef CoreSensor_h
-#define CoreSensor_h
 
 class CoreSensor
 {
@@ -85,5 +83,3 @@ private:
   bool needDisarm();
   void updateAverageHorizontalData();
 };
-
-#endif

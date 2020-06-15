@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Arduino.h"
 #include <Audio.h>
 #include <Wire.h>
@@ -22,9 +24,6 @@
 #define BEEP_TIME 125
 #define BEEP_FREQUENCY 1000
 #define AUDIO_BLOCK 16
-
-#ifndef CoreAudio_h
-#define CoreAudio_h
 
 class CoreAudio
 {
@@ -69,5 +68,3 @@ class CoreAudio
     void checkPowerAmp();
     
 };
-
-#endif

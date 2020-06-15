@@ -1,5 +1,4 @@
-#ifndef CoreCommon_h
-#define CoreCommon_h
+#pragma once
 
 enum Status
 {
@@ -61,5 +60,3 @@ struct NeedBlinkRecharge
     bool needRecharge;
     int colorRecharge;
 };
-
-#endif

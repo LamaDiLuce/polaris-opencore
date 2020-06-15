@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Arduino.h"
 #include <SPI.h>
 #include <Wire.h>
@@ -13,9 +15,6 @@
 #define ETX 0x03
 #define LF  0x0a
 #define REQUEST_VER 'V'
-
-#ifndef CoreEntryPoint_h
-#define CoreEntryPoint_h
 
 class CoreEntryPoint
 {
@@ -67,5 +66,3 @@ class CoreEntryPoint
         NeedBlinkRecharge needBlinkRechargeEvent;
         
 };
-
-#endif

@@ -1,8 +1,7 @@
+#pragma once
+
 #include "Arduino.h"
 #include "CoreCommon.h"
-
-#ifndef Logging_h
-#define Logging_h
 
 class CoreLogging
 {
@@ -32,4 +31,5 @@ class CoreLogging
 		bool debug_mode = false;
 
 };
-#endif
+
+

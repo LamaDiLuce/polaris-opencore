@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Arduino.h"
 #include "CoreCommon.h"
 #include <EEPROM.h>
@@ -22,8 +24,6 @@
 #define CLASH_TIME 200
 #define CLASH_COLOR_FOR_WHITE ACQUA
 #define CLASH_COLOR_FOR_NO_WHITE WHITE
-#ifndef CoreLed_h
-#define CoreLed_h
 
 class CoreLed
 {
@@ -84,5 +84,3 @@ private:
   String decodeColorSetId(int colorSetId);
   int setColorDelta(int color);
 };
-
-#endif

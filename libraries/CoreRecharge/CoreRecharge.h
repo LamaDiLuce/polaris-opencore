@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Arduino.h"
 #include "CoreLogging.h"
 #include "CoreCommon.h"
@@ -8,9 +10,6 @@
 
 #define BLINK_RECHARGE_STATUS_TIME 8000
 #define BLINK_RECHARGED_STATUS_TIME 12000
-
-#ifndef CoreRecharge_h
-#define CoreRecharge_h
 
 class CoreRecharge
 {
@@ -31,4 +30,3 @@ private:
   NeedBlinkRecharge needBlinkRecharge();
 };
 
-#endif
