@@ -10,11 +10,7 @@
 #include "CoreSensor.h"
 #include "CoreLed.h"
 #include "CoreRecharge.h"
-
-#define BAUD_RATE 9600
-static constexpr int STX = 0x02;
-static constexpr int ETX = 0x03;
-static constexpr int LF = 0x0a;
+#include "CoreComms.h"
 
 class CoreEntryPoint
 {
@@ -31,26 +27,15 @@ public:
     int getInt1Pin();
     //Reset status events
     void releaseStatus();
-    //Keep serial communication
-    void checkSerials();
-
-    //Hardware Serial Numbers
-    void kinetisUID(uint32_t *uid);
-    String kinetisUID();
 
 private:
-
-    String build;
-    String serial;
     String incomingMessage;
     CoreAudio audioModule;
     CoreSensor sensorModule;
     CoreLed ledModule;
     CoreRecharge rechargeModule;
+    CoreComms commsModule;
     Requests request;
-
-    void processIncomingMessage(String message);
-    void spaces(int num);
 
     //STATUS
     bool needClashEvent;

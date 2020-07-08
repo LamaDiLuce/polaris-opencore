@@ -23,13 +23,11 @@
 #define TIME_BLINK_WAITARM_WITH_COLOR 500
 #define TIME_CHARGE_SECUENCE_BLINK 300
 #define CLASH_TIME 200
-#define CLASH_COLOR_FOR_WHITE ACQUA
-#define CLASH_COLOR_FOR_NO_WHITE WHITE
 
 class CoreLed
 {
 public:
-  //Costructor
+  //Constructor
   CoreLed();
   //Init
   void init();
@@ -40,6 +38,7 @@ public:
   void setColor(int colorSetId, bool save);
   void setGradientColor(int red, int green, int blue, int white);
   void changeColor(int colorSetId);
+  void changeColor(const ColorLed& cLed);
   void turnOff();
   void fadeOut();
   void fadeIn();
@@ -51,6 +50,14 @@ public:
   void blinkRecharge(NeedBlinkRecharge needBlinkRecharge);
   void displayChargeSecuence();
 
+  //these functions to be implemented in non-volatile settings module
+  void loadDefaultColors();
+  int getCurrentColorSetId();
+  ColorLed getMainColor(int bank) const;
+  ColorLed getClashColor(int bank) const;
+  void setMainColor(int bank, ColorLed cc);
+  void setClashColor(int bank, ColorLed cc);
+  
 private:
   bool startedEvent = false;
   int currentColorSetId = OFF;
@@ -62,23 +69,14 @@ private:
   Requests currentRequest = Requests::none;
   Status currentStatus = Status::disarmed;
   ColorLed clashColorSet;
-  int clashColorSetId;
   bool fadingOut = false;
   bool fadingIn = false;
   bool alreadyBlinked = false;
   NeedBlinkRecharge currentBlinkRechargeStatus = {false, 0};
 
-  //COLORSET
-  ColorLed colorSet[9] = {
-      {255, 0, 0, 0},      //RED
-      {0, 255, 0, 0},      //GREEN
-      {0, 0, 255, 0},      //BLUE
-      {100, 255, 0, 60},   //YELLOW
-      {0, 255, 240, 80},   //ACQUA
-      {35, 10, 255, 10},   //PURPLE
-      {150, 255, 0, 20},   //ORANGE
-      {25, 170, 150, 255}, //WHITE
-      {0, 0, 0, 0}};       //OFF
+  //COLORSETS, these variables to be moved into non-volatile settings module
+  ColorLed colorSet[9];
+  ColorLed clashSet[9];
 
   String decodeColorSetId(int colorSetId);
   int setColorDelta(int color);
