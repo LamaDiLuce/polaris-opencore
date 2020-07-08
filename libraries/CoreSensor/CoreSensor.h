@@ -1,10 +1,12 @@
-#include "Arduino.h"
-#include "Wire.h"
-#include "SPI.h"
+#pragma once
+
+#include <Arduino.h>
+#include <Wire.h>
+#include <SPI.h>
+
 #include "CoreLogging.h"
 #include "CoreCommon.h"
 #include "SparkFunLSM6DS3.h"
-
 
 #define PROTOTYPE false
 
@@ -13,21 +15,18 @@
 #define SDO_PIN 17
 
 //Core
-#define SWING_THRESHOLD 90 //AVG of 3 gyro axes
-#define VERTICAL_ACC 8.0
-#define VERTICAL_ARM -6.0
-#define HORIZONTAL_ACC 0.0
-#define TOLERANCE_ARM 0.7
-#define TOLERANCE_DISARM 1.0
-#define TIME_FOR_ARM 1000
-#define TIME_FOR_DISARM 4000
-#define TIME_FOR_CONFIRM_ARM 2000
-#define CLASH_TRESHOLD 0x0A //min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
+static constexpr int SWING_THRESHOLD = 90; //AVG of 3 gyro axes
+static constexpr float VERTICAL_ACC = 8.0;
+static constexpr float VERTICAL_ARM = -6.0;
+static constexpr float HORIZONTAL_ACC = 0.0;
+static constexpr float TOLERANCE_ARM = 0.7;
+static constexpr float TOLERANCE_DISARM = 1.0;
+static constexpr int TIME_FOR_ARM = 1000;
+static constexpr int TIME_FOR_DISARM = 4000;
+static constexpr int TIME_FOR_CONFIRM_ARM = 2000;
+static constexpr int CLASH_TRESHOLD = 0x0A; //min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
 
 #define FILTER_SENSOR_ITEMS 20
-
-#ifndef CoreSensor_h
-#define CoreSensor_h
 
 class CoreSensor
 {
@@ -35,7 +34,7 @@ public:
   //Costructor
   CoreSensor();
   //Init
-  void init(bool debug);
+  void init();
   //Process loop
   void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
             bool &rVerticalPosition, bool &rNeedArm, bool &rHorizontalPosition,
@@ -44,11 +43,8 @@ public:
   uint8_t int1Status;
   //Get Interrupt Pin
   int getInt1Pin();
-  Status getStatus();
 
 private:
-  bool debugMode = false;
-  CoreLogging logger;
 
   FilterSensor filterSensorData = {0, 0.0, 0.0};
   LSM6DS3 device;
@@ -59,12 +55,12 @@ private:
   uint8_t dataToWrite = 0;
 
   float valueAccel = 0.0;
-  float minValue = VERTICAL_ACC - TOLERANCE_ARM;
-  float maxValue = VERTICAL_ACC + TOLERANCE_ARM;
-  float minArmValue = VERTICAL_ARM - TOLERANCE_ARM;
-  float maxArmValue = VERTICAL_ARM + TOLERANCE_ARM;
-  float minHValue = HORIZONTAL_ACC - TOLERANCE_DISARM;
-  float maxHValue = HORIZONTAL_ACC + TOLERANCE_DISARM;
+  static constexpr float minValue = VERTICAL_ACC - TOLERANCE_ARM;
+  static constexpr float maxValue = VERTICAL_ACC + TOLERANCE_ARM;
+  static constexpr float minArmValue = VERTICAL_ARM - TOLERANCE_ARM;
+  static constexpr float maxArmValue = VERTICAL_ARM + TOLERANCE_ARM;
+  static constexpr float minHValue = HORIZONTAL_ACC - TOLERANCE_DISARM;
+  static constexpr float maxHValue = HORIZONTAL_ACC + TOLERANCE_DISARM;
 
   float gyroAvg = 0.0;
   //float max2 = 0.0;
@@ -85,5 +81,3 @@ private:
   bool needDisarm();
   void updateAverageHorizontalData();
 };
-
-#endif

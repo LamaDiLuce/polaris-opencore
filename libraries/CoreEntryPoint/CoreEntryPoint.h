@@ -1,71 +1,64 @@
-#include "Arduino.h"
+#pragma once
+
+#include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <CoreLogging.h>
+
+#include "CoreCommon.h"
+#include "CoreLogging.h"
 #include "CoreAudio.h"
 #include "CoreSensor.h"
 #include "CoreLed.h"
 #include "CoreRecharge.h"
-#include "CoreCommon.h"
 
 #define BAUD_RATE 9600
-#define STX 0x02
-#define ETX 0x03
-#define LF  0x0a
-#define REQUEST_VER 'V'
-
-#ifndef CoreEntryPoint_h
-#define CoreEntryPoint_h
+static constexpr int STX = 0x02;
+static constexpr int ETX = 0x03;
+static constexpr int LF = 0x0a;
 
 class CoreEntryPoint
 {
-    public:
+public:
+    //Costructor
+    CoreEntryPoint();
+    //Init
+    void init(String build);
+    //Process loop
+    void loop();
+    //Support
+    void incrementInt1ISR();
+    //Get Interrupt Pin
+    int getInt1Pin();
+    //Reset status events
+    void releaseStatus();
+    //Keep serial communication
+    void checkSerials();
 
-        //Costructor
-        CoreEntryPoint();
-        //Init
-        void init(bool debug, String build, String serial);
-        //Process loop
-        void loop();
-        //Support
-        void incrementInt1ISR();
-        //Get Interrupt Pin
-        int getInt1Pin();
-        //Reset status events
-        void releaseStatus();
-        //Keep serial communication 
-        void checkSerials();
+    //Hardware Serial Numbers
+    void kinetisUID(uint32_t *uid);
+    String kinetisUID();
 
-        //Hardware Serial Numbers
-        void kinetisUID(uint32_t *uid);
-        const char* kinetisUID(void);
+private:
 
-    private:
+    String build;
+    String serial;
+    String incomingMessage;
+    CoreAudio audioModule;
+    CoreSensor sensorModule;
+    CoreLed ledModule;
+    CoreRecharge rechargeModule;
+    Requests request;
 
-        bool debugMode = false;
-        String build = "";
-        String serial = "";
-        String incomingMessage = "";
-        CoreAudio audioModule;
-        CoreSensor sensorModule;
-        CoreLed ledModule;
-        CoreRecharge rechargeModule;
-        CoreLogging logger;
-        Requests request;
+    void processIncomingMessage(String message);
+    void spaces(int num);
 
-        void processIncomingMessage(String message);
-        void spaces(int num);
-
-        //STATUS
-        bool needClashEvent;
-        bool needSwingEvent;
-        Status status;
-        bool verticalPosition;
-        bool horizontalPosition;
-        bool needArmEvent;
-        bool needDisarmEvent;
-        NeedBlinkRecharge needBlinkRechargeEvent;
-        
+    //STATUS
+    bool needClashEvent;
+    bool needSwingEvent;
+    Status status;
+    bool verticalPosition;
+    bool horizontalPosition;
+    bool needArmEvent;
+    bool needDisarmEvent;
+    NeedBlinkRecharge needBlinkRechargeEvent;
 };
-
-#endif

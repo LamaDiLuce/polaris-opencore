@@ -1,32 +1,11 @@
 #include "Arduino.h"
 #include "CoreLogging.h"
 
-//Constructor
-CoreLogging::CoreLogging()
-{
-}
-
-/*
- * Public methods
- */
-
-//Int
-void CoreLogging::init(bool debug)
-{
-	debug_mode = debug;
-	if (debug_mode)
-	{
-		//Serial.begin(9600);
-		while (!Serial)
-			;
-	}
-}
-
 //Write message without return
 void CoreLogging::write(String message)
 {
 
-	if (debug_mode)
+	if (DEBUG)
 		Serial.print(message);
 }
 
@@ -34,7 +13,7 @@ void CoreLogging::write(String message)
 void CoreLogging::writeLine(String message, String prefix)
 {
 
-	if (debug_mode)
+	if (DEBUG)
 	{
 		if (prefix != "")
 		{
@@ -48,7 +27,7 @@ void CoreLogging::writeLine(String message, String prefix)
 void CoreLogging::writeParamString(String param, String value, String prefix)
 {
 
-	if (debug_mode)
+	if (DEBUG)
 	{
 		if (prefix != "")
 		{
@@ -64,7 +43,7 @@ void CoreLogging::writeParamString(String param, String value, String prefix)
 void CoreLogging::writeParamInt(String param, int value, String prefix)
 {
 
-	if (debug_mode)
+	if (DEBUG)
 	{
 		if (prefix != "")
 		{
@@ -79,7 +58,7 @@ void CoreLogging::writeParamInt(String param, int value, String prefix)
 //Write status decoded with return
 void CoreLogging::writeParamStatus(Status status, String prefix)
 {
-	if (debug_mode)
+	if (DEBUG)
 	{
 		if (prefix != "")
 		{
@@ -146,7 +125,7 @@ void CoreLogging::writeParamStatus(Status status, String prefix)
 void CoreLogging::writeParamFloat(String param, float value, String prefix)
 {
 
-	if (debug_mode)
+	if (DEBUG)
 	{
 		if (prefix != "")
 		{
@@ -162,7 +141,7 @@ void CoreLogging::writeParamFloat(String param, float value, String prefix)
 void CoreLogging::writeParamLong(String param, long value, String prefix)
 {
 
-	if (debug_mode)
+	if (DEBUG)
 	{
 		if (prefix != "")
 		{

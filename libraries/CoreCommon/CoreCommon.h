@@ -1,7 +1,8 @@
-#ifndef CoreCommon_h
-#define CoreCommon_h
+#pragma once
 
-enum Status
+static constexpr bool DEBUG = false;
+
+enum class Status
 {
     disarmed = 0,
     armed = 1,
@@ -15,7 +16,7 @@ enum Status
     disarmedInRecharge = 9
 };
 
-enum Requests
+enum class Requests
 {
     lowClash = 0,
     highCLash = 1,
@@ -57,9 +58,7 @@ struct FilterSensor
 
 struct NeedBlinkRecharge
 {
-    bool chargeSecuence;
+    bool chargeSequence;
     bool needRecharge;
     int colorRecharge;
 };
-
-#endif

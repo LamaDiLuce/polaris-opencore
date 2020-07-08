@@ -12,11 +12,8 @@ CoreAudio::CoreAudio()
  */
 
 //Init
-void CoreAudio::init(bool pDebug)
+void CoreAudio::init()
 {
-    debugMode = pDebug;
-    logger.init(debugMode);
-
     SPI.setSCK(SCK_PIN);
     SPI.setMOSI(SI_PIN);
     SPI.setMISO(SO_PIN);
@@ -25,14 +22,14 @@ void CoreAudio::init(bool pDebug)
     digitalWrite(POWER_AMP_PIN, LOW);
     //digitalWrite(POWER_AMP_PIN, HIGH);
 
-    logger.write("SerialFlash connecting: ");
+    CoreLogging::write("SerialFlash connecting: ");
     if (!SerialFlash.begin(CS_PIN))
     {
-        logger.writeLine("Error");
+        CoreLogging::writeLine("Error");
     }
     else
     {
-        logger.writeLine("OK");
+        CoreLogging::writeLine("OK");
     }
 
     patchSineMixer = new AudioConnection(soundSine, 0, mainMixer, CHANNEL_SINE);
@@ -134,7 +131,7 @@ void CoreAudio::checkArming()
         if (!soundPlayFlashRaw.isPlaying())
         {
             status = Status::armed;
-            logger.writeLine("Armed");
+            CoreLogging::writeLine("Armed");
         }
     }
 }
@@ -146,7 +143,7 @@ void CoreAudio::checkDisarming()
         if (!soundPlayFlashRaw.isPlaying())
         {
             status = Status::disarmed;
-            logger.writeLine("Disarmed");
+            CoreLogging::writeLine("Disarmed");
         }
     }
 }

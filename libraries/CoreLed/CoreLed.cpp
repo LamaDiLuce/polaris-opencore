@@ -1,32 +1,17 @@
-#include "Arduino.h"
 #include "CoreLed.h"
 
 CoreLed::CoreLed()
 {
 }
 
-void CoreLed::init(bool pDebug)
+void CoreLed::init()
 {
-    debugMode = pDebug;
-    logger.init(debugMode);
 
     pinMode(PIN_RED, OUTPUT);
     pinMode(PIN_GREEN, OUTPUT);
     pinMode(PIN_BLUE, OUTPUT);
     pinMode(PIN_WHITE, OUTPUT);
 
-    /*
-    if (debugMode)
-    {
-        logger.writeLine("Test led:");
-        for (int i = 0; i < COLORS; i++)
-        {
-            logger.writeLine(decodeColorSetId(i));
-            setColor(i, false);
-            delay(1000);
-        }
-    }
-    */
     getCurrentColorSet();
 
     turnOff();
@@ -36,7 +21,7 @@ String CoreLed::decodeColorSetId(int colorSetId)
 {
     String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
 
-    if (colorSetId <= (int) sizeof(colors))
+    if (colorSetId < int(sizeof(colors) / sizeof(colors[0])))
         return colors[colorSetId];
 
     return OFF;
@@ -66,19 +51,16 @@ void CoreLed::getCurrentColorSet()
     }
     clashColorSet = colorSet[clashColorSetId];
 
-    logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
+    CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
 }
 
 void CoreLed::setCurrentColorSet(int colorSetId)
 {
-    logger.writeLine("Saving colorset...");
-    //logger.write(decodeColorSetId(colorSetId));
+    CoreLogging::writeLine("Saving colorset...");
     EEPROM.write(REG_COLORSET, colorSetId);
     EEPROM.write(REG_CHECK, CHECK_VALUE);
 
     getCurrentColorSet();
-
-    //logger.writeLine(": OK");
 }
 
 void CoreLed::changeColor(int colorSetId)
@@ -90,8 +72,8 @@ void CoreLed::changeColor(int colorSetId)
 
     if (colorSetId != OFF)
     {
-        logger.write("Change color: ");
-        logger.writeLine(decodeColorSetId(colorSetId));
+        CoreLogging::write("Change color: ");
+        CoreLogging::writeLine(decodeColorSetId(colorSetId));
     }
 }
 
@@ -124,7 +106,7 @@ void CoreLed::blink()
 {
     if (!alreadyBlinked)
     {
-        logger.writeLine("Blink");
+        CoreLogging::writeLine("Blink");
         changeColor(WHITE);
         delay(TIME_BLINK_WAITARM);
         turnOff();
@@ -147,7 +129,7 @@ void CoreLed::changeColorBlink()
 {
     if (!alreadyBlinked)
     {
-        logger.writeLine("Blink change color");
+        CoreLogging::writeLine("Blink change color");
         changeColor(currentChangeColorSetId);
         delay(TIME_BLINK_WAITARM_WITH_COLOR);
         turnOff();
@@ -156,9 +138,8 @@ void CoreLed::changeColorBlink()
 
 void CoreLed::fadeOut()
 {
-    logger.writeLine("fadeOut");
+    CoreLogging::writeLine("fadeOut");
 
-    //changeColor(currentColorSetId);
     singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
     singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
     singleStepColorSet.blue = currentColorSet.blue / FADE_DELAY;
@@ -177,7 +158,7 @@ void CoreLed::fadeOut()
 
 void CoreLed::fadeIn()
 {
-    logger.writeLine("fadeIn");
+    CoreLogging::writeLine("fadeIn");
 
     setGradientColor(0, 0, 0, 0);
     singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
@@ -198,8 +179,8 @@ void CoreLed::fadeIn()
 
 void CoreLed::clash()
 {
-    logger.writeLine("Clash:");
-    logger.writeParamString("Color Set", decodeColorSetId(currentColorSetId));
+    CoreLogging::writeLine("Clash:");
+    CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
     changeColor(clashColorSetId);
     delay(CLASH_TIME);
     changeColor(currentColorSetId);
@@ -209,7 +190,7 @@ void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 {
     if (currentStatus == Status::disarmedInRecharge)
     {
-        logger.writeLine("Blink recharging");
+        CoreLogging::writeLine("Blink recharging");
         changeColor(needBlinkRecharge.colorRecharge);
         delay(BLINK_TIME);
         changeColor(OFF);
@@ -220,8 +201,8 @@ void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
                        bool &rNeedArm, bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge)
 {
-    if ((currentStatus == waitArmWithChangeColorNext) &&
-        (rStatus == waitArmWithChangeColor))
+    if ((currentStatus == Status::waitArmWithChangeColorNext) &&
+        (rStatus == Status::waitArmWithChangeColor))
     {
         alreadyBlinked = false;
     }
@@ -266,8 +247,8 @@ void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
 
     if (rNeedArm)
     {
-        logger.writeParamString("Led", "NeedArm");
-        logger.writeParamStatus(currentStatus);
+        CoreLogging::writeParamString("Led", "NeedArm");
+        CoreLogging::writeParamStatus(currentStatus);
         if (currentStatus == Status::armingWithChangeColor)
         {
             setCurrentColorSet(currentChangeColorSetId);
@@ -283,7 +264,7 @@ void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
         rNeedDisarm = false;
     }
 
-    if(currentBlinkRechargeStatus.chargeSecuence){
+    if(currentBlinkRechargeStatus.chargeSequence){
         displayChargeSecuence();
     }
 

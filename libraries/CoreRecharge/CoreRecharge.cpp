@@ -1,4 +1,3 @@
-#include "Arduino.h"
 #include "CoreRecharge.h"
 
 //Costructor
@@ -11,11 +10,8 @@ CoreRecharge::CoreRecharge()
  */
 
 //Init
-void CoreRecharge::init(bool pDebug)
+void CoreRecharge::init()
 {
-    debugMode = pDebug;
-    logger.init(debugMode);
-
     pinMode(CHARGE_PIN, INPUT);
     pinMode(STANDBY_PIN, INPUT);
     pinMode(USB_PIN, INPUT);
@@ -31,7 +27,7 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
         if (currentStatus == Status::disarmed)
         {
             currentStatus = Status::disarmedInRecharge;
-            result.chargeSecuence = true;
+            result.chargeSequence = true;
             time = millis();
         }
 
@@ -41,9 +37,9 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
             {
                 if (millis() - time > BLINK_RECHARGE_STATUS_TIME)
                 {
-                    logger.writeParamString("Is Charge Pin High", "YES");
-                    logger.writeParamLong("Recharging", millis() - time);
-                    result.chargeSecuence = false;
+                    CoreLogging::writeParamString("Is Charge Pin High", "YES");
+                    CoreLogging::writeParamLong("Recharging", millis() - time);
+                    result.chargeSequence = false;
                     result.needRecharge = true;
                     result.colorRecharge = RECHARGE_COLOR;
                     time = millis();
@@ -54,9 +50,9 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
             {
                 if (millis() - time > BLINK_RECHARGED_STATUS_TIME)
                 {
-                    logger.writeParamString("Is StandBy Pin High", "YES");
-                    logger.writeParamLong("Recharged", millis() - time);
-                    result.chargeSecuence = false;
+                    CoreLogging::writeParamString("Is StandBy Pin High", "YES");
+                    CoreLogging::writeParamLong("Recharged", millis() - time);
+                    result.chargeSequence = false;
                     result.needRecharge = true;
                     result.colorRecharge = RECHARGED_COLOR;
                     time = millis();

@@ -7,23 +7,19 @@ CoreEntryPoint::CoreEntryPoint()
 }
 
 //Init
-void CoreEntryPoint::init(bool pDebug, String pBuild, String pSerial)
+void CoreEntryPoint::init(String pBuild)
 {
-    debugMode = pDebug;
     build = pBuild;
     serial = kinetisUID();
 
     Serial.begin(BAUD_RATE); //It needs for PC communication services
+    CoreLogging::writeParamString("Build", build);
+    CoreLogging::writeParamString("Serial Number", serial);
 
-    logger.init(debugMode);
-
-    logger.writeParamString("Build", build);
-    logger.writeParamString("Serial Number", serial);
-
-    audioModule.init(debugMode);
-    sensorModule.init(debugMode);
-    ledModule.init(debugMode);
-    rechargeModule.init(debugMode);
+    audioModule.init();
+    sensorModule.init();
+    ledModule.init();
+    rechargeModule.init();
 }
 
 //Process loop
@@ -66,13 +62,13 @@ void CoreEntryPoint::kinetisUID(uint32_t *uid)
     uid[2] = SIM_UIDL;
 }
 
-const char *CoreEntryPoint::kinetisUID(void)
+String CoreEntryPoint::kinetisUID()
 {
     uint32_t uid[3];
-    static char uidString[27];
+    char uidString[27];
     kinetisUID(uid);
-    sprintf(uidString, "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
-    return uidString;
+    snprintf(uidString, sizeof(uidString), "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
+    return String(uidString);
 }
 
 void CoreEntryPoint::checkSerials()
@@ -82,13 +78,11 @@ void CoreEntryPoint::checkSerials()
     if (Serial.available() > 0)
     {
         incomingByte = Serial.read();
-        //Serial.print(String(incomingByte);
         if (incomingByte == (byte)STX)
         {
-            //audioModule.beep();
             incomingMessage = "";
         }
-        else if ((incomingByte == (byte)ETX) || (incomingByte == (byte)LF))
+        else if ((incomingByte == ETX) || (incomingByte == LF))
         {
             processIncomingMessage(incomingMessage);
             incomingMessage = "";

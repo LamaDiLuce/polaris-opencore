@@ -1,6 +1,9 @@
-#include "Arduino.h"
-#include "CoreCommon.h"
+#pragma once
+
+#include <Arduino.h>
 #include <EEPROM.h>
+
+#include "CoreCommon.h"
 #include "CoreLogging.h"
 
 //LED RGBW
@@ -22,8 +25,6 @@
 #define CLASH_TIME 200
 #define CLASH_COLOR_FOR_WHITE ACQUA
 #define CLASH_COLOR_FOR_NO_WHITE WHITE
-#ifndef CoreLed_h
-#define CoreLed_h
 
 class CoreLed
 {
@@ -31,7 +32,7 @@ public:
   //Costructor
   CoreLed();
   //Init
-  void init(bool debug);
+  void init();
   //Process loop
   void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus, bool &rNeedArm,
             bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge);
@@ -51,8 +52,6 @@ public:
   void displayChargeSecuence();
 
 private:
-  bool debugMode = false;
-  CoreLogging logger;
   bool startedEvent = false;
   int currentColorSetId = OFF;
   int currentChangeColorSetId = OFF;
@@ -84,5 +83,3 @@ private:
   String decodeColorSetId(int colorSetId);
   int setColorDelta(int color);
 };
-
-#endif

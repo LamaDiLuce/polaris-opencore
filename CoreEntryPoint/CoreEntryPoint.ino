@@ -1,13 +1,11 @@
 #include "CoreEntryPoint.h"
 
 #define BUILD "1.9.12"
-#define DEBUG false
-#define SERIAL_NUMBER "SC1800001"
 
 CoreEntryPoint entryPoint;
 
 void setup() {
-  entryPoint.init(DEBUG, BUILD, SERIAL_NUMBER);
+  entryPoint.init(BUILD);
   attachInterrupt(digitalPinToInterrupt(entryPoint.getInt1Pin()), int1ISR, RISING);
 }
 
