@@ -48,6 +48,7 @@ void CoreSettings::saveToStore()
 { //@TODO: colours to json to serial file
   //if not possible use EEPROM
 
+
   //currently bank is in EEPROM
   EEPROM.write(REG_COLORSET, liveSettings.activeBank);
   EEPROM.write(REG_CHECK, CHECK_VALUE);
@@ -55,6 +56,7 @@ void CoreSettings::saveToStore()
 
 void CoreSettings::setActiveBank(int iBank)
 { liveSettings.activeBank=iBank;
+  saveToStore();
 }
 int CoreSettings::getActiveBank()
 { return liveSettings.activeBank;

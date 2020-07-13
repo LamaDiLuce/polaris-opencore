@@ -1,6 +1,6 @@
 #include "CoreEntryPoint.h"
 
-#define BUILD "1.9.12.settings"
+#define BUILD "1.9.12"
 
 CoreEntryPoint entryPoint;
 
