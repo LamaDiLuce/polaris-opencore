@@ -2,12 +2,15 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <SerialFlash.h>
 
-#include "CoreCommon.h"
+#include "ArduinoJson.h"
+#include "CoreLogging.h"
 
-#define REG_CHECK 0
-#define CHECK_VALUE 33
-#define REG_COLORSET 1
+static constexpr int REG_CHECK = 0;
+static constexpr int CHECK_VALUE = 33;
+static constexpr int REG_COLORSET = 1;
+static constexpr char configFilename[16] = "config.ini";
 
 class CoreSettings
 {
@@ -18,8 +21,8 @@ class CoreSettings
 
 		void loadDefaults();
 		void loadDefaultColors();
-        void readFromStore(); 
-        void saveToStore();
+        void readFromStore();
+		void saveToStore();
 
 		void setActiveBank(int iBank);
 		int getActiveBank();
@@ -28,6 +31,11 @@ class CoreSettings
 		ColorLed getClashColor(int bank);
 		void setMainColor(int bank, ColorLed cc);
 		void setClashColor(int bank, ColorLed cc);
+
+		int32_t getFileSize(const char *filen);
+		void printFile(const char *filen, boolean ignore);
+
 	private:
         saberSettings liveSettings;
+	
 };

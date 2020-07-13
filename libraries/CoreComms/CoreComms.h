@@ -4,8 +4,6 @@
 #include <SerialFlash.h>
 #include <CoreLogging.h>
 #include "CoreLed.h"
-#include "CoreSettings.h"
-#include "CoreCommon.h"
 
 #define BAUD_RATE 9600
 static constexpr int STX = 0x02;
@@ -52,7 +50,6 @@ class CoreComms
     ColorLed getClashColor(int bank) const;           //function to be defined in settings module
     void setMainColor(int bank, const ColorLed& ledColor);   //function to be defined in settings module
     void setClashColor(int bank, const ColorLed& ledColor);  //function to be defined in settings module
-
 
     char hexDigit(int n);
     ColorLed stringToColorLed(String sColor);

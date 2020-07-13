@@ -64,7 +64,7 @@ struct NeedBlinkRecharge
 };
 
 struct saberSettings
-{  String version="2020.01";
+{  char version[64]="2020.07";
    int activeBank;
    ColorLed colorSet[9];
    ColorLed clashSet[9];

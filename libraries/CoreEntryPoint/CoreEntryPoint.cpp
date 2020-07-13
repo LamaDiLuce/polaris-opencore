@@ -11,9 +11,9 @@ void CoreEntryPoint::init(String pBuild)
 {
     //init serial IF
     commsModule.init(pBuild);
-    settingsModule.init();
 
     audioModule.init();
+    settingsModule.init();
     sensorModule.init();
     
     CoreSettings *setPtr;
@@ -35,7 +35,6 @@ void CoreEntryPoint::loop()
     rechargeModule.loop(status, needBlinkRechargeEvent);
     ledModule.loop(needSwingEvent, needClashEvent, status,
                    needArmEvent, needDisarmEvent, needBlinkRechargeEvent);
-
     releaseStatus();
 
     commsModule.loop();

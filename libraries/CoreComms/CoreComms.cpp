@@ -311,13 +311,21 @@ void CoreComms::printDevInfo()
           Serial.print(" (");
           Serial.print(filesize);
           Serial.print(")\n");
+
+          Serial.print("settings getfilesize: ");
+          Serial.print(setmodule->getFileSize(filename));
+          Serial.print(" bytes\n");
+
         }
         else
         {
           break; // no more files
         }
       }
-
+      Serial.println("config.ini ------------------------------");
+      setmodule->printFile("config.ini", true);
+      Serial.println("\n-----------------------------------------");
+      
       Serial.println("Read Chip Identification:");
       SerialFlash.readID(buf);
       Serial.print("  JEDEC ID:     ");
