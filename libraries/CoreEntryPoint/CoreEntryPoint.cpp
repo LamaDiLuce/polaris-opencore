@@ -11,15 +11,19 @@ void CoreEntryPoint::init(String pBuild)
 {
     //init serial IF
     commsModule.init(pBuild);
+    settingsModule.init();
 
     audioModule.init();
     sensorModule.init();
-    ledModule.init();
+    
+    CoreSettings *setPtr;
+    setPtr = &settingsModule;    
+    ledModule.init(setPtr);
     rechargeModule.init();
 
-    CoreLed *ptr;
-    ptr = &ledModule;
-    commsModule.setModule(ptr);
+    CoreLed *ledPtr;
+    ledPtr = &ledModule;
+    commsModule.setModule(ledPtr, setPtr);
 }
 
 //Process loop

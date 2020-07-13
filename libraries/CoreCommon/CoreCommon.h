@@ -62,3 +62,10 @@ struct NeedBlinkRecharge
     bool needRecharge;
     int colorRecharge;
 };
+
+struct saberSettings
+{  String version="2020.01";
+   int activeBank;
+   ColorLed colorSet[9];
+   ColorLed clashSet[9];
+};

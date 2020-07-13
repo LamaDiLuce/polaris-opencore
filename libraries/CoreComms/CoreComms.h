@@ -4,6 +4,7 @@
 #include <SerialFlash.h>
 #include <CoreLogging.h>
 #include "CoreLed.h"
+#include "CoreSettings.h"
 #include "CoreCommon.h"
 
 #define BAUD_RATE 9600
@@ -23,7 +24,7 @@ class CoreComms
     CoreComms();
     //Init
     void init(String pBuild);
-    void setModule(CoreLed *cled);
+    void setModule(CoreLed *cled, CoreSettings *cSet);
     //Process loop
     void loop();
     byte getMode();
@@ -35,6 +36,7 @@ class CoreComms
     String serial = "";
     String incomingMessage = "";
     CoreLed *ledmodule;  //for access to color variables, to be moved to a settings module
+    CoreSettings *setmodule;
     
     //Hardware Serial Numbers
     void kinetisUID(uint32_t *uid);
