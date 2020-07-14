@@ -12,7 +12,9 @@ void CoreSettings::loadDefaults()
   loadDefaultColors();
 }
 void CoreSettings::loadDefaultColors()
-{ liveSettings.colorSet[RED]    = {255, 0, 0, 0};      //0 RED
+{ liveSettings.version = CURRENTVERSION ;
+
+  liveSettings.colorSet[RED]    = {255, 0, 0, 0};      //0 RED
   liveSettings.colorSet[GREEN]  = {0, 255, 0, 0};      //1 GREEN
   liveSettings.colorSet[BLUE]   = {0, 0, 255, 0};      //2 BLUE
   liveSettings.colorSet[YELLOW] = {100, 255, 0, 60};   //3 YELLOW
@@ -37,26 +39,52 @@ void CoreSettings::readFromStore()
   { CoreLogging::writeLine("ERROR, readFromStore, SeriaFlash Not Ready");
     return;
   }
-  //@TODO: read json to settinsg
-  //-------------------------------------------------------------------------
-  //--------------------------------------------------------------------------
-  //--------------------------------------------------------------------------
-  if(!SerialFlash.exists("/config.ini"))
-  { SerialFlash.remove("/config.ini");
-  }
   
   if(!SerialFlash.exists(configFilename))
   { Serial.println(String(configFilename)+" does not exist.");
-	loadDefaults();
+	  loadDefaults();
     return;
   }
 
+  SerialFlashFile file = SerialFlash.open(configFilename);
+  StaticJsonDocument<16384> doc;
+  char buffer[16384];
 
+  file.read(buffer, 16384);
+  file.close();
 
-  //--------------------------------------------------------------------------
-  //--------------------------------------------------------------------------
-  //-------------------------------------------------------------------------
+  DeserializationError error = deserializeJson(doc, buffer);
+  if (error)
+  { CoreLogging::writeLine("Failed to read file, using default configuration");
+    loadDefaults();
+    return;
+  } else
+  { JsonObject obj = doc.as<JsonObject>();
 
+    liveSettings.version = obj["version"].as<String>();
+    if(!liveSettings.version.equals(CURRENTVERSION))
+    { //wrong format filetype so load defaults
+      loadDefaults();
+      return;
+    }
+    
+    liveSettings.activeBank = doc["activeBank"] | BLUE;
+    
+    //@TODO: I know this is wrong, but I wanted proof of concept, Nuntis
+    for(int i=0; i<=7; i++)
+    { liveSettings.colorSet[i].red   = doc["colorSet_"+String(i)+"_red"] | 0;
+      liveSettings.colorSet[i].green = doc["colorSet_"+String(i)+"_green"] | 0;
+      liveSettings.colorSet[i].blue  = doc["colorSet_"+String(i)+"_blue"] | 0;
+      liveSettings.colorSet[i].white = doc["colorSet_"+String(i)+"_white"] | 0;
+   
+      liveSettings.clashSet[i].red   = doc["clashSet_"+String(i)+"_red"] | 0;
+      liveSettings.clashSet[i].green = doc["clashSet_"+String(i)+"_green"] | 0;
+      liveSettings.clashSet[i].blue  = doc["clashSet_"+String(i)+"_blue"] | 0;
+      liveSettings.clashSet[i].white = doc["clashSet_"+String(i)+"_white"] | 0;
+    }
+  }
+  
+  /*
   //currently active bank is saved in EEPROM
   if (EEPROM.read(REG_CHECK) == CHECK_VALUE)
   { liveSettings.activeBank= EEPROM.read(REG_COLORSET);
@@ -64,56 +92,52 @@ void CoreSettings::readFromStore()
   else
   { liveSettings.activeBank=BLUE;
   }
+  */
 
   //for test only
-  saveToStore();
+  //saveToStore();
 }
 void CoreSettings::saveToStore()
 { if(!SerialFlash.ready())
   { CoreLogging::writeLine("ERROR, saveToStore, SeriaFlash Not Ready");
     return;
   }
-  //@TODO: colours to json to serial file
-  //--------- ----------------------------------------------------------------
-  //--------- ----------------------------------------------------------------
-  //--------- ----------------------------------------------------------------
+  
   if(!SerialFlash.exists(configFilename))
   { if(!SerialFlash.createErasable(configFilename, 65535))
     { CoreLogging::writeLine("ERROR, savetoStore, unable to create " + String(configFilename));
-	  return;
-	}
+	    return;
+	  }
   } 
 
   SerialFlashFile file = SerialFlash.open(configFilename);
   file.erase();
-  StaticJsonDocument<8192> doc;
+  StaticJsonDocument<16384> doc;
   // Set the values in the document
   doc["version"] = liveSettings.version;
   doc["activeBank"] = liveSettings.activeBank;
 
-  // I know this is wrong, but I wanted proof of concept, Nuntis
+  //@TODO: I know this is wrong, but I wanted proof of concept, Nuntis
   for(int i=0; i<=7; i++)
-  { doc["colorSet["+String(i)+"].red"] = liveSettings.colorSet[i].red;
-    doc["colorSet["+String(i)+"].green"] = liveSettings.colorSet[i].green;
-    doc["colorSet["+String(i)+"].blue"] = liveSettings.colorSet[i].blue;
-    doc["colorSet["+String(i)+"].white"] = liveSettings.colorSet[i].white;
+  { doc["colorSet_"+String(i)+"_red"] = liveSettings.colorSet[i].red;
+    doc["colorSet_"+String(i)+"_green"] = liveSettings.colorSet[i].green;
+    doc["colorSet_"+String(i)+"_blue"] = liveSettings.colorSet[i].blue;
+    doc["colorSet_"+String(i)+"_white"] = liveSettings.colorSet[i].white;
   
-    doc["clashSet["+String(i)+"].red"] = liveSettings.clashSet[i].red;
-    doc["clashSet["+String(i)+"].green"] = liveSettings.clashSet[i].green;
-    doc["clashSet["+String(i)+"].blue"] = liveSettings.clashSet[i].blue;
-    doc["clashSet["+String(i)+"].white"] = liveSettings.clashSet[i].white;
+    doc["clashSet_"+String(i)+"_red"] = liveSettings.clashSet[i].red;
+    doc["clashSet_"+String(i)+"_green"] = liveSettings.clashSet[i].green;
+    doc["clashSet_"+String(i)+"_blue"] = liveSettings.clashSet[i].blue;
+    doc["clashSet_"+String(i)+"_white"] = liveSettings.clashSet[i].white;
   }
 
   // Serialize JSON to file
-  char buffer[8192];
-  uint32_t sz =serializeJson(doc, buffer);
+  char buffer[16384];
+  uint32_t sz = serializeJsonPretty(doc, buffer);
+  //uint32_t sz = serializeJson(doc, buffer);
   if (sz == 0)
   { CoreLogging::writeLine("Error, saveToStore, Failed to write to file");
   }
   file.write(buffer, sz);
-
-  buffer[0]=EOF;
-  file.write(buffer,1);
 
   // Close the file
   file.close();
@@ -122,8 +146,8 @@ void CoreSettings::saveToStore()
   //--------------------------------------------------------------------------
 
   //currently bank is in EEPROM
-  EEPROM.write(REG_COLORSET, liveSettings.activeBank);
-  EEPROM.write(REG_CHECK, CHECK_VALUE);
+  //EEPROM.write(REG_COLORSET, liveSettings.activeBank);
+  //EEPROM.write(REG_CHECK, CHECK_VALUE);
 }
 void CoreSettings::printFile(const char *filen, boolean ignore)
 { if(!SerialFlash.ready())
