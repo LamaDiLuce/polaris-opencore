@@ -33,6 +33,7 @@ void CoreEntryPoint::loop()
                       needArmEvent, horizontalPosition, needDisarmEvent);
     audioModule.loop(needSwingEvent, needClashEvent, status, needArmEvent, needDisarmEvent);
     rechargeModule.loop(status, needBlinkRechargeEvent);
+
     ledModule.loop(needSwingEvent, needClashEvent, status,
                    needArmEvent, needDisarmEvent, needBlinkRechargeEvent);
     releaseStatus();
@@ -40,8 +41,9 @@ void CoreEntryPoint::loop()
     commsModule.loop();
 
     //if we are out of needBlinkRechargeEvent and communication mode is not normal then save the settings
-    if((!needBlinkRechargeEvent.needRecharge) && (commsModule.getMode()!=MODE_NORMAL))
+    if((status!=Status::disarmedInRecharge) && (commsModule.getMode()!=MODE_NORMAL))
     { settingsModule.saveToStore();
+      Serial.println("saved...");
       commsModule.setMode(MODE_NORMAL);
     }
 }
