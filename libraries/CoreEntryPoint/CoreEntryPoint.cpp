@@ -43,7 +43,6 @@ void CoreEntryPoint::loop()
     //if we are out of needBlinkRechargeEvent and communication mode is not normal then save the settings
     if((status!=Status::disarmedInRecharge) && (commsModule.getMode()!=MODE_NORMAL))
     { settingsModule.saveToStore();
-      Serial.println("saved...");
       commsModule.setMode(MODE_NORMAL);
     }
 }
