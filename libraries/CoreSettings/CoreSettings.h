@@ -7,11 +7,8 @@
 #include "ArduinoJson.h"
 #include "CoreLogging.h"
 
-//static constexpr int REG_CHECK = 0;
-//static constexpr int CHECK_VALUE = 33;
-//static constexpr int REG_COLORSET = 1;
 static constexpr char configFilename[16] = "config.ini";
-#define CURRENTVERSION "2020.01"
+#define CURRENTVERSION "2020.02"
 
 struct saberSettings
 {  String version;

@@ -26,6 +26,7 @@ class CoreComms
     //Process loop
     void loop();
     byte getMode();
+    void setMode(byte cmode);
     String colorToString(ColorLed cColor, boolean bHex);
 
   private:

@@ -38,6 +38,12 @@ void CoreEntryPoint::loop()
     releaseStatus();
 
     commsModule.loop();
+
+    //if we are out of needBlinkRechargeEvent and communication mode is not normal then save the settings
+    if((!needBlinkRechargeEvent.needRecharge) && (commsModule.getMode()!=MODE_NORMAL))
+    { settingsModule.saveToStore();
+      commsModule.setMode(MODE_NORMAL);
+    }
 }
 
 void CoreEntryPoint::releaseStatus()

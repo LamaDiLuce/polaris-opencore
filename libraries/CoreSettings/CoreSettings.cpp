@@ -70,32 +70,19 @@ void CoreSettings::readFromStore()
     
     liveSettings.activeBank = doc["activeBank"] | BLUE;
     
-    //@TODO: I know this is wrong, but I wanted proof of concept, Nuntis
     for(int i=0; i<=7; i++)
-    { liveSettings.colorSet[i].red   = doc["colorSet_"+String(i)+"_red"] | 0;
-      liveSettings.colorSet[i].green = doc["colorSet_"+String(i)+"_green"] | 0;
-      liveSettings.colorSet[i].blue  = doc["colorSet_"+String(i)+"_blue"] | 0;
-      liveSettings.colorSet[i].white = doc["colorSet_"+String(i)+"_white"] | 0;
+    { liveSettings.colorSet[i].red   = doc["bank"][i]["color"]["red"] | 0;
+      liveSettings.colorSet[i].green = doc["bank"][i]["color"]["green"] | 0;
+      liveSettings.colorSet[i].blue  = doc["bank"][i]["color"]["blue"] | 0;
+      liveSettings.colorSet[i].white = doc["bank"][i]["color"]["white"] | 0;
    
-      liveSettings.clashSet[i].red   = doc["clashSet_"+String(i)+"_red"] | 0;
-      liveSettings.clashSet[i].green = doc["clashSet_"+String(i)+"_green"] | 0;
-      liveSettings.clashSet[i].blue  = doc["clashSet_"+String(i)+"_blue"] | 0;
-      liveSettings.clashSet[i].white = doc["clashSet_"+String(i)+"_white"] | 0;
+      liveSettings.clashSet[i].red   = doc["bank"][i]["clash"]["red"] | 0;
+      liveSettings.clashSet[i].green = doc["bank"][i]["clash"]["green"] | 0;
+      liveSettings.clashSet[i].blue  = doc["bank"][i]["clash"]["blue"] | 0;
+      liveSettings.clashSet[i].white = doc["bank"][i]["clash"]["white"] | 0;
     }
   }
   
-  /*
-  //currently active bank is saved in EEPROM
-  if (EEPROM.read(REG_CHECK) == CHECK_VALUE)
-  { liveSettings.activeBank= EEPROM.read(REG_COLORSET);
-  }
-  else
-  { liveSettings.activeBank=BLUE;
-  }
-  */
-
-  //for test only
-  //saveToStore();
 }
 void CoreSettings::saveToStore()
 { if(!SerialFlash.ready())
@@ -117,23 +104,22 @@ void CoreSettings::saveToStore()
   doc["version"] = liveSettings.version;
   doc["activeBank"] = liveSettings.activeBank;
 
-  //@TODO: I know this is wrong, but I wanted proof of concept, Nuntis
   for(int i=0; i<=7; i++)
-  { doc["colorSet_"+String(i)+"_red"] = liveSettings.colorSet[i].red;
-    doc["colorSet_"+String(i)+"_green"] = liveSettings.colorSet[i].green;
-    doc["colorSet_"+String(i)+"_blue"] = liveSettings.colorSet[i].blue;
-    doc["colorSet_"+String(i)+"_white"] = liveSettings.colorSet[i].white;
+  { doc["bank"][i]["color"]["red"] = liveSettings.colorSet[i].red;
+    doc["bank"][i]["color"]["green"] = liveSettings.colorSet[i].green;
+    doc["bank"][i]["color"]["blue"] = liveSettings.colorSet[i].blue;
+    doc["bank"][i]["color"]["white"] = liveSettings.colorSet[i].white;
   
-    doc["clashSet_"+String(i)+"_red"] = liveSettings.clashSet[i].red;
-    doc["clashSet_"+String(i)+"_green"] = liveSettings.clashSet[i].green;
-    doc["clashSet_"+String(i)+"_blue"] = liveSettings.clashSet[i].blue;
-    doc["clashSet_"+String(i)+"_white"] = liveSettings.clashSet[i].white;
+    doc["bank"][i]["clash"]["red"] = liveSettings.clashSet[i].red;
+    doc["bank"][i]["clash"]["green"] = liveSettings.clashSet[i].green;
+    doc["bank"][i]["clash"]["blue"] = liveSettings.clashSet[i].blue;
+    doc["bank"][i]["clash"]["white"] = liveSettings.clashSet[i].white;
   }
 
   // Serialize JSON to file
   char buffer[16384];
-  uint32_t sz = serializeJsonPretty(doc, buffer);
-  //uint32_t sz = serializeJson(doc, buffer);
+  uint32_t sz = serializeJsonPretty(doc, buffer);//<-- writes json in a more human readable format
+  //uint32_t sz = serializeJson(doc, buffer);    //<-- writes a smaller file, but the block size is 64K anyway
   if (sz == 0)
   { CoreLogging::writeLine("Error, saveToStore, Failed to write to file");
   }
@@ -141,13 +127,7 @@ void CoreSettings::saveToStore()
 
   // Close the file
   file.close();
-  //--------------------------------------------------------------------------
-  //--------------------------------------------------------------------------
-  //--------------------------------------------------------------------------
-
-  //currently bank is in EEPROM
-  //EEPROM.write(REG_COLORSET, liveSettings.activeBank);
-  //EEPROM.write(REG_CHECK, CHECK_VALUE);
+  
 }
 void CoreSettings::printFile(const char *filen, boolean ignore)
 { if(!SerialFlash.ready())
@@ -207,5 +187,3 @@ void CoreSettings::setMainColor(int bank, ColorLed cc)
 void CoreSettings::setClashColor(int bank, ColorLed cc)
 { liveSettings.clashSet[bank]=cc;
 }
-
-

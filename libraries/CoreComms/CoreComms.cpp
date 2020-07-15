@@ -285,6 +285,9 @@ String CoreComms::colorLedToString(ColorLed cColor, boolean bHex)
 byte CoreComms::getMode()
 { return commsMode;
 }
+void CoreComms::setMode(byte cmode)
+{ commsMode=cmode;
+}
 void CoreComms::printDevInfo()
 {
       Serial.write(STX);
