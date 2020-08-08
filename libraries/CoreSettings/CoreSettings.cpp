@@ -41,7 +41,7 @@ void CoreSettings::readFromStore()
   }
   
   if(!SerialFlash.exists(configFilename))
-  { Serial.println(String(configFilename)+" does not exist.");
+  { CoreLogging::writeLine(String(configFilename)+" does not exist.");
 	  loadDefaults();
     return;
   }
