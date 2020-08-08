@@ -10,7 +10,7 @@
 static constexpr char configFilename[16] = "config.ini";
 #define CURRENTVERSION "2020.02"
 
-struct saberSettings
+struct SaberSettings
 {  String version;
    int activeBank;
    ColorLed colorSet[9];
