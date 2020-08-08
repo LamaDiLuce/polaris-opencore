@@ -41,6 +41,6 @@ class CoreSettings
 		void printFile(const char *filen, boolean ignore);
 
 	private:
-        saberSettings liveSettings;
+        SaberSettings liveSettings;
 	
 };
