@@ -84,7 +84,7 @@ Now we need to configure the project so it actually can be built for our board.
 Go to "**Tools**" and:
 
 1. Set **Board** to "**Teensy 3.2 / 3.1**".
-2. Set **USB Type** to "**USB**".
+2. Set **USB Type** to "**Serial**".
 3. Set **CPU Speed** to "**72 Mhz**".
 4. Set **Optimize** to "**Faster**".
 5. Set **Keyboard Layout** to "**US English**".
