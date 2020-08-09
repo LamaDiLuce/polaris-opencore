@@ -4,26 +4,26 @@ static constexpr bool DEBUG = false;
 
 enum class Status
 {
-    disarmed = 0,
-    armed = 1,
-    waitArm = 2,
-    arming = 3,
-    disarming = 4,
-    waitDisarm = 5,
-    waitArmWithChangeColor = 6,
-    waitArmWithChangeColorNext = 7,
-    armingWithChangeColor = 8,
-    disarmedInRecharge = 9
+  disarmed = 0,
+  armed = 1,
+  waitArm = 2,
+  arming = 3,
+  disarming = 4,
+  waitDisarm = 5,
+  waitArmWithChangeColor = 6,
+  waitArmWithChangeColorNext = 7,
+  armingWithChangeColor = 8,
+  disarmedInRecharge = 9
 };
 
 enum class Requests
 {
-    lowClash = 0,
-    highCLash = 1,
-    swing = 2,
-    arm = 3,
-    disarm = 4,
-    none = 5
+  lowClash = 0,
+  highCLash = 1,
+  swing = 2,
+  arm = 3,
+  disarm = 4,
+  none = 5
 };
 
 #define COLORS 7
@@ -43,22 +43,22 @@ enum class Requests
 
 struct ColorLed
 {
-    int red;
-    int green;
-    int blue;
-    int white;
+  int red;
+  int green;
+  int blue;
+  int white;
 };
 
 struct FilterSensor
 {
-    int readingCount;
-    float progressAverageValue;
-    float previousAverageValue;
+  int readingCount;
+  float progressAverageValue;
+  float previousAverageValue;
 };
 
 struct NeedBlinkRecharge
 {
-    bool chargeSequence;
-    bool needRecharge;
-    int colorRecharge;
+  bool chargeSequence;
+  bool needRecharge;
+  int colorRecharge;
 };

@@ -4,9 +4,9 @@ CoreLed::CoreLed()
 {
 }
 
-void CoreLed::init(CoreSettings *cSet)
+void CoreLed::init(CoreSettings* cSet)
 {
-  moduleSettings=cSet;
+  moduleSettings = cSet;
   moduleSettings->init();
 
   pinMode(PIN_RED, OUTPUT);
@@ -18,26 +18,27 @@ void CoreLed::init(CoreSettings *cSet)
 }
 String CoreLed::decodeColorSetId(int colorSetId)
 {
-    String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
+  String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
 
-    if (colorSetId < int(sizeof(colors) / sizeof(colors[0])))
-        return colors[colorSetId];
+  if (colorSetId < int(sizeof(colors) / sizeof(colors[0])))
+    return colors[colorSetId];
 
-    return OFF;
+  return OFF;
 }
 void CoreLed::getCurrentColorSet()
 {
-    currentColorSetId = moduleSettings->getActiveBank();
-    currentColorSet =  moduleSettings->getMainColor(currentColorSetId); //colorSet[currentColorSetId];
-    currentChangeColorSetId = currentColorSetId;
-    
-    //clashColorSetId = CLASH_COLOR_FOR_NO_WHITE;
-    clashColorSet = moduleSettings->getClashColor(currentColorSetId); //clashSet[currentColorSetId];
+  currentColorSetId = moduleSettings->getActiveBank();
+  currentColorSet = moduleSettings->getMainColor(currentColorSetId); // colorSet[currentColorSetId];
+  currentChangeColorSetId = currentColorSetId;
 
-    CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
+  // clashColorSetId = CLASH_COLOR_FOR_NO_WHITE;
+  clashColorSet = moduleSettings->getClashColor(currentColorSetId); // clashSet[currentColorSetId];
+
+  CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
 }
 void CoreLed::setCurrentColorSet(int colorSetId)
-{ CoreLogging::writeLine("Saving colorset...");
+{
+  CoreLogging::writeLine("Saving colorset...");
   moduleSettings->setActiveBank(colorSetId);
   getCurrentColorSet();
 }
@@ -61,202 +62,201 @@ void CoreLed::changeColor(const ColorLed& cLed)
 
 int CoreLed::setColorDelta(int color)
 {
-    return (color < 0) ? 0 : (color > 255) ? 255 : color;
+  return (color < 0) ? 0 : (color > 255) ? 255 : color;
 }
 
 void CoreLed::setGradientColor(int red, int green, int blue, int white)
 {
-    red = setColorDelta(red);
-    green = setColorDelta(green);
-    blue = setColorDelta(blue);
-    white = setColorDelta(white);
+  red = setColorDelta(red);
+  green = setColorDelta(green);
+  blue = setColorDelta(blue);
+  white = setColorDelta(white);
 
-    analogWrite(PIN_RED, !COMMON_GND ? red : 255 - red);
-    analogWrite(PIN_GREEN, !COMMON_GND ? green : 255 - green);
-    analogWrite(PIN_BLUE, !COMMON_GND ? blue : 255 - blue);
-    analogWrite(PIN_WHITE, !COMMON_GND ? white : 255 - white);
+  analogWrite(PIN_RED, !COMMON_GND ? red : 255 - red);
+  analogWrite(PIN_GREEN, !COMMON_GND ? green : 255 - green);
+  analogWrite(PIN_BLUE, !COMMON_GND ? blue : 255 - blue);
+  analogWrite(PIN_WHITE, !COMMON_GND ? white : 255 - white);
 
-    gradientColorSet = {red, green, blue, white};
+  gradientColorSet = {red, green, blue, white};
 }
 
 void CoreLed::turnOff()
 {
-    changeColor(OFF);
+  changeColor(OFF);
 }
 
 void CoreLed::blink()
 {
-    if (!alreadyBlinked)
-    {
-        CoreLogging::writeLine("Blink");
-        changeColor(WHITE);
-        delay(TIME_BLINK_WAITARM);
-        turnOff();
-    }
+  if (!alreadyBlinked)
+  {
+    CoreLogging::writeLine("Blink");
+    changeColor(WHITE);
+    delay(TIME_BLINK_WAITARM);
+    turnOff();
+  }
 }
 
-void CoreLed::displayChargeSecuence(){
-    changeColor(RED);
-    delay(TIME_CHARGE_SECUENCE_BLINK);
-    changeColor (GREEN);
-    delay(TIME_CHARGE_SECUENCE_BLINK);
-    changeColor (BLUE);
-    delay(TIME_CHARGE_SECUENCE_BLINK);
-    changeColor (WHITE);
-    delay(TIME_CHARGE_SECUENCE_BLINK);
-    turnOff();
+void CoreLed::displayChargeSecuence()
+{
+  changeColor(RED);
+  delay(TIME_CHARGE_SECUENCE_BLINK);
+  changeColor(GREEN);
+  delay(TIME_CHARGE_SECUENCE_BLINK);
+  changeColor(BLUE);
+  delay(TIME_CHARGE_SECUENCE_BLINK);
+  changeColor(WHITE);
+  delay(TIME_CHARGE_SECUENCE_BLINK);
+  turnOff();
 }
 
 void CoreLed::changeColorBlink()
 {
-    if (!alreadyBlinked)
-    {
-        CoreLogging::writeLine("Blink change color");
-        changeColor(currentChangeColorSetId);
-        delay(TIME_BLINK_WAITARM_WITH_COLOR);
-        turnOff();
-    }
+  if (!alreadyBlinked)
+  {
+    CoreLogging::writeLine("Blink change color");
+    changeColor(currentChangeColorSetId);
+    delay(TIME_BLINK_WAITARM_WITH_COLOR);
+    turnOff();
+  }
 }
 
 void CoreLed::fadeOut()
 {
-    CoreLogging::writeLine("fadeOut");
+  CoreLogging::writeLine("fadeOut");
 
-    singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
-    singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
-    singleStepColorSet.blue = currentColorSet.blue / FADE_DELAY;
-    singleStepColorSet.white = currentColorSet.white / FADE_DELAY;
-    for (int i = 0; i <= FADE_DELAY; i++)
-    {
-        setGradientColor(gradientColorSet.red - singleStepColorSet.red,
-                         gradientColorSet.green - singleStepColorSet.green,
-                         gradientColorSet.blue - singleStepColorSet.blue,
-                         gradientColorSet.white - singleStepColorSet.white);
-        delay(1000 / FADE_DELAY);
-    }
+  singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
+  singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
+  singleStepColorSet.blue = currentColorSet.blue / FADE_DELAY;
+  singleStepColorSet.white = currentColorSet.white / FADE_DELAY;
+  for (int i = 0; i <= FADE_DELAY; i++)
+  {
+    setGradientColor(gradientColorSet.red - singleStepColorSet.red, gradientColorSet.green - singleStepColorSet.green,
+                     gradientColorSet.blue - singleStepColorSet.blue,
+                     gradientColorSet.white - singleStepColorSet.white);
+    delay(1000 / FADE_DELAY);
+  }
 
-    turnOff();
+  turnOff();
 }
 
 void CoreLed::fadeIn()
 {
-    CoreLogging::writeLine("fadeIn");
+  CoreLogging::writeLine("fadeIn");
 
-    setGradientColor(0, 0, 0, 0);
-    singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
-    singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
-    singleStepColorSet.blue = currentColorSet.blue / FADE_DELAY;
-    singleStepColorSet.white = currentColorSet.white / FADE_DELAY;
-    for (int i = 0; i <= FADE_DELAY; i++)
-    {
-        setGradientColor(gradientColorSet.red + singleStepColorSet.red,
-                         gradientColorSet.green + singleStepColorSet.green,
-                         gradientColorSet.blue + singleStepColorSet.blue,
-                         gradientColorSet.white + singleStepColorSet.white);
-        delay(250 / FADE_DELAY);
-    }
+  setGradientColor(0, 0, 0, 0);
+  singleStepColorSet.red = currentColorSet.red / FADE_DELAY;
+  singleStepColorSet.green = currentColorSet.green / FADE_DELAY;
+  singleStepColorSet.blue = currentColorSet.blue / FADE_DELAY;
+  singleStepColorSet.white = currentColorSet.white / FADE_DELAY;
+  for (int i = 0; i <= FADE_DELAY; i++)
+  {
+    setGradientColor(gradientColorSet.red + singleStepColorSet.red, gradientColorSet.green + singleStepColorSet.green,
+                     gradientColorSet.blue + singleStepColorSet.blue,
+                     gradientColorSet.white + singleStepColorSet.white);
+    delay(250 / FADE_DELAY);
+  }
 
-    changeColor(currentColorSetId);
+  changeColor(currentColorSetId);
 }
 
 void CoreLed::clash()
 {
-    CoreLogging::writeLine("Clash:");
-    CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
-    changeColor(moduleSettings->getClashColor(currentColorSetId));
-    delay(CLASH_TIME);
-    changeColor(moduleSettings->getMainColor(currentColorSetId));
+  CoreLogging::writeLine("Clash:");
+  CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
+  changeColor(moduleSettings->getClashColor(currentColorSetId));
+  delay(CLASH_TIME);
+  changeColor(moduleSettings->getMainColor(currentColorSetId));
 }
 
 void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 {
-    if (currentStatus == Status::disarmedInRecharge)
-    {
-        CoreLogging::writeLine("Blink recharging");
-        changeColor(needBlinkRecharge.colorRecharge);
-        delay(BLINK_TIME);
-        changeColor(OFF);
-    }
+  if (currentStatus == Status::disarmedInRecharge)
+  {
+    CoreLogging::writeLine("Blink recharging");
+    changeColor(needBlinkRecharge.colorRecharge);
+    delay(BLINK_TIME);
+    changeColor(OFF);
+  }
 }
 
-//Process loop
-void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
-                       bool &rNeedArm, bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge)
+// Process loop
+void CoreLed::loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool& rNeedArm, bool& rNeedDisarm,
+                   NeedBlinkRecharge& rNeedBlinkRecharge)
 {
-    if ((currentStatus == Status::waitArmWithChangeColorNext) &&
-        (rStatus == Status::waitArmWithChangeColor))
+  if ((currentStatus == Status::waitArmWithChangeColorNext) && (rStatus == Status::waitArmWithChangeColor))
+  {
+    alreadyBlinked = false;
+  }
+
+  currentStatus = rStatus;
+  currentBlinkRechargeStatus = rNeedBlinkRecharge;
+
+  if (currentStatus == Status::waitArm)
+  {
+    blink();
+    alreadyBlinked = true;
+  }
+
+  if (currentStatus == Status::waitArmWithChangeColor)
+  {
+    changeColorBlink();
+    alreadyBlinked = true;
+  }
+
+  if (currentStatus == Status::waitArmWithChangeColorNext)
+  {
+    alreadyBlinked = false;
+    currentChangeColorSetId++;
+
+    if (currentChangeColorSetId > COLORS)
     {
-        alreadyBlinked = false;
+      currentChangeColorSetId = 0;
     }
 
-    currentStatus = rStatus;
-    currentBlinkRechargeStatus = rNeedBlinkRecharge;
+    changeColorBlink();
+    alreadyBlinked = true;
 
-    if (currentStatus == Status::waitArm)
+    currentStatus = Status::waitArmWithChangeColor;
+    rStatus = currentStatus;
+  }
+
+  if (rNeedClash)
+  {
+    clash();
+    rNeedClash = false;
+  }
+
+  if (rNeedArm)
+  {
+    CoreLogging::writeParamString("Led", "NeedArm");
+    CoreLogging::writeParamStatus(currentStatus);
+    if (currentStatus == Status::armingWithChangeColor)
     {
-        blink();
-        alreadyBlinked = true;
+      setCurrentColorSet(currentChangeColorSetId);
     }
-
-    if (currentStatus == Status::waitArmWithChangeColor)
-    {
-        changeColorBlink();
-        alreadyBlinked = true;
+    else
+    { // refresh actual color in case it has been changed via serial port command
+      getCurrentColorSet();
     }
+    fadeIn();
+    rNeedArm = false;
+    alreadyBlinked = false;
+  }
 
-    if (currentStatus == Status::waitArmWithChangeColorNext)
-    {
-        alreadyBlinked = false;
-        currentChangeColorSetId++;
+  if (rNeedDisarm)
+  {
+    fadeOut();
+    rNeedDisarm = false;
+  }
 
-        if (currentChangeColorSetId > COLORS)
-        {
-            currentChangeColorSetId = 0;
-        }
+  if (currentBlinkRechargeStatus.chargeSequence)
+  {
+    displayChargeSecuence();
+  }
 
-        changeColorBlink();
-        alreadyBlinked = true;
-
-        currentStatus = Status::waitArmWithChangeColor;
-        rStatus = currentStatus;
-    }
-
-    if (rNeedClash)
-    {
-        clash();
-        rNeedClash = false;
-    }
-
-    if (rNeedArm)
-    {
-        CoreLogging::writeParamString("Led", "NeedArm");
-        CoreLogging::writeParamStatus(currentStatus);
-        if (currentStatus == Status::armingWithChangeColor)
-        { 
-          setCurrentColorSet(currentChangeColorSetId);
-        }
-        else
-        { //refresh actual color in case it has been changed via serial port command
-          getCurrentColorSet();
-        }
-        fadeIn();
-        rNeedArm = false;
-        alreadyBlinked = false;
-    }
-
-    if (rNeedDisarm)
-    {
-        fadeOut();
-        rNeedDisarm = false;
-    }
-
-    if(currentBlinkRechargeStatus.chargeSequence){
-        displayChargeSecuence();
-    }
-
-    if (currentBlinkRechargeStatus.needRecharge)
-    {
-        blinkRecharge(currentBlinkRechargeStatus);
-        currentBlinkRechargeStatus = {false, 0};
-    }
+  if (currentBlinkRechargeStatus.needRecharge)
+  {
+    blinkRecharge(currentBlinkRechargeStatus);
+    currentBlinkRechargeStatus = {false, 0};
+  }
 }

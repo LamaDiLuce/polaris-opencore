@@ -2,8 +2,8 @@
 
 #include <Arduino.h>
 
-#include "CoreLogging.h"
 #include "CoreCommon.h"
+#include "CoreLogging.h"
 
 #define CHARGE_PIN 13
 #define STANDBY_PIN 15
@@ -15,12 +15,12 @@
 class CoreRecharge
 {
 public:
-  //Costructor
+  // Costructor
   CoreRecharge();
-  //Init
+  // Init
   void init();
-  //Process loop
-  void loop(Status &rStatus, NeedBlinkRecharge &rNeedBlinkRecharge);
+  // Process loop
+  void loop(Status& rStatus, NeedBlinkRecharge& rNeedBlinkRecharge);
 
 private:
   unsigned long time;
@@ -28,4 +28,3 @@ private:
   NeedBlinkRecharge currentNeedBlinkRechargeStatus = {false, 0};
   NeedBlinkRecharge needBlinkRecharge();
 };
-

@@ -4,12 +4,14 @@
 
 CoreEntryPoint entryPoint;
 
-void setup() {
+void setup()
+{
   entryPoint.init(BUILD);
   attachInterrupt(digitalPinToInterrupt(entryPoint.getInt1Pin()), int1ISR, RISING);
 }
 
-void loop() {
+void loop()
+{
   entryPoint.loop();
 }
 

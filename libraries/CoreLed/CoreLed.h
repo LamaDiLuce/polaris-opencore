@@ -3,10 +3,10 @@
 #include <Arduino.h>
 
 #include "CoreCommon.h"
-#include "CoreSettings.h"
 #include "CoreLogging.h"
+#include "CoreSettings.h"
 
-//LED RGBW
+// LED RGBW
 #define PIN_RED 3
 #define PIN_GREEN 4
 #define PIN_BLUE 5
@@ -24,14 +24,14 @@
 class CoreLed
 {
 public:
-  //Constructor
+  // Constructor
   CoreLed();
-  //Init
-  void init(CoreSettings *cSet);
-  //Process loop
-  void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus, bool &rNeedArm,
-            bool &rNeedDisarm, NeedBlinkRecharge &rNeedBlinkRecharge);
-  //Tools
+  // Init
+  void init(CoreSettings* cSet);
+  // Process loop
+  void loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool& rNeedArm, bool& rNeedDisarm,
+            NeedBlinkRecharge& rNeedBlinkRecharge);
+  // Tools
   void setColor(int colorSetId, bool save);
   void setGradientColor(int red, int green, int blue, int white);
   void changeColor(int colorSetId);
@@ -66,6 +66,5 @@ private:
 
   String decodeColorSetId(int colorSetId);
   int setColorDelta(int color);
-  CoreSettings *moduleSettings;
-
+  CoreSettings* moduleSettings;
 };

@@ -2,15 +2,15 @@
 
 #include <Arduino.h>
 #include <Audio.h>
-#include <Wire.h>
-#include <SPI.h>
 #include <SD.h>
+#include <SPI.h>
 #include <SerialFlash.h>
+#include <Wire.h>
 
-#include "CoreLogging.h"
 #include "CoreCommon.h"
+#include "CoreLogging.h"
 
-//Flash
+// Flash
 #define CS_PIN 10
 #define SI_PIN 11
 #define SO_PIN 12
@@ -28,42 +28,41 @@
 
 class CoreAudio
 {
-  public:
-    //Costructor
-    CoreAudio();
-    //Init
-    void init();
-    //Process loop
-    void loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus, bool &rNeedArm, bool &rNeedDisarm);
-    //Commands
-    void arm();
-    void disarm();
-    void beep();
-    
-  private:
-    AudioSynthWaveformSine soundSine;
-    AudioPlaySerialflashRaw soundPlayFlashRaw;
-    AudioPlaySerialflashRaw soundPlayFlashFXRaw;
-    AudioMixer4 mainMixer;
-    AudioOutputAnalog outputDac;
-    AudioConnection* patchSineMixer = nullptr;
-    AudioConnection* patchFlashMixer = nullptr;
-    AudioConnection* patchFlashFXMixer = nullptr;
+public:
+  // Costructor
+  CoreAudio();
+  // Init
+  void init();
+  // Process loop
+  void loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool& rNeedArm, bool& rNeedDisarm);
+  // Commands
+  void arm();
+  void disarm();
+  void beep();
 
-    AudioConnection* patchMixerDac = nullptr;
+private:
+  AudioSynthWaveformSine soundSine;
+  AudioPlaySerialflashRaw soundPlayFlashRaw;
+  AudioPlaySerialflashRaw soundPlayFlashFXRaw;
+  AudioMixer4 mainMixer;
+  AudioOutputAnalog outputDac;
+  AudioConnection* patchSineMixer = nullptr;
+  AudioConnection* patchFlashMixer = nullptr;
+  AudioConnection* patchFlashFXMixer = nullptr;
 
-    SerialFlashFile file;
+  AudioConnection* patchMixerDac = nullptr;
 
-    bool swinging = false;
-    bool changeColorStarted = false; 
-    Status status = Status::disarmed;
+  SerialFlashFile file;
 
-    void clash();
-    void swing();
-    void checkHum();
-    void checkArming();
-    void checkDisarming();
-    void changeColorMode();
-    void checkPowerAmp();
-    
+  bool swinging = false;
+  bool changeColorStarted = false;
+  Status status = Status::disarmed;
+
+  void clash();
+  void swing();
+  void checkHum();
+  void checkArming();
+  void checkDisarming();
+  void changeColorMode();
+  void checkPowerAmp();
 };
