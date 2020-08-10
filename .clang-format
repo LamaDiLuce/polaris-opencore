@@ -1,0 +1,8 @@
+﻿---
+BasedOnStyle: Microsoft
+AlignEscapedNewlines: Left
+PointerAlignment: Left
+IndentWidth: 2
+AlwaysBreakTemplateDeclarations: Yes
+SpaceAfterTemplateKeyword: false
+...

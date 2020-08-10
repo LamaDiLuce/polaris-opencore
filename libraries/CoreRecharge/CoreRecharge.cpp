@@ -1,6 +1,6 @@
 #include "CoreRecharge.h"
 
-//Costructor
+// Costructor
 CoreRecharge::CoreRecharge()
 {
 }
@@ -9,81 +9,80 @@ CoreRecharge::CoreRecharge()
  * Public Methods
  */
 
-//Init
+// Init
 void CoreRecharge::init()
 {
-    pinMode(CHARGE_PIN, INPUT);
-    pinMode(STANDBY_PIN, INPUT);
-    pinMode(USB_PIN, INPUT);
+  pinMode(CHARGE_PIN, INPUT);
+  pinMode(STANDBY_PIN, INPUT);
+  pinMode(USB_PIN, INPUT);
 }
 
-//Checking if recharge is active
+// Checking if recharge is active
 NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
 {
-    NeedBlinkRecharge result = {false, 0};
+  NeedBlinkRecharge result = {false, 0};
 
-    if (digitalRead(USB_PIN) == HIGH)
+  if (digitalRead(USB_PIN) == HIGH)
+  {
+    if (currentStatus == Status::disarmed)
     {
-        if (currentStatus == Status::disarmed)
-        {
-            currentStatus = Status::disarmedInRecharge;
-            result.chargeSequence = true;
-            time = millis();
-        }
-
-        if (currentStatus == Status::disarmedInRecharge)
-        {
-            if (digitalRead(CHARGE_PIN) == HIGH)
-            {
-                if (millis() - time > BLINK_RECHARGE_STATUS_TIME)
-                {
-                    CoreLogging::writeParamString("Is Charge Pin High", "YES");
-                    CoreLogging::writeParamLong("Recharging", millis() - time);
-                    result.chargeSequence = false;
-                    result.needRecharge = true;
-                    result.colorRecharge = RECHARGE_COLOR;
-                    time = millis();
-                }
-            }
-
-            if (digitalRead(STANDBY_PIN) == HIGH)
-            {
-                if (millis() - time > BLINK_RECHARGED_STATUS_TIME)
-                {
-                    CoreLogging::writeParamString("Is StandBy Pin High", "YES");
-                    CoreLogging::writeParamLong("Recharged", millis() - time);
-                    result.chargeSequence = false;
-                    result.needRecharge = true;
-                    result.colorRecharge = RECHARGED_COLOR;
-                    time = millis();
-                }
-            }
-        }
-    }
-    else
-    {
-        if (currentStatus == Status::disarmedInRecharge)
-        {
-            currentStatus = Status::disarmed;
-            time = 0;
-        }
+      currentStatus = Status::disarmedInRecharge;
+      result.chargeSequence = true;
+      time = millis();
     }
 
-    return result;
+    if (currentStatus == Status::disarmedInRecharge)
+    {
+      if (digitalRead(CHARGE_PIN) == HIGH)
+      {
+        if (millis() - time > BLINK_RECHARGE_STATUS_TIME)
+        {
+          CoreLogging::writeParamString("Is Charge Pin High", "YES");
+          CoreLogging::writeParamLong("Recharging", millis() - time);
+          result.chargeSequence = false;
+          result.needRecharge = true;
+          result.colorRecharge = RECHARGE_COLOR;
+          time = millis();
+        }
+      }
+
+      if (digitalRead(STANDBY_PIN) == HIGH)
+      {
+        if (millis() - time > BLINK_RECHARGED_STATUS_TIME)
+        {
+          CoreLogging::writeParamString("Is StandBy Pin High", "YES");
+          CoreLogging::writeParamLong("Recharged", millis() - time);
+          result.chargeSequence = false;
+          result.needRecharge = true;
+          result.colorRecharge = RECHARGED_COLOR;
+          time = millis();
+        }
+      }
+    }
+  }
+  else
+  {
+    if (currentStatus == Status::disarmedInRecharge)
+    {
+      currentStatus = Status::disarmed;
+      time = 0;
+    }
+  }
+
+  return result;
 }
 
-//Looping status
-void CoreRecharge::loop(Status &rStatus, NeedBlinkRecharge &rNeedBlinkRecharge)
+// Looping status
+void CoreRecharge::loop(Status& rStatus, NeedBlinkRecharge& rNeedBlinkRecharge)
 {
-    currentStatus = rStatus;
-    currentNeedBlinkRechargeStatus = rNeedBlinkRecharge;
+  currentStatus = rStatus;
+  currentNeedBlinkRechargeStatus = rNeedBlinkRecharge;
 
-    if ((currentStatus == Status::disarmed) ||
-        (currentStatus == Status::disarmedInRecharge))
-    {
-        currentNeedBlinkRechargeStatus = needBlinkRecharge();
-    }
+  if ((currentStatus == Status::disarmed) || (currentStatus == Status::disarmedInRecharge))
+  {
+    currentNeedBlinkRechargeStatus = needBlinkRecharge();
+  }
 
-    rStatus = currentStatus;
-    rNeedBlinkRecharge = currentNeedBlinkRechargeStatus;
+  rStatus = currentStatus;
+  rNeedBlinkRecharge = currentNeedBlinkRechargeStatus;
 }
