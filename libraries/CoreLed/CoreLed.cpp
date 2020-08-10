@@ -4,69 +4,18 @@ CoreLed::CoreLed()
 {
 }
 
-void CoreLed::init()
+void CoreLed::init(CoreSettings *cSet)
 {
-  //set up temporary static colors
-  //temporary to be moved to settings module and only used if no settings file or reset
-  //turning the saber off will loose use amended settings until we have a non-volatile settings
-  loadDefaultColors();
-  //temporary 
-  
+  moduleSettings=cSet;
+  moduleSettings->init();
+
   pinMode(PIN_RED, OUTPUT);
   pinMode(PIN_GREEN, OUTPUT);
   pinMode(PIN_BLUE, OUTPUT);
   pinMode(PIN_WHITE, OUTPUT);
 
-  getCurrentColorSet();
-
   turnOff();
 }
-//these functions to be implmented in non-volatile settings module
-void CoreLed::loadDefaultColors()
-{
-  colorSet[RED]    = {255, 0, 0, 0};      //0 RED
-  colorSet[GREEN]  = {0, 255, 0, 0};      //1 GREEN
-  colorSet[BLUE]   = {0, 0, 255, 0};      //2 BLUE
-  colorSet[YELLOW] = {100, 255, 0, 60};   //3 YELLOW
-  colorSet[ACQUA]  = {0, 255, 240, 80};   //4 ACQUA
-  colorSet[PURPLE] = {35, 10, 255, 10};   //5 PURPLE
-  colorSet[ORANGE] = {150, 255, 0, 20};   //6 ORANGE
-  colorSet[WHITE]  = {25, 170, 150, 255}; //7 WHITE
-  colorSet[OFF]= {0, 0, 0, 0};            //8 OFF
-
-  clashSet[RED] = {25, 170, 150, 255}; 
-  clashSet[GREEN] = {25, 170, 150, 255}; 
-  clashSet[BLUE] = {25, 170, 150, 255}; 
-  clashSet[YELLOW] = {25, 170, 150, 255}; 
-  clashSet[ACQUA] = {25, 170, 150, 255}; 
-  clashSet[PURPLE] = {25, 170, 150, 255}; 
-  clashSet[ORANGE] = {25, 170, 150, 255}; 
-  clashSet[WHITE] = {0, 255, 240, 80};    //WHITE flashes ACQUA 
-  clashSet[OFF] = {0, 0, 0, 0};
-}
-int CoreLed::getCurrentColorSetId()
-{ if (EEPROM.read(0) == CHECK_VALUE)
-  {
-    return EEPROM.read(REG_COLORSET);
-  }
-  else
-  { setCurrentColorSet(BLUE);
-    return BLUE;
-  }
-}
-ColorLed CoreLed::getMainColor(int bank) const
-{ return colorSet[bank];
-}
-ColorLed CoreLed::getClashColor(int bank) const
-{ return clashSet[bank];
-}
-void CoreLed::setMainColor(int bank, ColorLed cc)
-{ colorSet[bank]=cc;
-}
-void CoreLed::setClashColor(int bank, ColorLed cc)
-{ clashSet[bank]=cc;
-}
-
 String CoreLed::decodeColorSetId(int colorSetId)
 {
     String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
@@ -76,31 +25,26 @@ String CoreLed::decodeColorSetId(int colorSetId)
 
     return OFF;
 }
-
 void CoreLed::getCurrentColorSet()
 {
-    currentColorSetId = getCurrentColorSetId();
-    currentColorSet = colorSet[currentColorSetId];
+    currentColorSetId = moduleSettings->getActiveBank();
+    currentColorSet =  moduleSettings->getMainColor(currentColorSetId); //colorSet[currentColorSetId];
     currentChangeColorSetId = currentColorSetId;
     
     //clashColorSetId = CLASH_COLOR_FOR_NO_WHITE;
-    clashColorSet = clashSet[currentColorSetId];
+    clashColorSet = moduleSettings->getClashColor(currentColorSetId); //clashSet[currentColorSetId];
 
     CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
 }
-
 void CoreLed::setCurrentColorSet(int colorSetId)
-{
-    CoreLogging::writeLine("Saving colorset...");
-    EEPROM.write(REG_COLORSET, colorSetId);
-    EEPROM.write(REG_CHECK, CHECK_VALUE);
-
-    getCurrentColorSet();
+{ CoreLogging::writeLine("Saving colorset...");
+  moduleSettings->setActiveBank(colorSetId);
+  getCurrentColorSet();
 }
 
 void CoreLed::changeColor(int colorSetId)
 {
-  changeColor(colorSet[colorSetId]);
+  changeColor(moduleSettings->getMainColor(colorSetId));
   if (colorSetId != OFF)
   {
     CoreLogging::write("Change color: ");
@@ -219,9 +163,9 @@ void CoreLed::clash()
 {
     CoreLogging::writeLine("Clash:");
     CoreLogging::writeParamString("Color Set", decodeColorSetId(currentColorSetId));
-    changeColor(clashSet[currentColorSetId]);
+    changeColor(moduleSettings->getClashColor(currentColorSetId));
     delay(CLASH_TIME);
-    changeColor(colorSet[currentColorSetId]);
+    changeColor(moduleSettings->getMainColor(currentColorSetId));
 }
 
 void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
@@ -288,12 +232,12 @@ void CoreLed::loop(bool &rNeedSwing, bool &rNeedClash, Status &rStatus,
         CoreLogging::writeParamString("Led", "NeedArm");
         CoreLogging::writeParamStatus(currentStatus);
         if (currentStatus == Status::armingWithChangeColor)
-        {
-            setCurrentColorSet(currentChangeColorSetId);
+        { 
+          setCurrentColorSet(currentChangeColorSetId);
         }
         else
         { //refresh actual color in case it has been changed via serial port command
-          currentColorSet=colorSet[currentColorSetId];
+          getCurrentColorSet();
         }
         fadeIn();
         rNeedArm = false;

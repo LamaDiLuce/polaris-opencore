@@ -10,6 +10,7 @@
 #include "CoreSensor.h"
 #include "CoreLed.h"
 #include "CoreRecharge.h"
+#include "CoreSettings.h"
 #include "CoreComms.h"
 
 class CoreEntryPoint
@@ -35,6 +36,7 @@ private:
     CoreLed ledModule;
     CoreRecharge rechargeModule;
     CoreComms commsModule;
+    CoreSettings settingsModule;
     Requests request;
 
     //STATUS

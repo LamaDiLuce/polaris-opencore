@@ -13,13 +13,17 @@ void CoreEntryPoint::init(String pBuild)
     commsModule.init(pBuild);
 
     audioModule.init();
+    settingsModule.init();
     sensorModule.init();
-    ledModule.init();
+    
+    CoreSettings *setPtr;
+    setPtr = &settingsModule;    
+    ledModule.init(setPtr);
     rechargeModule.init();
 
-    CoreLed *ptr;
-    ptr = &ledModule;
-    commsModule.setModule(ptr);
+    CoreLed *ledPtr;
+    ledPtr = &ledModule;
+    commsModule.setModule(ledPtr, setPtr);
 }
 
 //Process loop
@@ -29,12 +33,18 @@ void CoreEntryPoint::loop()
                       needArmEvent, horizontalPosition, needDisarmEvent);
     audioModule.loop(needSwingEvent, needClashEvent, status, needArmEvent, needDisarmEvent);
     rechargeModule.loop(status, needBlinkRechargeEvent);
+
     ledModule.loop(needSwingEvent, needClashEvent, status,
                    needArmEvent, needDisarmEvent, needBlinkRechargeEvent);
-
     releaseStatus();
 
     commsModule.loop();
+
+    //if we are out of needBlinkRechargeEvent and communication mode is not normal then save the settings
+    if((status!=Status::disarmedInRecharge) && (commsModule.getMode()!=MODE_NORMAL))
+    { settingsModule.saveToStore();
+      commsModule.setMode(MODE_NORMAL);
+    }
 }
 
 void CoreEntryPoint::releaseStatus()

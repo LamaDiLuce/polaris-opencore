@@ -5,7 +5,6 @@
 CoreComms::CoreComms()
 {
 }
-
 //Init
 void CoreComms::init(String pBuild)
 {
@@ -17,9 +16,9 @@ void CoreComms::init(String pBuild)
   CoreLogging::writeParamString("Serial Number", serial);
 
 }
-void CoreComms::setModule(CoreLed *cled)
-{ //temporary LED module, will pass settings module once we have non-volatile module
-  ledmodule = cled;
+void CoreComms::setModule(CoreLed *cled, CoreSettings *cSet)
+{ ledmodule = cled;
+  setmodule = cSet;
 }
 
 //Process loop
@@ -145,20 +144,22 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   else if (pIncomingMessage.startsWith("B="))
   { char i=pIncomingMessage.charAt(2);
     if((i>='0') && (i<='7'))
-    { ledmodule->setCurrentColorSet(i-48);
+    { setmodule->setActiveBank(i-48);
       out="OK "+pIncomingMessage;
     }
   }
   else if (pIncomingMessage=="B?")
-  { out="B="+String(ledmodule->getCurrentColorSetId());
+  { out="B="+String(setmodule->getActiveBank());
   }
   else if(pIncomingMessage=="RESET")
-  { ledmodule->loadDefaultColors();
+  { //ledmodule->loadDefaultColors();
+    setmodule->loadDefaults();
     out="OK RESET";
   }
   else if(pIncomingMessage=="SAVE")
   { //@TODO: call non-volatile settings module to save all settings to non-volatile storage
     commsMode=MODE_NORMAL;
+    setmodule->saveToStore();
     out="OK SAVE";
   }
   
@@ -176,24 +177,28 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
 }
 
 ColorLed CoreComms::getMainColor(int bank) const
-{ return ledmodule->getMainColor(bank);
+{ //return ledmodule->getMainColor(bank);
+  return setmodule->getMainColor(bank);
 }
 ColorLed CoreComms::getClashColor(int bank) const
-{ return ledmodule->getClashColor(bank);
+{ //return ledmodule->getClashColor(bank);
+  return setmodule->getClashColor(bank);
 }
 void CoreComms::setMainColor(int bank, String colorString)
 { setMainColor(bank, stringToColorLed(colorString));
 }
 void CoreComms::setMainColor(int bank, const ColorLed& ledColor)
 { //call settings module
-  ledmodule->setMainColor(bank, ledColor);
+  //ledmodule->setMainColor(bank, ledColor);
+  setmodule->setMainColor(bank, ledColor);
 }
 void CoreComms::setClashColor(int bank, String colorString)
 { setClashColor(bank, stringToColorLed(colorString));
 }
 void CoreComms::setClashColor(int bank, const ColorLed& ledColor)
 { //call settings module
- ledmodule->setClashColor(bank, ledColor);
+  //ledmodule->setClashColor(bank, ledColor);
+  setmodule->setClashColor(bank, ledColor);
 }
 ColorLed CoreComms::stringToColorLed(String sColor)
 { ColorLed cc = {0,0,0,0};
@@ -278,10 +283,11 @@ String CoreComms::colorLedToString(ColorLed cColor, boolean bHex)
 }
 
 byte CoreComms::getMode()
-{ 
-  return commsMode;
+{ return commsMode;
 }
-
+void CoreComms::setMode(byte cmode)
+{ commsMode=cmode;
+}
 void CoreComms::printDevInfo()
 {
       Serial.write(STX);
@@ -308,13 +314,21 @@ void CoreComms::printDevInfo()
           Serial.print(" (");
           Serial.print(filesize);
           Serial.print(")\n");
+
+          Serial.print("settings getfilesize: ");
+          Serial.print(setmodule->getFileSize(filename));
+          Serial.print(" bytes\n");
+
         }
         else
         {
           break; // no more files
         }
       }
-
+      Serial.println("config.ini ------------------------------");
+      setmodule->printFile("config.ini", true);
+      Serial.println("\n-----------------------------------------");
+      
       Serial.println("Read Chip Identification:");
       SerialFlash.readID(buf);
       Serial.print("  JEDEC ID:     ");
