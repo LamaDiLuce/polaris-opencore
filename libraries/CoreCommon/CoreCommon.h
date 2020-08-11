@@ -1,6 +1,6 @@
 #pragma once
 
-static constexpr bool DEBUG = false;
+static constexpr bool DEBUG = true;
 
 enum class Status
 {

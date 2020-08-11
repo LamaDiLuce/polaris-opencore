@@ -38,8 +38,7 @@ private:
   CoreSettings* setmodule;
 
   // Hardware Serial Numbers
-  void kinetisUID(uint32_t* uid);
-  const char* kinetisUID(void);
+  String getKinetisUID();
 
   void processIncomingMessage(const String& pIncomingMessage);
   void printDevInfo();

@@ -1,18 +1,23 @@
 #include "CoreSettings.h"
 
+static constexpr const char* configFilename = "config.ini";
+
 CoreSettings::CoreSettings()
 {
 }
+
 void CoreSettings::init()
 {
   loadDefaults();
   readFromStore();
 }
+
 void CoreSettings::loadDefaults()
 {
   liveSettings.activeBank = BLUE;
   loadDefaultColors();
 }
+
 void CoreSettings::loadDefaultColors()
 {
   liveSettings.version = CURRENTVERSION;
@@ -37,17 +42,18 @@ void CoreSettings::loadDefaultColors()
   liveSettings.clashSet[WHITE] = {0, 255, 240, 80}; // WHITE flashes ACQUA
   liveSettings.clashSet[OFF] = {0, 0, 0, 0};
 }
+
 void CoreSettings::readFromStore()
 {
   if (!SerialFlash.ready())
   {
-    CoreLogging::writeLine("ERROR, readFromStore, SeriaFlash Not Ready");
+    CoreLogging::writeLine("CoreSettings: ERROR, readFromStore, SeriaFlash Not Ready");
     return;
   }
 
   if (!SerialFlash.exists(configFilename))
   {
-    CoreLogging::writeLine(String(configFilename) + " does not exist.");
+    CoreLogging::writeLine("CoreSettings: Config file %s does not exist.", configFilename);
     loadDefaults();
     return;
   }
@@ -62,7 +68,7 @@ void CoreSettings::readFromStore()
   DeserializationError error = deserializeJson(doc, buffer);
   if (error)
   {
-    CoreLogging::writeLine("Failed to read file, using default configuration");
+    CoreLogging::writeLine("CoreSettings: Failed to read file, using default configuration");
     loadDefaults();
     return;
   }
@@ -97,7 +103,7 @@ void CoreSettings::saveToStore()
 {
   if (!SerialFlash.ready())
   {
-    CoreLogging::writeLine("ERROR, saveToStore, SeriaFlash Not Ready");
+    CoreLogging::writeLine("CoreSettings: ERROR, saveToStore, SeriaFlash Not Ready");
     return;
   }
 
@@ -105,7 +111,7 @@ void CoreSettings::saveToStore()
   {
     if (!SerialFlash.createErasable(configFilename, 65535))
     {
-      CoreLogging::writeLine("ERROR, savetoStore, unable to create " + String(configFilename));
+      CoreLogging::writeLine("CoreSettings: ERROR, savetoStore, unable to create file %s", configFilename);
       return;
     }
   }
@@ -136,23 +142,24 @@ void CoreSettings::saveToStore()
   // uint32_t sz = serializeJson(doc, buffer);    //<-- writes a smaller file, but the block size is 64K anyway
   if (sz == 0)
   {
-    CoreLogging::writeLine("Error, saveToStore, Failed to write to file");
+    CoreLogging::writeLine("CoreSettings: Error, saveToStore, Failed to write to file");
   }
   file.write(buffer, sz);
 
   // Close the file
   file.close();
 }
+
 void CoreSettings::printFile(const char* filen, boolean ignore)
 {
   if (!SerialFlash.ready())
   {
-    Serial.print("ERROR, printFile, SeriaFlash Not Ready\n");
+    CoreLogging::writeLine("CoreSettings: ERROR, printFile, SeriaFlash Not Ready");
     return;
   }
   if (!SerialFlash.exists(filen))
   {
-    Serial.print("ERROR, printFile, " + String(filen) + " does not exist\n");
+    CoreLogging::writeLine("CoreSettings: ERROR, printFile, %s does not exist", filen);
     return;
   }
   char buf[1];
@@ -167,18 +174,19 @@ void CoreSettings::printFile(const char* filen, boolean ignore)
   }
   file.close();
 }
+
 int32_t CoreSettings::getFileSize(const char* filen)
 {
   int32_t sz = -88;
 
   if (!SerialFlash.ready())
   {
-    CoreLogging::writeLine("ERROR, SeriaFlash Not Ready");
+    CoreLogging::writeLine("CoreSettings: ERROR, SeriaFlash Not Ready");
     return -99;
   }
   if (!SerialFlash.exists(filen))
   {
-    CoreLogging::writeLine("ERROR, file " + String(filen) + " does not exist");
+    CoreLogging::writeLine("CoreSettings: ERROR, file %s does not exist", filen);
     return -1;
   }
   SerialFlashFile file = SerialFlash.open(filen);
@@ -193,6 +201,7 @@ void CoreSettings::setActiveBank(int iBank)
   liveSettings.activeBank = iBank;
   saveToStore();
 }
+
 int CoreSettings::getActiveBank()
 {
   return liveSettings.activeBank;
@@ -202,14 +211,17 @@ ColorLed CoreSettings::getMainColor(int bank)
 {
   return liveSettings.colorSet[bank];
 }
+
 ColorLed CoreSettings::getClashColor(int bank)
 {
   return liveSettings.clashSet[bank];
 }
+
 void CoreSettings::setMainColor(int bank, ColorLed cc)
 {
   liveSettings.colorSet[bank] = cc;
 }
+
 void CoreSettings::setClashColor(int bank, ColorLed cc)
 {
   liveSettings.clashSet[bank] = cc;

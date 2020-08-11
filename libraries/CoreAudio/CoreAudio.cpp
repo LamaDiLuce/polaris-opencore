@@ -24,14 +24,14 @@ void CoreAudio::init()
   digitalWrite(POWER_AMP_PIN, LOW);
   // digitalWrite(POWER_AMP_PIN, HIGH);
 
-  CoreLogging::write("SerialFlash connecting: ");
+  CoreLogging::writeLine("CoreAudio: SerialFlash connecting: ");
   if (!SerialFlash.begin(CS_PIN))
   {
-    CoreLogging::writeLine("Error");
+    CoreLogging::writeLine("CoreAudio: Serial connection error");
   }
   else
   {
-    CoreLogging::writeLine("OK");
+    CoreLogging::writeLine("CoreAudio: Serial connection OK");
   }
 
   patchSineMixer = new AudioConnection(soundSine, 0, mainMixer, CHANNEL_SINE);
@@ -130,7 +130,7 @@ void CoreAudio::checkArming()
     if (!soundPlayFlashRaw.isPlaying())
     {
       status = Status::armed;
-      CoreLogging::writeLine("Armed");
+      CoreLogging::writeLine("CoreAudio: Armed");
     }
   }
 }
@@ -142,7 +142,7 @@ void CoreAudio::checkDisarming()
     if (!soundPlayFlashRaw.isPlaying())
     {
       status = Status::disarmed;
-      CoreLogging::writeLine("Disarmed");
+      CoreLogging::writeLine("CoreAudio: Disarmed");
     }
   }
 }
