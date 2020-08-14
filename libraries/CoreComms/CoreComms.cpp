@@ -198,6 +198,16 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
       }
     }
   }
+  else if (pIncomingMessage.equalsIgnoreCase("P=0"))
+  {
+    ledmodule->changeColor({0,0,0,0});
+    out="OK, P=0";    
+  }
+  else if (pIncomingMessage.startsWith("P=") || pIncomingMessage.startsWith("p="))
+  {
+    ledmodule->changeColor(stringToColorLed(pIncomingMessage.substring(2)));
+    out="OK, "+pIncomingMessage;    
+  }
   else if (pIncomingMessage.startsWith("B="))
   {
     char i = pIncomingMessage.charAt(2);
@@ -237,6 +247,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
       Serial.print(out + char(LF));
     }
   }
+  
 }
 
 ColorLed CoreComms::stringToColorLed(String sColor)
