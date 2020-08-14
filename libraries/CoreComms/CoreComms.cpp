@@ -86,12 +86,17 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     {
       if ((pIncomingMessage.charAt(0) == 'C') || (pIncomingMessage.charAt(0) == 'c'))
       {
-        setMainColor(i - 48, pIncomingMessage.substring(3));
+        setmodule->setMainColor(i - 48, stringToColorLed(pIncomingMessage.substring(3)));
         out = "OK " + pIncomingMessage;
       }
       else if ((pIncomingMessage.charAt(0) == 'F') || (pIncomingMessage.charAt(0) == 'f'))
       {
-        setClashColor(i - 48, pIncomingMessage.substring(3));
+        setmodule->setClashColor(i - 48, stringToColorLed(pIncomingMessage.substring(3)));
+        out = "OK " + pIncomingMessage;
+      }
+      else if ((pIncomingMessage.charAt(0) == 'W') || (pIncomingMessage.charAt(0) == 'w'))
+      {
+        setmodule->setSwingColor(i - 48, stringToColorLed(pIncomingMessage.substring(3)));
         out = "OK " + pIncomingMessage;
       }
     }
@@ -103,19 +108,27 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     {
       if (pIncomingMessage.charAt(0) == 'C')
       {
-        out = "C" + String(i - 48) + "=" + colorLedToString(getMainColor(i - 48), true); // ascii 48 = 0
+        out = "C" + String(i - 48) + "=" + colorLedToString(setmodule->getMainColor(i - 48), true); // ascii 48 = 0
       }
       else if (pIncomingMessage.charAt(0) == 'c')
       {
-        out = "c" + String(i - 48) + "=" + colorLedToString(getMainColor(i - 48), false);
+        out = "c" + String(i - 48) + "=" + colorLedToString(setmodule->getMainColor(i - 48), false);
       }
       else if (pIncomingMessage.charAt(0) == 'F')
       {
-        out = "F" + String(i - 48) + "=" + colorLedToString(getClashColor(i - 48), true);
+        out = "F" + String(i - 48) + "=" + colorLedToString(setmodule->getClashColor(i - 48), true);
       }
       else if (pIncomingMessage.charAt(0) == 'f')
       {
-        out = "f" + String(i - 48) + "=" + colorLedToString(getClashColor(i - 48), false);
+        out = "f" + String(i - 48) + "=" + colorLedToString(setmodule->getClashColor(i - 48), false);
+      }
+      else if (pIncomingMessage.charAt(0) == 'W')
+      {
+        out = "W" + String(i - 48) + "=" + colorLedToString(setmodule->getSwingColor(i - 48), true);
+      }
+      else if (pIncomingMessage.charAt(0) == 'w')
+      {
+        out = "w" + String(i - 48) + "=" + colorLedToString(setmodule->getSwingColor(i - 48), false);
       }
     }
   }
@@ -123,7 +136,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   {
     for (int i = 0; i <= 7; i++)
     {
-      out += "C" + String(i) + "=" + colorLedToString(getMainColor(i), true);
+      out += "C" + String(i) + "=" + colorLedToString(setmodule->getMainColor(i), true);
       if (i != 7)
       {
         out += "\n";
@@ -134,7 +147,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   {
     for (int i = 0; i <= 7; i++)
     {
-      out += "c" + String(i) + "=" + colorLedToString(getMainColor(i), false);
+      out += "c" + String(i) + "=" + colorLedToString(setmodule->getMainColor(i), false);
       if (i != 7)
       {
         out += "\n";
@@ -145,7 +158,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   {
     for (int i = 0; i <= 7; i++)
     {
-      out += "F" + String(i) + "=" + colorLedToString(getClashColor(i), true);
+      out += "F" + String(i) + "=" + colorLedToString(setmodule->getClashColor(i), true);
       if (i != 7)
       {
         out += "\n";
@@ -156,7 +169,29 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   {
     for (int i = 0; i <= 7; i++)
     {
-      out += "f" + String(i) + "=" + colorLedToString(getClashColor(i), false);
+      out += "f" + String(i) + "=" + colorLedToString(setmodule->getClashColor(i), false);
+      if (i != 7)
+      {
+        out += "\n";
+      }
+    }
+  }
+  else if (pIncomingMessage == "W?")
+  {
+    for (int i = 0; i <= 7; i++)
+    {
+      out += "W" + String(i) + "=" + colorLedToString(setmodule->getSwingColor(i), true);
+      if (i != 7)
+      {
+        out += "\n";
+      }
+    }
+  }
+  else if (pIncomingMessage == "w?")
+  {
+    for (int i = 0; i <= 7; i++)
+    {
+      out += "w" + String(i) + "=" + colorLedToString(setmodule->getSwingColor(i), false);
       if (i != 7)
       {
         out += "\n";
@@ -204,32 +239,6 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   }
 }
 
-ColorLed CoreComms::getMainColor(int bank) const
-{
-  return setmodule->getMainColor(bank);
-}
-ColorLed CoreComms::getClashColor(int bank) const
-{
-  return setmodule->getClashColor(bank);
-}
-void CoreComms::setMainColor(int bank, String colorString)
-{
-  setMainColor(bank, stringToColorLed(colorString));
-}
-void CoreComms::setMainColor(int bank, const ColorLed& ledColor)
-{
-  // call settings module
-  setmodule->setMainColor(bank, ledColor);
-}
-void CoreComms::setClashColor(int bank, String colorString)
-{
-  setClashColor(bank, stringToColorLed(colorString));
-}
-void CoreComms::setClashColor(int bank, const ColorLed& ledColor)
-{ // call settings module
-  // ledmodule->setClashColor(bank, ledColor);
-  setmodule->setClashColor(bank, ledColor);
-}
 ColorLed CoreComms::stringToColorLed(String sColor)
 {
   ColorLed cc = {0, 0, 0, 0};
