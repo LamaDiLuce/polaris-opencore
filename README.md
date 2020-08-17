@@ -36,7 +36,7 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 
 ## Features
 
-- RGBW costomization for LED
+- RGBW costomization for the LED
 - No pushbutton required
   - Gestures to arm / disarm
   - Blade color can be selected with a gesture among pre-sets during arming
@@ -49,7 +49,7 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 In order to be able to contributre to this project, compile and upload the FW to your lightsaber, you need to:
 - undestand C++
 - be familiar with Arduino
-- download and installa bunch of software
+- download and install bunch of software
 
 The following guides contain a step by step instructions to be up and running:
 
@@ -62,9 +62,11 @@ The following guides contain a step by step instructions to be up and running:
 ---
 
 ## Contributing
+Any developer who wants to contribute to the project shall propose a completed merge into the master as a significant feature update for a release to the public (just one pull request with all the relevant details).
 
+The changes are first reviewed in terms of coding, compatibility with previous versions and Scintilla SW. If the changes are ok and in line with the purpose of the lightsaber FW, a new release candidate is built.
 
-
+This new release candidate is testes by selected developers and, if all the tests are passed, the master branch is updated and a new official FW version is released.
 
 ---
 
