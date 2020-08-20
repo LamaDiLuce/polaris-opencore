@@ -250,33 +250,6 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   
 }
 
-ColorLed CoreComms::getMainColor(int bank) const
-{
-  return setmodule->getMainColor(bank);
-}
-ColorLed CoreComms::getClashColor(int bank) const
-{
-  return setmodule->getClashColor(bank);
-}
-void CoreComms::setMainColor(int bank, String colorString)
-{
-  setMainColor(bank, stringToColorLed(colorString));
-}
-void CoreComms::setMainColor(int bank, const ColorLed& ledColor)
-{
-  // call settings module
-  setmodule->setMainColor(bank, ledColor);
-}
-void CoreComms::setClashColor(int bank, String colorString)
-{
-  setClashColor(bank, stringToColorLed(colorString));
-}
-void CoreComms::setClashColor(int bank, const ColorLed& ledColor)
-{ // call settings module
-  // ledmodule->setClashColor(bank, ledColor);
-  setmodule->setClashColor(bank, ledColor);
-}
-
 ColorLed CoreComms::stringToColorLed(String sColor)
 {
   ColorLed cc = {0, 0, 0, 0};
