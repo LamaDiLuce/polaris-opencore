@@ -7,7 +7,7 @@
 #include "ArduinoJson.h"
 #include "CoreLogging.h"
 
-#define CURRENTVERSION "2020.02"
+#define CURRENTVERSION "2020.03"
 
 struct SaberSettings
 {
@@ -15,6 +15,7 @@ struct SaberSettings
   int activeBank;
   ColorLed colorSet[9];
   ColorLed clashSet[9];
+  ColorLed swingSet[9];
 };
 
 class CoreSettings
@@ -34,8 +35,10 @@ public:
 
   ColorLed getMainColor(int bank);
   ColorLed getClashColor(int bank);
+  ColorLed getSwingColor(int bank);
   void setMainColor(int bank, ColorLed cc);
   void setClashColor(int bank, ColorLed cc);
+  void setSwingColor(int bank, ColorLed cc);
 
   int32_t getFileSize(const char* filen);
   void printFile(const char* filen, boolean ignore);

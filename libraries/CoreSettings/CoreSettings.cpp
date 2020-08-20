@@ -41,6 +41,16 @@ void CoreSettings::loadDefaultColors()
   liveSettings.clashSet[ORANGE] = {25, 170, 150, 255};
   liveSettings.clashSet[WHITE] = {0, 255, 240, 80}; // WHITE flashes ACQUA
   liveSettings.clashSet[OFF] = {0, 0, 0, 0};
+
+  liveSettings.swingSet[RED] = {128, 0, 0, 255};
+  liveSettings.swingSet[GREEN] = {0, 196, 0, 255};
+  liveSettings.swingSet[BLUE] = {0, 0, 196, 255};
+  liveSettings.swingSet[YELLOW] = {64, 196, 0, 255};
+  liveSettings.swingSet[ACQUA] = {0, 196, 128, 255};
+  liveSettings.swingSet[PURPLE] = {35, 10, 196, 255};
+  liveSettings.swingSet[ORANGE] = {100, 255, 0, 90};
+  liveSettings.swingSet[WHITE] = {0, 0, 128, 255};
+  liveSettings.swingSet[OFF] = {0, 0, 0, 0};
 }
 
 void CoreSettings::readFromStore()
@@ -96,6 +106,11 @@ void CoreSettings::readFromStore()
       liveSettings.clashSet[i].green = doc["bank"][i]["clash"]["green"] | 0;
       liveSettings.clashSet[i].blue = doc["bank"][i]["clash"]["blue"] | 0;
       liveSettings.clashSet[i].white = doc["bank"][i]["clash"]["white"] | 0;
+
+      liveSettings.swingSet[i].red = doc["bank"][i]["swing"]["red"] | 0;
+      liveSettings.swingSet[i].green = doc["bank"][i]["swing"]["green"] | 0;
+      liveSettings.swingSet[i].blue = doc["bank"][i]["swing"]["blue"] | 0;
+      liveSettings.swingSet[i].white = doc["bank"][i]["swing"]["white"] | 0;
     }
   }
 }
@@ -134,6 +149,11 @@ void CoreSettings::saveToStore()
     doc["bank"][i]["clash"]["green"] = liveSettings.clashSet[i].green;
     doc["bank"][i]["clash"]["blue"] = liveSettings.clashSet[i].blue;
     doc["bank"][i]["clash"]["white"] = liveSettings.clashSet[i].white;
+
+    doc["bank"][i]["swing"]["red"] = liveSettings.swingSet[i].red;
+    doc["bank"][i]["swing"]["green"] = liveSettings.swingSet[i].green;
+    doc["bank"][i]["swing"]["blue"] = liveSettings.swingSet[i].blue;
+    doc["bank"][i]["swing"]["white"] = liveSettings.swingSet[i].white;
   }
 
   // Serialize JSON to file
@@ -217,6 +237,11 @@ ColorLed CoreSettings::getClashColor(int bank)
   return liveSettings.clashSet[bank];
 }
 
+ColorLed CoreSettings::getSwingColor(int bank)
+{
+  return liveSettings.swingSet[bank];
+}
+
 void CoreSettings::setMainColor(int bank, ColorLed cc)
 {
   liveSettings.colorSet[bank] = cc;
@@ -225,4 +250,9 @@ void CoreSettings::setMainColor(int bank, ColorLed cc)
 void CoreSettings::setClashColor(int bank, ColorLed cc)
 {
   liveSettings.clashSet[bank] = cc;
+}
+
+void CoreSettings::setSwingColor(int bank, ColorLed cc)
+{
+  liveSettings.swingSet[bank] = cc;
 }

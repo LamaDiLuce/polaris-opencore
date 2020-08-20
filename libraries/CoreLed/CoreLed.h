@@ -40,6 +40,8 @@ public:
   void fadeOut();
   void fadeIn();
   void clash();
+  void swingOn();
+  void swingOff();
   void blink();
   void changeColorBlink();
   void blinkRecharge(NeedBlinkRecharge needBlinkRecharge);

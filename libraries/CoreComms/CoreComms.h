@@ -43,14 +43,6 @@ private:
   void processIncomingMessage(const String& pIncomingMessage);
   void printDevInfo();
 
-  void setMainColor(int bank, String colorString);
-  void setClashColor(int bank, String colorString);
-
-  ColorLed getMainColor(int bank) const;                  // function to be defined in settings module
-  ColorLed getClashColor(int bank) const;                 // function to be defined in settings module
-  void setMainColor(int bank, const ColorLed& ledColor);  // function to be defined in settings module
-  void setClashColor(int bank, const ColorLed& ledColor); // function to be defined in settings module
-
   char hexDigit(int n);
   ColorLed stringToColorLed(String sColor);
   String colorLedToString(ColorLed cColor, boolean bHex);

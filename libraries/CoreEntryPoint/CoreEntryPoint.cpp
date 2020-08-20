@@ -44,6 +44,7 @@ void CoreEntryPoint::loop()
   {
     settingsModule.saveToStore();
     commsModule.setMode(MODE_NORMAL);
+    ledModule.changeColor({0,0,0,0}); //in case preview has been turned on
   }
 }
 

@@ -171,6 +171,21 @@ void CoreLed::clash()
   changeColor(moduleSettings->getMainColor(currentColorSetId));
 }
 
+void CoreLed::swingOn()
+{ 
+  CoreLogging::writeLine("CoreLed:Swing On:");
+  CoreLogging::writeLine("CoreLed: Current color set: %s", decodeColorSetId(currentColorSetId));
+  changeColor(moduleSettings->getSwingColor(currentColorSetId));
+  //delay(CLASH_TIME);
+  //changeColor(moduleSettings->getMainColor(currentColorSetId));
+}
+void CoreLed::swingOff()
+{ 
+  CoreLogging::writeLine("CoreLed:Swing Off:");
+  CoreLogging::writeLine("CoreLed: Current color set: %s", decodeColorSetId(currentColorSetId));
+  changeColor(moduleSettings->getMainColor(currentColorSetId));
+}
+
 void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 {
   if (currentStatus == Status::disarmedInRecharge)
@@ -227,6 +242,17 @@ void CoreLed::loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool& rN
   {
     clash();
     rNeedClash = false;
+  }
+
+  if(rStatus == Status::armed)
+  { if(rNeedSwing)
+    { 
+      swingOn();
+    }
+    else
+    {
+      swingOff();
+    }
   }
 
   if (rNeedArm)
