@@ -9,11 +9,11 @@ CoreComms::CoreComms()
 void CoreComms::init(String pBuild)
 {
   build = pBuild;
-  serial = kinetisUID();
+  serial = getKinetisUID();
 
   Serial.begin(BAUD_RATE); // It needs for PC communication services
-  CoreLogging::writeParamString("Build", build);
-  CoreLogging::writeParamString("Serial Number", serial);
+  CoreLogging::writeLine("CoreComms: Build: %s", build);
+  CoreLogging::writeLine("CoreComms: Serial Number: %s", serial);
 }
 void CoreComms::setModule(CoreLed* cled, CoreSettings* cSet)
 {
@@ -32,7 +32,8 @@ void CoreComms::loop()
     // Any incoming string beginning with a # has a single character # response,
     // and can be used to detect the saber model, so ignore STX if string starts with "#"
     if ((incomingByte == STX) && (incomingMessage.charAt(0) != '#'))
-    { // for future file transfer
+    {
+      // for future file transfer
       incomingMessage = "";
     }
     else if ((incomingByte == ETX) || (incomingByte == LF))
@@ -47,19 +48,11 @@ void CoreComms::loop()
   }
 }
 
-void CoreComms::kinetisUID(uint32_t* uid)
+String CoreComms::getKinetisUID()
 {
-  uid[0] = SIM_UIDMH;
-  uid[1] = SIM_UIDML;
-  uid[2] = SIM_UIDL;
-}
-const char* CoreComms::kinetisUID(void)
-{
-  uint32_t uid[3];
-  static char uidString[27];
-  kinetisUID(uid);
-  sprintf(uidString, "%08lx-%08lx-%08lx", uid[0], uid[1], uid[2]);
-  return uidString;
+  char uidString[32];
+  snprintf(uidString, 32, "%08lx-%08lx-%08lx", SIM_UIDMH, SIM_UIDML, SIM_UIDL);
+  return String(uidString);
 }
 
 void CoreComms::processIncomingMessage(const String& pIncomingMessage)
@@ -84,7 +77,8 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     out = "S=" + serial;
   }
   else if (pIncomingMessage.charAt(2) == '=')
-  { // a set somethign command
+  {
+    // a set somethign command
     // C0=  color 1 = r,g,b,w    or = #0011223344
     // F0=  clash(flash) color 1 = r,g,b,w
     char i = pIncomingMessage.charAt(1);
@@ -211,11 +205,11 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
 }
 
 ColorLed CoreComms::getMainColor(int bank) const
-{ // return ledmodule->getMainColor(bank);
+{
   return setmodule->getMainColor(bank);
 }
 ColorLed CoreComms::getClashColor(int bank) const
-{ // return ledmodule->getClashColor(bank);
+{
   return setmodule->getClashColor(bank);
 }
 void CoreComms::setMainColor(int bank, String colorString)
@@ -223,8 +217,8 @@ void CoreComms::setMainColor(int bank, String colorString)
   setMainColor(bank, stringToColorLed(colorString));
 }
 void CoreComms::setMainColor(int bank, const ColorLed& ledColor)
-{ // call settings module
-  // ledmodule->setMainColor(bank, ledColor);
+{
+  // call settings module
   setmodule->setMainColor(bank, ledColor);
 }
 void CoreComms::setClashColor(int bank, String colorString)

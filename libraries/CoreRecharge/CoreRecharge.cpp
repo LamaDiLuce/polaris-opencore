@@ -37,8 +37,8 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
       {
         if (millis() - time > BLINK_RECHARGE_STATUS_TIME)
         {
-          CoreLogging::writeParamString("Is Charge Pin High", "YES");
-          CoreLogging::writeParamLong("Recharging", millis() - time);
+          CoreLogging::writeLine("CoreRecharge: Is Charge Pin High: YES");
+          CoreLogging::writeLine("CoreRecharge: Recharging, time from blink ms: %d", millis() - time);
           result.chargeSequence = false;
           result.needRecharge = true;
           result.colorRecharge = RECHARGE_COLOR;
@@ -50,8 +50,8 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
       {
         if (millis() - time > BLINK_RECHARGED_STATUS_TIME)
         {
-          CoreLogging::writeParamString("Is StandBy Pin High", "YES");
-          CoreLogging::writeParamLong("Recharged", millis() - time);
+          CoreLogging::writeLine("CoreRecharge: Is StandBy Pin High: YES");
+          CoreLogging::writeLine("CoreRecharge: Recharged, time from blink ms: %d", millis() - time);
           result.chargeSequence = false;
           result.needRecharge = true;
           result.colorRecharge = RECHARGED_COLOR;

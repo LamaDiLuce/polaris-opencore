@@ -7,7 +7,6 @@
 #include "ArduinoJson.h"
 #include "CoreLogging.h"
 
-static constexpr char configFilename[16] = "config.ini";
 #define CURRENTVERSION "2020.02"
 
 struct SaberSettings
