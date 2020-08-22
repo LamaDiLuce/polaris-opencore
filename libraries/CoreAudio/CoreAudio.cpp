@@ -89,9 +89,10 @@ void CoreAudio::clash()
     String clash = "CLASH_" + String(clashId) + "_0.RAW";
     soundPlayFlashFXRaw.play(clash.c_str());
   }
-  else if (status == Status::waitArm || 
-           status == Status::waitArmWithChangeColor || 
-           status == Status::waitArmWithChangeColorNext)
+  else if ((status == Status::waitArm || 
+            status == Status::waitArmWithChangeColor || 
+            status == Status::waitArmWithChangeColorNext) &&
+            !muted)
   {
     beep();
     beep();
