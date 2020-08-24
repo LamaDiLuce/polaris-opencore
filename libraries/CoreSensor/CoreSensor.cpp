@@ -106,15 +106,14 @@ bool CoreSensor::needArm()
       time = millis();
       CoreLogging::writeLine("CoreSensor: Start vertical position...");
     }
-
-    if ((lastIsVerticalPosition) && (isVerticalPosition))
+    valueGyro = abs(PROTOTYPE ? device.readFloatGyroX() : device.readFloatGyroZ());
+    if (lastIsVerticalPosition && 
+        isVerticalPosition &&
+        valueGyro > ARM_THRESHOLD)
     {
-      if (millis() - time > TIME_FOR_ARM)
-      {
-        CoreLogging::writeLine("CoreSensor: Waiting arm...");
-        status = Status::waitArm;
-        time = millis();
-      }
+      CoreLogging::writeLine("CoreSensor: Waiting arm...");
+      status = Status::waitArm;
+      time = millis();
     }
   }
   else if (status == Status::waitArm)

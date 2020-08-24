@@ -16,6 +16,7 @@
 
 // Core
 static constexpr int SWING_THRESHOLD = 90; // AVG of 3 gyro axes
+static constexpr int ARM_THRESHOLD = 300;
 static constexpr float VERTICAL_ACC = 8.0;
 static constexpr float VERTICAL_ARM = -6.0;
 static constexpr float HORIZONTAL_ACC = 0.0;
@@ -53,6 +54,7 @@ private:
   uint8_t dataToWrite = 0;
 
   float valueAccel = 0.0;
+  float valueGyro = 0.0;
   static constexpr float minValue = VERTICAL_ACC - TOLERANCE_ARM;
   static constexpr float maxValue = VERTICAL_ACC + TOLERANCE_ARM;
   static constexpr float minArmValue = VERTICAL_ARM - TOLERANCE_ARM;
