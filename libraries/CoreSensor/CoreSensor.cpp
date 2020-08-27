@@ -108,8 +108,13 @@ bool CoreSensor::needArm()
     }
     if ((lastIsVerticalPosition) && (isVerticalPosition))
     {
-      valueGyro = abs(PROTOTYPE ? device.readFloatGyroX() : device.readFloatGyroZ());
-      if ((millis() - time > TIME_FOR_ARM) && (valueGyro > ARM_THRESHOLD))
+      valueGyroZ = abs(PROTOTYPE ? device.readFloatGyroX() : device.readFloatGyroZ());
+      valueGyroX = abs(PROTOTYPE ? device.readFloatGyroY() : device.readFloatGyroX());
+      valueGyroY = abs(PROTOTYPE ? device.readFloatGyroZ() : device.readFloatGyroY());
+      if ((millis() - time > TIME_FOR_ARM) && 
+           (valueGyroZ > ARM_THRESHOLD_Z) &&
+           (valueGyroX < ARM_THRESHOLD_XY) &&
+           (valueGyroY < ARM_THRESHOLD_XY))
       {
         CoreLogging::writeLine("CoreSensor: Waiting arm...");
         status = Status::waitArm;
