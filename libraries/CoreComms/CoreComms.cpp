@@ -221,6 +221,52 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   {
     out = "B=" + String(setmodule->getActiveBank());
   }
+  else if (pIncomingMessage.equalsIgnoreCase("ERASE="+serial) 
+           || pIncomingMessage.equalsIgnoreCase("ERASE=ALL"))
+  { out ="ERROR, ERASE Not Yet Implemented.";
+    SerialFlash.eraseAll();
+    int i=0;
+    Serial.println("Erasing Serial Flash, this may take 20s to 2 minutes");
+    while (SerialFlash.ready() == false)
+    {
+      // wait, 30 seconds to 2 minutes for most chips
+      if(i==0)
+      {
+        Serial.print("#");
+      }
+      i++;
+      if(i>10)
+      {
+        i=0;
+      }
+    }
+    Serial.print("OK, Now re-load your sound files.\n");
+    Serial.print("OK, Serial Flash Erased.\n");
+  }
+  else if (pIncomingMessage.startsWith("ERASE") || pIncomingMessage.startsWith("erase") )
+  { out="ERROR, ERASE aborted, no security serial no.";
+  }
+  else if (pIncomingMessage.startsWith("r?") || pIncomingMessage.startsWith("R?") )
+  {
+    //read file
+    if(!pIncomingMessage.endsWith(".wav") && !pIncomingMessage.endsWith(".WAV"))
+    { 
+      //if not a binary WAV file send STX and then ETX
+      Serial.print(STX);
+    }
+    char filename[64];
+    pIncomingMessage.substring(2).toCharArray(filename,64);
+    setmodule->printFile(filename, true);
+    if(!pIncomingMessage.endsWith(".wav") && !pIncomingMessage.endsWith(".WAV"))
+    { 
+      //if not a binary WAV file send STX and then ETX
+      Serial.print(ETX);
+    }
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("LIST?"))
+  { 
+    out = listFiles();
+  }
   else if (pIncomingMessage == "RESET")
   { // ledmodule->loadDefaultColors();
     setmodule->loadDefaults();
@@ -379,7 +425,7 @@ void CoreComms::printDevInfo()
     {
       Serial.print(filename);
       Serial.print(" ");
-      spaces(20 - strlen(filename));
+      Serial.print(spaces(20 - strlen(filename)));
       Serial.print(" (");
       Serial.print(filesize);
       Serial.print(")\n");
@@ -393,10 +439,7 @@ void CoreComms::printDevInfo()
       break; // no more files
     }
   }
-  Serial.println("config.ini ------------------------------");
-  setmodule->printFile("config.ini", true);
-  Serial.println("\n-----------------------------------------");
-
+  
   Serial.println("Read Chip Identification:");
   SerialFlash.readID(buf);
   Serial.print("  JEDEC ID:     ");
@@ -415,11 +458,87 @@ void CoreComms::printDevInfo()
 
   Serial.write(ETX);
 }
+String CoreComms::listFiles()
+{ String lst="";
 
-void CoreComms::spaces(int num)
-{
-  for (int i = 0; i < num; i++)
+  lst=char(STX);
+  //Serial.print("SerialFlash connecting...\n");
+  SerialFlash.opendir();
+  unsigned char buf[256];
+  lst += "Files on memory:\n";
+  boolean moreFiles=true;
+  while (moreFiles)
   {
-    Serial.print(" ");
+    // List all files to PC
+    char filename[64];
+    uint32_t filesize;
+
+    if (SerialFlash.readdir(filename, sizeof(filename), filesize))
+    {
+      lst += String(filename)+spaces(26 - strlen(filename))+" ";
+      lst += String(filesize);
+      lst += "\n";
+    }
+    else
+    {
+      moreFiles=false;
+    }
   }
+
+  lst += "Serial Flash Chip JEDEC ID: ";
+  SerialFlash.readID(buf);
+  lst += String(buf[0], HEX)+" ";
+  lst += String(buf[1], HEX)+" ";
+  lst += String(buf[2], HEX)+"\n";
+
+  lst += "Memory Size: ";
+  uint32_t chipsize = SerialFlash.capacity(buf);
+  lst += String(chipsize);
+  lst += " bytes\n";
+  lst += "Block Size: ";
+  lst += String(SerialFlash.blockSize());
+  lst += " bytes\n";
+
+  lst += char(ETX);
+  return lst;
+
+      /*
+    SerialFlash.opendir();
+    unsigned char buf[256];
+    boolean morefiles=true; 
+    while (morefiles)
+    {
+      // List all files to Serial
+      char filename[64];
+      uint32_t filesize;
+
+      out = "";
+      if (SerialFlash.readdir(filename, sizeof(filename), filesize))
+      {
+        out += filename + spaces(22 - strlen(filename));
+        out += String(filesize)+"\n";
+        //out += "settings getfilesize: " + setmodule->getFileSize(filename) + " bytes\n");
+      } else
+      {
+        morefiles=false;
+      }
+    }
+    out += "Serial Flash Chip JEDEC ID:  " ;
+    SerialFlash.readID(buf);
+    out += String(buf[0], HEX)+" "+String(buf[1], HEX)+" "+String(buf[2], HEX)+"\n";
+
+    //SerialFlash.readSerialNumber(buf);
+    //out += "SF SN: "+String(buf)+"\n";
+
+    uint32_t chipsize = SerialFlash.capacity(buf);
+    out += "Memory Size: "+String(chipsize)+" bytes\n";
+    out += "Block Size: "+String(SerialFlash.blockSize())+" bytes\n";
+    */
+}
+String CoreComms::spaces(int num)
+{ String out="";
+  for (int i = 0; i < num; i++)
+  { out += " ";
+  }
+  return out;
 }
