@@ -60,21 +60,190 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   String out;
   out = "";
 
-  if (pIncomingMessage == "V")
+  if (pIncomingMessage.equalsIgnoreCase("V"))
   {
     printDevInfo();
   }
-  else if (pIncomingMessage.startsWith("#"))
+  else if (pIncomingMessage.substring(0,1).equalsIgnoreCase("#"))
   {
     Serial.print("#");
   }
-  else if (pIncomingMessage == "V?")
+  else if (pIncomingMessage.equalsIgnoreCase("V?"))
   {
     out = "V=" + build;
   }
   else if (pIncomingMessage == "S?")
   {
     out = "S=" + serial;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("ERASE=ALL"))
+  { SerialFlash.eraseAll();
+    int i=0;
+    Serial.println("Erasing Serial Flash, this may take 20s to 2 minutes");
+    while (SerialFlash.ready() == false)
+    {
+      // wait, 30 seconds to 2 minutes for most chips
+      if(i==0)
+      {
+        Serial.print("#");
+      }
+      i++;
+      if(i>10)
+      {
+        i=0;
+      }
+    }
+    out="OK, Now re-load your sound files.\nOK, Serial Flash Erased.\n";
+  }
+  else if (pIncomingMessage.substring(0,5).equalsIgnoreCase("ERASE"))
+  {
+    out="ERROR, ERASE aborted, no security serial no.";
+  }
+  else if (pIncomingMessage.equalsIgnoreCase ("WR?") )
+  {
+    out="OK, Write Ready";
+  }
+  else if (pIncomingMessage.substring(0,3).equalsIgnoreCase("WR="))
+  { 
+    // W=filename,size\n   --binary-file-stream--
+    int pos = pIncomingMessage.indexOf(',');
+    if(pos<0)
+    {
+      out="ERROR, Write Invalid format";
+    }
+    else
+    { 
+      String fname=pIncomingMessage.substring(3,',').trim();
+      long fsize=pIncomingMessage.substring(',').trim().toInt();
+
+      Serial.print("OK, Write "+fname+" "+String(fsize)+" - Not Yet Implemented.\n");
+
+      if(fname.length()==0)
+      {
+        out="ERROR, Write Invalid filename";
+      }
+      else if(fsize==0)
+      {
+        out="ERROR, Write Invalid file length";
+      }
+      else
+      {
+        if(!SerialFlash.ready())
+        {
+          out="ERROR, Serial Flash Not Ready";
+        }
+        else
+        { 
+          char filename[fname.length() + 1];
+          fname.toCharArray(filename,64);
+          // Remove if it already exists
+          SerialFlash.opendir();
+
+          if( SerialFlash.exists(filename) )
+          {
+            SerialFlash.remove(filename);
+          }
+          //now read incoming stream to flash
+          boolean success=false;
+          if(fname.toLowerCase().endsWith(".raw"))
+          { 
+            //raw files are binary -- so not erasable and exact size
+            success=SerialFlash.create(filename, fsize);
+          }
+          else
+          { 
+            //all other files are ascii, so set as eraseable -- 65535 is the blocksize, so files mightas well be blocksize
+            success=SerialFlash.createErasable(filename, max(65535,fsize));
+          }
+          
+          if(success)
+          {
+            // Opening file to write it
+            SerialFlashFile file = SerialFlash.open(filename);
+            if (file)
+            {
+              long counter=0;
+              long time = millis();
+
+              while (counter<fsize)
+              { 
+                while(!Serial.available())
+                { delay(10);
+                  if((millis()-time)>10000)
+                  {
+                    //if no comms for 10 seconds then timeout the transfer
+                    time=-1;
+                    break;
+                  }
+                }
+                byte data[] = {Serial.read()};
+                file.write(data, 1);
+                counter++;
+                time = millis();
+              }
+              if(time<0)
+              {
+                out="ERROR, Write Timed-out";
+              }
+              else
+              {
+                out="OK, Write Complete";
+              }              
+              file.close();
+            }
+            else
+            {
+            out="ERROR, Unable to create file (2)";
+            }
+          }
+          else
+          {
+            out="ERROR, Unable to create file (1)";
+          }
+          
+
+        }
+
+      }
+      
+      
+    }
+        
+  }
+  else if (pIncomingMessage.substring(0,3).equalsIgnoreCase("RD?") )
+  {
+    //read file
+    String lc=pIncomingMessage;
+    lc=lc.toLowerCase(); 
+    if(!lc.endsWith(".raw"))
+    { 
+      //if not a binary sound file send STX and then ETX
+      Serial.print(STX);
+    }
+    char filename[64];
+    pIncomingMessage.substring(3).toCharArray(filename,64);
+    setmodule->printFile(filename, true);
+    if(!lc.endsWith(".raw"))
+    { 
+      //if not a binary WAV file send STX and then ETX
+      Serial.print(ETX);
+    }
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("FREE?"))
+  {
+    out = "USED="+String(getStorageFree());
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("USED?"))
+  {
+    out = "USED="+String(getStorageUsed());
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("SIZE?"))
+  {
+    out = "SIZE="+String(getStorageCapacity());
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("LIST?"))
+  { 
+    out = listFiles();
   }
   else if (pIncomingMessage.charAt(2) == '=')
   {
@@ -221,52 +390,6 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   {
     out = "B=" + String(setmodule->getActiveBank());
   }
-  else if (pIncomingMessage.equalsIgnoreCase("ERASE="+serial) 
-           || pIncomingMessage.equalsIgnoreCase("ERASE=ALL"))
-  { out ="ERROR, ERASE Not Yet Implemented.";
-    SerialFlash.eraseAll();
-    int i=0;
-    Serial.println("Erasing Serial Flash, this may take 20s to 2 minutes");
-    while (SerialFlash.ready() == false)
-    {
-      // wait, 30 seconds to 2 minutes for most chips
-      if(i==0)
-      {
-        Serial.print("#");
-      }
-      i++;
-      if(i>10)
-      {
-        i=0;
-      }
-    }
-    Serial.print("OK, Now re-load your sound files.\n");
-    Serial.print("OK, Serial Flash Erased.\n");
-  }
-  else if (pIncomingMessage.startsWith("ERASE") || pIncomingMessage.startsWith("erase") )
-  { out="ERROR, ERASE aborted, no security serial no.";
-  }
-  else if (pIncomingMessage.startsWith("r?") || pIncomingMessage.startsWith("R?") )
-  {
-    //read file
-    if(!pIncomingMessage.endsWith(".wav") && !pIncomingMessage.endsWith(".WAV"))
-    { 
-      //if not a binary WAV file send STX and then ETX
-      Serial.print(STX);
-    }
-    char filename[64];
-    pIncomingMessage.substring(2).toCharArray(filename,64);
-    setmodule->printFile(filename, true);
-    if(!pIncomingMessage.endsWith(".wav") && !pIncomingMessage.endsWith(".WAV"))
-    { 
-      //if not a binary WAV file send STX and then ETX
-      Serial.print(ETX);
-    }
-  }
-  else if (pIncomingMessage.equalsIgnoreCase("LIST?"))
-  { 
-    out = listFiles();
-  }
   else if (pIncomingMessage == "RESET")
   { // ledmodule->loadDefaultColors();
     setmodule->loadDefaults();
@@ -410,51 +533,8 @@ void CoreComms::printDevInfo()
   Serial.println(build);
   Serial.print("Serial Number: ");
   Serial.println(serial);
-  Serial.print("SerialFlash connecting...\n");
-  SerialFlash.opendir();
-  unsigned char buf[256];
-  Serial.println("Files on memory:");
 
-  while (1)
-  {
-    // List all files to PC
-    char filename[64];
-    uint32_t filesize;
-
-    if (SerialFlash.readdir(filename, sizeof(filename), filesize))
-    {
-      Serial.print(filename);
-      Serial.print(" ");
-      Serial.print(spaces(20 - strlen(filename)));
-      Serial.print(" (");
-      Serial.print(filesize);
-      Serial.print(")\n");
-
-      Serial.print("settings getfilesize: ");
-      Serial.print(setmodule->getFileSize(filename));
-      Serial.print(" bytes\n");
-    }
-    else
-    {
-      break; // no more files
-    }
-  }
-  
-  Serial.println("Read Chip Identification:");
-  SerialFlash.readID(buf);
-  Serial.print("  JEDEC ID:     ");
-  Serial.print(buf[0], HEX);
-  Serial.print(" ");
-  Serial.print(buf[1], HEX);
-  Serial.print(" ");
-  Serial.println(buf[2], HEX);
-  Serial.print("  Memory Size:  ");
-  uint32_t chipsize = SerialFlash.capacity(buf);
-  Serial.print(chipsize);
-  Serial.println(" bytes");
-  Serial.print("  Block Size:   ");
-  Serial.print(SerialFlash.blockSize());
-  Serial.println(" bytes");
+  Serial.println(listFiles());
 
   Serial.write(ETX);
 }
@@ -467,17 +547,22 @@ String CoreComms::listFiles()
   unsigned char buf[256];
   lst += "Files on memory:\n";
   boolean moreFiles=true;
+  uint32_t maxAddr=0;
   while (moreFiles)
   {
     // List all files to PC
     char filename[64];
     uint32_t filesize;
+    
 
     if (SerialFlash.readdir(filename, sizeof(filename), filesize))
     {
-      lst += String(filename)+spaces(26 - strlen(filename))+" ";
+      lst += String(filename)+spaces(max(1,22 - strlen(filename)));
       lst += String(filesize);
       lst += "\n";
+
+      SerialFlashFile ff = SerialFlash.open(filename);
+      maxAddr= max(maxAddr, ff.getFlashAddress()+ff.size());
     }
     else
     {
@@ -485,55 +570,26 @@ String CoreComms::listFiles()
     }
   }
 
-  lst += "Serial Flash Chip JEDEC ID: ";
+  lst += "Serial Flash Chip\nJEDEC ID: ";
   SerialFlash.readID(buf);
   lst += String(buf[0], HEX)+" ";
   lst += String(buf[1], HEX)+" ";
   lst += String(buf[2], HEX)+"\n";
 
-  lst += "Memory Size: ";
-  uint32_t chipsize = SerialFlash.capacity(buf);
-  lst += String(chipsize);
+  uint32_t cap = SerialFlash.capacity(buf);
+  lst += "Memory Size: "+String(cap);
   lst += " bytes\n";
+  lst += "Memory Free: "+String(cap-maxAddr);
+  lst += " bytes\n";
+  lst += "Memory Used: "+String(maxAddr);
+  lst += " bytes\n";
+  
   lst += "Block Size: ";
   lst += String(SerialFlash.blockSize());
   lst += " bytes\n";
 
   lst += char(ETX);
   return lst;
-
-      /*
-    SerialFlash.opendir();
-    unsigned char buf[256];
-    boolean morefiles=true; 
-    while (morefiles)
-    {
-      // List all files to Serial
-      char filename[64];
-      uint32_t filesize;
-
-      out = "";
-      if (SerialFlash.readdir(filename, sizeof(filename), filesize))
-      {
-        out += filename + spaces(22 - strlen(filename));
-        out += String(filesize)+"\n";
-        //out += "settings getfilesize: " + setmodule->getFileSize(filename) + " bytes\n");
-      } else
-      {
-        morefiles=false;
-      }
-    }
-    out += "Serial Flash Chip JEDEC ID:  " ;
-    SerialFlash.readID(buf);
-    out += String(buf[0], HEX)+" "+String(buf[1], HEX)+" "+String(buf[2], HEX)+"\n";
-
-    //SerialFlash.readSerialNumber(buf);
-    //out += "SF SN: "+String(buf)+"\n";
-
-    uint32_t chipsize = SerialFlash.capacity(buf);
-    out += "Memory Size: "+String(chipsize)+" bytes\n";
-    out += "Block Size: "+String(SerialFlash.blockSize())+" bytes\n";
-    */
 }
 String CoreComms::spaces(int num)
 { String out="";
@@ -541,4 +597,37 @@ String CoreComms::spaces(int num)
   { out += " ";
   }
   return out;
+}
+uint32_t CoreComms::getStorageCapacity()
+{ 
+  SerialFlash.opendir();
+  unsigned char buf[256];
+  SerialFlash.readID(buf);
+  return SerialFlash.capacity(buf);
+}
+uint32_t CoreComms::getStorageUsed()
+{
+  //must traverse files find last one and add it's size
+  SerialFlash.opendir();
+  boolean moreFiles=true;
+  uint32_t maxAddr=0;
+  while (moreFiles)
+  {
+    char filename[64];
+    uint32_t filesize;
+    if (SerialFlash.readdir(filename, sizeof(filename), filesize))
+    {
+      SerialFlashFile ff = SerialFlash.open(filename);
+      maxAddr= max(maxAddr, ff.getFlashAddress()+ff.size());
+    }
+    else
+    {
+      moreFiles=false;
+    }
+  }
+  return maxAddr;
+}
+uint32_t CoreComms::getStorageFree()
+{
+  return getStorageCapacity()-getStorageUsed();
 }

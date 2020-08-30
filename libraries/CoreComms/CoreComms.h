@@ -49,4 +49,7 @@ private:
 
   String listFiles();
   String spaces(int num);
+  uint32_t getStorageCapacity();
+  uint32_t getStorageUsed();
+  uint32_t getStorageFree();
 };
