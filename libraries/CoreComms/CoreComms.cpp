@@ -82,18 +82,17 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     Serial.println("Erasing Serial Flash, this may take 20s to 2 minutes");
     while (SerialFlash.ready() == false)
     {
-      // wait, 30 seconds to 2 minutes for most chips
-      if(i==0)
-      {
-        Serial.print("#");
-      }
+      delay(500);
       i++;
-      if(i>10)
+      Serial.print("#");
+      // wait, 30 seconds to 2 minutes for most chips
+      if(i>=20)
       {
+        Serial.print("\n");
         i=0;
       }
     }
-    out="OK, Now re-load your sound files.\nOK, Serial Flash Erased.\n";
+    out="\nOK, Now re-load your sound files.\nOK, Serial Flash Erased.\n";
   }
   else if (pIncomingMessage.substring(0,5).equalsIgnoreCase("ERASE"))
   {
@@ -113,16 +112,16 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     }
     else
     { 
-      String fname=pIncomingMessage.substring(3,',').trim();
-      long fsize=pIncomingMessage.substring(',').trim().toInt();
+      String fname=pIncomingMessage.substring(3,pIncomingMessage.indexOf(',')).trim();
+      long fsize=pIncomingMessage.substring(pIncomingMessage.indexOf(',')+1).trim().toInt();
 
-      Serial.print("OK, Write "+fname+" "+String(fsize)+" - Not Yet Implemented.\n");
-
+      Serial.print("OK, Write "+fname+", "+String(fsize)+".\n");
+      
       if(fname.length()==0)
       {
         out="ERROR, Write Invalid filename";
       }
-      else if(fsize==0)
+      else if(fsize<=0)
       {
         out="ERROR, Write Invalid file length";
       }
@@ -163,12 +162,12 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
             if (file)
             {
               long counter=0;
-              long time = millis();
+              unsigned long time = millis();
 
               while (counter<fsize)
               { 
                 while(!Serial.available())
-                { delay(10);
+                { delay(5);
                   if((millis()-time)>10000)
                   {
                     //if no comms for 10 seconds then timeout the transfer
@@ -178,11 +177,13 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
                 }
                 byte data[] = {Serial.read()};
                 file.write(data, 1);
+                
                 counter++;
                 time = millis();
               }
               if(time<0)
               {
+                file.erase();
                 out="ERROR, Write Timed-out";
               }
               else
