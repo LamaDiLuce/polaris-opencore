@@ -4,6 +4,7 @@
 [![License](https://img.shields.io/github/license/LamaDiLuce/polaris-opencore.svg)](https://github.com/LamaDiLuce/polaris-opencore)
 [![GitHub issues](https://img.shields.io/github/issues/LamaDiLuce/polaris-opencore)](https://github.com/LamaDiLuce/polaris-opencore/issues)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/ludosport/)
+[![GitHub issues](https://img.shields.io/github/issues/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/issues/)
 
 Polaris, the combat ready modular hilt born in 2015 becomes an open source project in 2020 powered with the new Anima EVO electronic module.
 
@@ -18,7 +19,7 @@ To read the entire story you can follow [this link](https://www.lamadiluce.it/po
 - [Features](#features)
 - [Setup](#setup)
 - [Contributing](#contributing)
-- [Code Team](#core-team)
+- [Coulcil members](#coulcil-members)
 - [FAQ](#faq)
 - [Donations](#donations)
 - [License](#license)
@@ -40,6 +41,7 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 - No pushbutton required
   - Gestures to arm / disarm
   - Blade color can be selected with a gesture among pre-sets during arming
+- Mute cunction activated by a tap on the hilt during arming
 - Electronic powered by a Cortex-M4
 - Dedicated Scintilla PC software for advanced customization and firmware upgrade
 
@@ -49,7 +51,7 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 In order to be able to contributre to this project, compile and upload the FW to your lightsaber, you need to:
 - undestand C++
 - be familiar with Arduino
-- download and install bunch of software
+- download and install a bunch of software
 
 The following guides contain a step by step instructions to be up and running:
 
@@ -64,26 +66,22 @@ The following guides contain a step by step instructions to be up and running:
 ## Contributing
 Any developer who wants to contribute to the project shall propose a completed merge into the master as a significant feature update for a release to the public (just one pull request with all the relevant details).
 
-The changes are first reviewed in terms of coding, compatibility with previous versions and Scintilla SW. If the changes are ok and in line with the purpose of the lightsaber FW, a new release candidate is built.
+The changes are first reviewed in terms of coding, compatibility with previous versions and Scintilla SW. If the changes are ok and in line with the purpose of the lightsaber FW, the coulcil give the approval and a new release candidate is built.
 
 This new release candidate is testes by selected developers and, if all the tests are passed, the master branch is updated and a new official FW version is released.
 
 ---
 
-## Core Team
-
-
+## Coulcil members
+| Name1 | Name2 |
+| :---: | :---: |
+| ![Polaris Anima EVO](https://www.lamadiluce.it/wp-content/uploads/2020/06/FBcover-01-e1596115323936.png) | ![Polaris Anima EVO](https://www.lamadiluce.it/wp-content/uploads/2020/06/FBcover-01-e1596115323936.png) |
 
 
 ---
 
 ## FAQ
-
-- **I'm using PlatformIO inside VSCode and I'm getting the error *"CoreEntryPoint.h: No such file or directory"***
-    - Open the *platformio.ini* file and change or add the line: *lib_extra_dirs = ~/Documents/GitHub/polaris-opencore/libraries*
-- **I'm getting an error message after connection with Scintilla *"An OpenCore Polaris was detected, but Scintilla failed to communicate with it."***
-    - It could be normal for older firmware. Just go ahead and upload the latest FW (*Firmware Tools > Flash latest OpenCore firmware*)
-
+FAQ and troubleshooting can be found [here](Documentation/FAQ.md)
 
 ---
 
