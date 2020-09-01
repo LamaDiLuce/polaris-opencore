@@ -96,7 +96,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   }
   else if (pIncomingMessage.substring(0,5).equalsIgnoreCase("ERASE"))
   {
-    out="ERROR, ERASE aborted, no security serial no.";
+    out="ERROR, ERASE aborted, incomplete erase command.";
   }
   else if (pIncomingMessage.equalsIgnoreCase ("WR?") )
   {
