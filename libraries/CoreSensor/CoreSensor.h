@@ -53,6 +53,9 @@ private:
   uint8_t dataToWrite = 0;
 
   float valueAccel = 0.0;
+  float valueGyroX = 0.0;
+  float valueGyroY = 0.0;
+  float valueGyroZ = 0.0;
   static constexpr float minValue = VERTICAL_ACC - TOLERANCE_ARM;
   static constexpr float maxValue = VERTICAL_ACC + TOLERANCE_ARM;
   static constexpr float minArmValue = VERTICAL_ARM - TOLERANCE_ARM;
