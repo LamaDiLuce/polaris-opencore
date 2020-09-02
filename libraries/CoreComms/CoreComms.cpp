@@ -232,7 +232,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   }
   else if (pIncomingMessage.equalsIgnoreCase("FREE?"))
   {
-    out = "USED="+String(getStorageFree());
+    out = "FREE="+String(getStorageFree());
   }
   else if (pIncomingMessage.equalsIgnoreCase("USED?"))
   {
