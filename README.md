@@ -52,14 +52,18 @@ In order to be able to contributre to this project, compile and upload the FW to
 - undestand C++
 - be familiar with Arduino
 - download and install a bunch of software
+- get used to Git and GitHub in order to commit your changes
 
-The following guides contain a step by step instructions to be up and running:
+There are two possible scenarios, based on your preferences. You can install Arduino IDE, Teensyduino, and use your preferred text editor for the code OR you can install Visual Studio Code and PlatformIO extension. We strongly recommend the latter, since VS Code plus PlatformIO is a modern, cross-platform and powerful IDE and this scenario requires less configuration steps.
+
+- [Get ready with GitHub](Documentation/GIT.md)
+- [Configure VS Code plus PlatformIO](Documentation/VSCode-PlatformIO.md)
+- [or] Configure Arduino IDE and Teensyduino
+  - [Windows (or MAC) guide step by step](Documentation/SETUP.md#windows-setup)
+  - [Linux guide step by step](Documentation/SETUP.md#linux-setup)
 
 
-> [Windows (or MAC) guide step by step](Documentation/SETUP.md#windows-setup)
 
-
-> [Linux guide step by step](Documentation/SETUP.md#linux-setup)
 
 ---
 
