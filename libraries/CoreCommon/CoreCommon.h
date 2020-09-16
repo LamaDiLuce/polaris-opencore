@@ -28,13 +28,13 @@ enum class Requests
 
 #define COLORS 7
 #define RED 0
-#define GREEN 1
-#define BLUE 2
-#define YELLOW 3
-#define ACQUA 4
-#define PURPLE 5
-#define ORANGE 6
-#define WHITE 7
+#define ORANGE 1
+#define YELLOW 2
+#define GREEN 3
+#define WHITE 4
+#define ACQUA 5
+#define BLUE 6
+#define PURPLE 7
 #define OFF 8
 
 #define BLINK_TIME 300

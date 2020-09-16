@@ -23,33 +23,33 @@ void CoreSettings::loadDefaultColors()
   liveSettings.version = CURRENTVERSION;
 
   liveSettings.colorSet[RED] = {255, 0, 0, 0};        // 0 RED
-  liveSettings.colorSet[GREEN] = {0, 255, 0, 0};      // 1 GREEN
-  liveSettings.colorSet[BLUE] = {0, 0, 255, 0};       // 2 BLUE
-  liveSettings.colorSet[YELLOW] = {100, 255, 0, 60};  // 3 YELLOW
-  liveSettings.colorSet[ACQUA] = {0, 255, 240, 80};   // 4 ACQUA
-  liveSettings.colorSet[PURPLE] = {35, 10, 255, 10};  // 5 PURPLE
-  liveSettings.colorSet[ORANGE] = {150, 255, 0, 20};  // 6 ORANGE
-  liveSettings.colorSet[WHITE] = {25, 170, 150, 255}; // 7 WHITE
+  liveSettings.colorSet[ORANGE] = {150, 255, 0, 20};  // 1 ORANGE
+  liveSettings.colorSet[YELLOW] = {100, 255, 0, 60};  // 2 YELLOW
+  liveSettings.colorSet[GREEN] = {0, 255, 0, 0};      // 3 GREEN
+  liveSettings.colorSet[WHITE] = {25, 170, 150, 255}; // 4 WHITE
+  liveSettings.colorSet[ACQUA] = {0, 255, 240, 80};   // 5 ACQUA
+  liveSettings.colorSet[BLUE] = {0, 0, 255, 0};       // 6 BLUE
+  liveSettings.colorSet[PURPLE] = {35, 10, 255, 10};  // 7 PURPLE
   liveSettings.colorSet[OFF] = {0, 0, 0, 0};          // 8 OFF
 
   liveSettings.clashSet[RED] = {25, 170, 150, 255};
-  liveSettings.clashSet[GREEN] = {25, 170, 150, 255};
-  liveSettings.clashSet[BLUE] = {25, 170, 150, 255};
-  liveSettings.clashSet[YELLOW] = {25, 170, 150, 255};
-  liveSettings.clashSet[ACQUA] = {25, 170, 150, 255};
-  liveSettings.clashSet[PURPLE] = {25, 170, 150, 255};
   liveSettings.clashSet[ORANGE] = {25, 170, 150, 255};
+  liveSettings.clashSet[YELLOW] = {25, 170, 150, 255};
+  liveSettings.clashSet[GREEN] = {25, 170, 150, 255};
   liveSettings.clashSet[WHITE] = {0, 255, 240, 80}; // WHITE flashes ACQUA
+  liveSettings.clashSet[ACQUA] = {25, 170, 150, 255};
+  liveSettings.clashSet[BLUE] = {25, 170, 150, 255};
+  liveSettings.clashSet[PURPLE] = {25, 170, 150, 255};
   liveSettings.clashSet[OFF] = {0, 0, 0, 0};
 
   liveSettings.swingSet[RED] = {128, 0, 0, 255};
-  liveSettings.swingSet[GREEN] = {0, 196, 0, 255};
-  liveSettings.swingSet[BLUE] = {0, 0, 196, 255};
-  liveSettings.swingSet[YELLOW] = {64, 196, 0, 255};
-  liveSettings.swingSet[ACQUA] = {0, 196, 128, 255};
-  liveSettings.swingSet[PURPLE] = {35, 10, 196, 255};
   liveSettings.swingSet[ORANGE] = {100, 255, 0, 90};
+  liveSettings.swingSet[YELLOW] = {64, 196, 0, 255};
+  liveSettings.swingSet[GREEN] = {0, 196, 0, 255};
   liveSettings.swingSet[WHITE] = {0, 0, 128, 255};
+  liveSettings.swingSet[ACQUA] = {0, 196, 128, 255};
+  liveSettings.swingSet[BLUE] = {0, 0, 196, 255};
+  liveSettings.swingSet[PURPLE] = {35, 10, 196, 255};
   liveSettings.swingSet[OFF] = {0, 0, 0, 0};
 }
 
