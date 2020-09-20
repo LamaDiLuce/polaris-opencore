@@ -127,8 +127,13 @@ bool CoreSensor::needArm()
     if (millis() - time < TIME_FOR_CONFIRM_ARM)
     {
       valueAccel = PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ();
-
-      if (containArm(valueAccel))
+      valueGyroZ = abs(PROTOTYPE ? device.readFloatGyroX() : device.readFloatGyroZ());
+      valueGyroX = abs(PROTOTYPE ? device.readFloatGyroY() : device.readFloatGyroX());
+      valueGyroY = abs(PROTOTYPE ? device.readFloatGyroZ() : device.readFloatGyroY());
+      if ((containArm(valueAccel)) && 
+          (valueGyroZ < SWING_THRESHOLD) &&
+          (valueGyroX < SWING_THRESHOLD) &&
+          (valueGyroY < SWING_THRESHOLD))
       {
         CoreLogging::writeLine("CoreSensor: Request arm...");
         isVerticalPosition = false;
@@ -151,7 +156,13 @@ bool CoreSensor::needArm()
     if (millis() - time < TIME_FOR_CONFIRM_ARM)
     {
       valueAccel = PROTOTYPE ? device.readFloatAccelX() : device.readFloatAccelZ();
-      if (containArm(valueAccel))
+      valueGyroZ = abs(PROTOTYPE ? device.readFloatGyroX() : device.readFloatGyroZ());
+      valueGyroX = abs(PROTOTYPE ? device.readFloatGyroY() : device.readFloatGyroX());
+      valueGyroY = abs(PROTOTYPE ? device.readFloatGyroZ() : device.readFloatGyroY());
+      if ((containArm(valueAccel)) && 
+          (valueGyroZ < SWING_THRESHOLD) &&
+          (valueGyroX < SWING_THRESHOLD) &&
+          (valueGyroY < SWING_THRESHOLD))
       {
         CoreLogging::writeLine("CoreSensor: Request arm and change color...");
         status = Status::armingWithChangeColor;
