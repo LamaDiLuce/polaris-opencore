@@ -47,5 +47,9 @@ private:
   ColorLed stringToColorLed(String sColor);
   String colorLedToString(ColorLed cColor, boolean bHex);
 
-  void spaces(int num);
+  String listFiles();
+  String spaces(int num);
+  uint32_t getStorageCapacity();
+  uint32_t getStorageUsed();
+  uint32_t getStorageFree();
 };
