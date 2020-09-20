@@ -72,6 +72,7 @@ void CoreAudio::disarm()
   {
     soundPlayFlashRaw.play("POWEROFF_0.RAW");
     status = Status::disarming;
+    muted = false;
   }
 }
 
@@ -79,15 +80,24 @@ void CoreAudio::clash()
 {
   if (status == Status::armed)
   {
-    // if (!soundPlayFlashFXRaw.isPlaying())
-    //{
     if (soundPlayFlashRaw.isPlaying())
+    {
       soundPlayFlashRaw.stop();
-
+    }
     int clashId = random(1, 10);
 
     String clash = "CLASH_" + String(clashId) + "_0.RAW";
     soundPlayFlashFXRaw.play(clash.c_str());
+  }
+  else if ((status == Status::waitArm || 
+            status == Status::waitArmWithChangeColor || 
+            status == Status::waitArmWithChangeColorNext) &&
+            !muted)
+  {
+    beep();
+    beep();
+    muted = true;
+    CoreLogging::writeLine("CoreAudio: Muted");
   }
 }
 
@@ -151,20 +161,18 @@ void CoreAudio::changeColorMode()
 {
   if ((status == Status::waitArmWithChangeColor) && (!changeColorStarted))
   {
-    digitalWrite(POWER_AMP_PIN, HIGH);
-    delay(50);
-    mainMixer.gain(CHANNEL_SINE, 1);
-    delay(BEEP_TIME);
-    mainMixer.gain(CHANNEL_SINE, 0);
+    beep();
     changeColorStarted = true;
-    digitalWrite(POWER_AMP_PIN, LOW);
   }
 }
 
 void CoreAudio::checkPowerAmp()
 {
-  if ((status == Status::disarmed) || (status == Status::disarmedInRecharge) ||
-      (status == Status::waitArmWithChangeColor) || (status == Status::waitArmWithChangeColorNext))
+  if ((status == Status::disarmed) || 
+      (status == Status::disarmedInRecharge) ||
+      (status == Status::waitArmWithChangeColor) || 
+      (status == Status::waitArmWithChangeColorNext) ||
+      (muted))
   {
     digitalWrite(POWER_AMP_PIN, LOW);
   }
@@ -177,7 +185,7 @@ void CoreAudio::checkPowerAmp()
 void CoreAudio::beep()
 {
   digitalWrite(POWER_AMP_PIN, HIGH);
-  delay(250);
+  delay(50);
   mainMixer.gain(CHANNEL_SINE, 1);
   delay(BEEP_TIME);
   mainMixer.gain(CHANNEL_SINE, 0);

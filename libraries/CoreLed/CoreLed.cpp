@@ -238,7 +238,7 @@ void CoreLed::loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool& rN
     rStatus = currentStatus;
   }
 
-  if (rNeedClash)
+  if (rNeedClash && currentStatus == Status::armed)
   {
     clash();
     rNeedClash = false;

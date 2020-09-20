@@ -253,6 +253,7 @@ void CoreSensor::loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool&
       isVerticalPosition = rVerticalPosition;
     }
     rNeedArm = needArm();
+    rNeedClash = needClash();
   }
   else if (status == Status::disarmedInRecharge)
   {

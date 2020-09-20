@@ -56,6 +56,7 @@ private:
 
   bool swinging = false;
   bool changeColorStarted = false;
+  bool muted = false;
   Status status = Status::disarmed;
 
   void clash();
