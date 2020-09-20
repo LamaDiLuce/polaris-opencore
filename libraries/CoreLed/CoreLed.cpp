@@ -19,7 +19,7 @@ void CoreLed::init(CoreSettings* cSet)
 
 String CoreLed::decodeColorSetId(int colorSetId)
 {
-  String colors[9] = {"RED", "GREEN", "BLUE", "YELLOW", "ACQUA", "PURPLE", "ORANGE", "WHITE", "OFF"};
+  String colors[9] = {"RED", "ORANGE", "YELLOW", "GREEN", "WHITE", "ACQUA", "BLUE", "PURPLE", "OFF"};
 
   if (colorSetId < int(sizeof(colors) / sizeof(colors[0])))
     return colors[colorSetId];
