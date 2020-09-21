@@ -7,7 +7,7 @@
 #include "ArduinoJson.h"
 #include "CoreLogging.h"
 
-#define CURRENTVERSION "2020.03"
+#define CURRENTVERSION "2020.04"
 
 struct SaberSettings
 {
