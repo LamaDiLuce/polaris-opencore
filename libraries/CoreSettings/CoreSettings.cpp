@@ -93,7 +93,7 @@ void CoreSettings::readFromStore()
       return;
     }
 
-    liveSettings.activeBank =  max(RED, min(doc["activeBank"] | BLUE, WHITE));
+    liveSettings.activeBank =  max(0, min(doc["activeBank"] | BLUE, COLORS));
 
     for (int i = 0; i <= 7; i++)
     {
@@ -218,7 +218,7 @@ int32_t CoreSettings::getFileSize(const char* filen)
 
 void CoreSettings::setActiveBank(int iBank)
 { 
-  liveSettings.activeBank = max(RED, min(iBank,WHITE));
+  liveSettings.activeBank = max(0, min(iBank, COLORS));
   saveToStore();
 }
 
