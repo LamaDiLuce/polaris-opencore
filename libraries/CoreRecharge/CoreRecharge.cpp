@@ -33,11 +33,11 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
 
     if (currentStatus == Status::disarmedInRecharge)
     {
-      if (digitalRead(CHARGE_PIN) == HIGH)
+      if (digitalRead(CHARGE_PIN) == LOW)
       {
         if (millis() - time > BLINK_RECHARGE_STATUS_TIME)
         {
-          CoreLogging::writeLine("CoreRecharge: Is Charge Pin High: YES");
+          CoreLogging::writeLine("CoreRecharge: Is Charge Pin Active: YES");
           CoreLogging::writeLine("CoreRecharge: Recharging, time from blink ms: %d", millis() - time);
           result.chargeSequence = false;
           result.needRecharge = true;
@@ -46,11 +46,11 @@ NeedBlinkRecharge CoreRecharge::needBlinkRecharge()
         }
       }
 
-      if (digitalRead(STANDBY_PIN) == HIGH)
+      if (digitalRead(STANDBY_PIN) == LOW)
       {
         if (millis() - time > BLINK_RECHARGED_STATUS_TIME)
         {
-          CoreLogging::writeLine("CoreRecharge: Is StandBy Pin High: YES");
+          CoreLogging::writeLine("CoreRecharge: Is StandBy Pin Active: YES");
           CoreLogging::writeLine("CoreRecharge: Recharged, time from blink ms: %d", millis() - time);
           result.chargeSequence = false;
           result.needRecharge = true;
