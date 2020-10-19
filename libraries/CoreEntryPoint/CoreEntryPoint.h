@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
-
+#include "Automaton.h"
 #include "CoreAudio.h"
 #include "CoreCommon.h"
 #include "CoreComms.h"

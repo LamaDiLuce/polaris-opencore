@@ -1,5 +1,4 @@
 #include "CoreEntryPoint.h"
-#include "Arduino.h"
 
 // Costructor
 CoreEntryPoint::CoreEntryPoint()
@@ -10,9 +9,11 @@ CoreEntryPoint::CoreEntryPoint()
 void CoreEntryPoint::init(String pBuild)
 {
   // init serial IF
-  commsModule.init(pBuild);
 
-  audioModule.init();
+  commsModule.init(pBuild);
+  audioModule.trace(Serial);
+  audioModule.begin();
+
   settingsModule.init();
   sensorModule.init();
 
@@ -24,6 +25,7 @@ void CoreEntryPoint::init(String pBuild)
   CoreLed* ledPtr;
   ledPtr = &ledModule;
   commsModule.setModule(ledPtr, setPtr);
+  status = Status::disarmed;
 }
 
 // Process loop
@@ -31,7 +33,33 @@ void CoreEntryPoint::loop()
 {
   sensorModule.loop(needSwingEvent, needClashEvent, status, verticalPosition, needArmEvent, horizontalPosition,
                     needDisarmEvent);
-  audioModule.loop(needSwingEvent, needClashEvent, status, needArmEvent, needDisarmEvent);
+  audioModule.cycle();
+  if (needArmEvent)
+  {
+    audioModule.trigger(audioModule.EVT_ARM);
+  }
+  if (needDisarmEvent)
+  {
+    audioModule.trigger(audioModule.EVT_DISARM);
+  }
+  if (needClashEvent)
+  {
+    audioModule.trigger(audioModule.EVT_CLASH);
+  }
+  if (needSwingEvent)
+  {
+    audioModule.trigger(audioModule.EVT_SWING);
+  }
+  if (audioModule.state() == audioModule.ARMED)
+  {
+    status=Status::armed;
+  }
+  if (audioModule.state() == audioModule.DISARM)
+  {
+    status=Status::disarmed;
+  }  
+
+  //audioModule.loop(needSwingEvent, needClashEvent, status, needArmEvent, needDisarmEvent);
   rechargeModule.loop(status, needBlinkRechargeEvent);
 
   ledModule.loop(needSwingEvent, needClashEvent, status, needArmEvent, needDisarmEvent, needBlinkRechargeEvent);

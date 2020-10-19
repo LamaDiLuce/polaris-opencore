@@ -1,184 +1,112 @@
 #include "CoreAudio.h"
 
-#include <string.h>
-
-#include "Arduino.h"
-
-// Costructor
-CoreAudio::CoreAudio()
-{
-}
-
-/*
- * Public Methods
+/* Add optional parameters for the state machine to begin()
+ * Add extra initialization code
  */
 
-// Init
-void CoreAudio::init()
-{
+CoreAudio& CoreAudio::begin() {
+  // clang-format off
+  const static state_t state_table[] PROGMEM = {
+    /*             ON_ENTER    ON_LOOP   ON_EXIT  EVT_MUTE  EVT_ARM  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
+    /*   IDLE */   ENT_IDLE, ATM_SLEEP, EXT_IDLE,     MUTE,     ARM,        -1,        -1,         -1,    -1,
+    /*   MUTE */   ENT_MUTE,        -1,       -1,       -1,      -1,        -1,        -1,       IDLE,    -1,
+    /*    ARM */    ENT_ARM,        -1,       -1,       -1,      -1,        -1,        -1,         -1, ARMED,
+    /*  ARMED */         -1,  LP_ARMED,       -1,       -1,      -1,     SWING,     CLASH,     DISARM,    -1,
+    /*  CLASH */  ENT_CLASH,        -1,       -1,       -1,      -1,        -1,        -1,         -1, ARMED,
+    /*  SWING */  ENT_SWING,        -1,       -1,       -1,      -1,        -1,     CLASH,         -1, ARMED,
+    /* DISARM */ ENT_DISARM,        -1,       -1,       -1,      -1,        -1,        -1,         -1,  IDLE,
+  };
+  // clang-format on
+  Machine::begin( state_table, ELSE );
   SPI.setSCK(SCK_PIN);
   SPI.setMOSI(SI_PIN);
   SPI.setMISO(SO_PIN);
-
   pinMode(POWER_AMP_PIN, OUTPUT);
   digitalWrite(POWER_AMP_PIN, LOW);
-  // digitalWrite(POWER_AMP_PIN, HIGH);
-
-  CoreLogging::writeLine("CoreAudio: SerialFlash connecting: ");
-  if (!SerialFlash.begin(CS_PIN))
-  {
-    CoreLogging::writeLine("CoreAudio: Serial connection error");
-  }
-  else
-  {
-    CoreLogging::writeLine("CoreAudio: Serial connection OK");
-  }
-
+  SerialFlash.begin(CS_PIN);
   patchSineMixer = new AudioConnection(soundSine, 0, mainMixer, CHANNEL_SINE);
   patchFlashMixer = new AudioConnection(soundPlayFlashRaw, 0, mainMixer, CHANNEL_HUM);
   patchFlashFXMixer = new AudioConnection(soundPlayFlashFXRaw, 0, mainMixer, CHANNEL_FX);
   patchMixerDac = new AudioConnection(mainMixer, outputDac);
-
   AudioMemory(AUDIO_BLOCK);
-
-  mainMixer.gain(CHANNEL_HUM, 1); // HUM
-  mainMixer.gain(CHANNEL_FX, 1);  // FX: Clash and Swing
+  mainMixer.gain(CHANNEL_HUM, 0.1); // HUM
+  mainMixer.gain(CHANNEL_FX, 0.1);  // FX: Clash and Swing
   mainMixer.gain(CHANNEL_SINE, 0);
   soundSine.amplitude(1);
   soundSine.frequency(BEEP_FREQUENCY);
-
-  // randomSeed(analogRead(0));
+  return *this;          
 }
 
-void CoreAudio::arm()
-{
-  if ((status == Status::waitArm) || (status == Status::waitArmWithChangeColor) ||
-      (status == Status::waitArmWithChangeColorNext) || (status == Status::armingWithChangeColor))
-  {
-    changeColorStarted = false;
+/* Add C++ code for each internally handled event (input) 
+ * The code must return 1 to trigger the event
+ */
 
-    soundPlayFlashRaw.play("POWERON_0.RAW");
-
-    if (status != Status::armingWithChangeColor)
-    {
-      status = Status::arming;
-    }
+int CoreAudio::event( int id ) {
+  switch ( id ) {
+    case EVT_MUTE:
+      return 0;
+    case EVT_ARM:
+      return 0;
+    case EVT_SWING:
+      return 0;
+    case EVT_CLASH:
+      return 0;
+    case EVT_DISARM:
+      return 0;
   }
+  return 0;
 }
 
-void CoreAudio::disarm()
-{
-  if (status == Status::armed)
-  {
-    soundPlayFlashRaw.play("POWEROFF_0.RAW");
-    status = Status::disarming;
-    muted = false;
-  }
-}
+/* Add C++ code for each action
+ * This generates the 'output' for the state machine
+ */
 
-void CoreAudio::clash()
-{
-  if (status == Status::armed)
-  {
-    if (soundPlayFlashRaw.isPlaying())
-    {
-      soundPlayFlashRaw.stop();
-    }
-    int clashId = random(1, 10);
-
-    String clash = "CLASH_" + String(clashId) + "_0.RAW";
-    soundPlayFlashFXRaw.play(clash.c_str());
-  }
-  else if ((status == Status::waitArm || 
-            status == Status::waitArmWithChangeColor || 
-            status == Status::waitArmWithChangeColorNext) &&
-            !muted)
-  {
-    beep();
-    beep();
-    muted = true;
-    CoreLogging::writeLine("CoreAudio: Muted");
-  }
-}
-
-void CoreAudio::swing()
-{
-  if ((status == Status::armed) && (!swinging))
-  {
-    if (!soundPlayFlashFXRaw.isPlaying())
-    {
-      if (soundPlayFlashRaw.isPlaying())
-        soundPlayFlashRaw.stop();
-
-      int swingId = random(1, 8);
-      String swing = "SWING_" + String(swingId) + "_0.RAW";
-
-      soundPlayFlashFXRaw.play(swing.c_str());
-    }
-  }
-}
-
-void CoreAudio::checkHum()
-{
-  if (status == Status::armed)
-  {
-    if (!soundPlayFlashRaw.isPlaying())
-    {
-      if (swinging)
+void CoreAudio::action( int id ) {
+  switch ( id ) {
+    case ENT_IDLE:
+      digitalWrite(POWER_AMP_PIN, LOW);
+      return;
+    case LP_IDLE:
+      return;
+    case EXT_IDLE:
+      digitalWrite(POWER_AMP_PIN, HIGH);
+      return;
+    case ENT_MUTE:
+      digitalWrite(POWER_AMP_PIN, LOW);
+      return;
+    case ENT_ARM:
+      soundPlayFlashRaw.play("POWERON_0.RAW");
+      return;
+    case LP_ARMED:
+      if (!soundPlayFlashRaw.isPlaying())
       {
-        swinging = false;
+        soundPlayFlashRaw.play("HUM_0.RAW");
       }
-      soundPlayFlashRaw.play("HUM_0.RAW");
-    }
-  }
-}
+      return;
+    case ENT_CLASH:
+      if (soundPlayFlashRaw.isPlaying())
+      {
+        soundPlayFlashRaw.stop();
+      }
+      clashId = random(1, 10);
+      clashString = "CLASH_" + String(clashId) + "_0.RAW";
+      soundPlayFlashFXRaw.play(clashString.c_str());
+      return;
+    case ENT_SWING:
+      if (!soundPlayFlashFXRaw.isPlaying())
+      {
+        if (soundPlayFlashRaw.isPlaying())
+          soundPlayFlashRaw.stop();
 
-void CoreAudio::checkArming()
-{
-  if ((status == Status::arming) || (status == Status::armingWithChangeColor))
-  {
-    if (!soundPlayFlashRaw.isPlaying())
-    {
-      status = Status::armed;
-      CoreLogging::writeLine("CoreAudio: Armed");
-    }
-  }
-}
+        swingId = random(1, 8);
+        swingString = "SWING_" + String(swingId) + "_0.RAW";
 
-void CoreAudio::checkDisarming()
-{
-  if (status == Status::disarming)
-  {
-    if (!soundPlayFlashRaw.isPlaying())
-    {
-      status = Status::disarmed;
-      CoreLogging::writeLine("CoreAudio: Disarmed");
-    }
-  }
-}
-
-void CoreAudio::changeColorMode()
-{
-  if ((status == Status::waitArmWithChangeColor) && (!changeColorStarted))
-  {
-    beep();
-    changeColorStarted = true;
-  }
-}
-
-void CoreAudio::checkPowerAmp()
-{
-  if ((status == Status::disarmed) || 
-      (status == Status::disarmedInRecharge) ||
-      (status == Status::waitArmWithChangeColor) || 
-      (status == Status::waitArmWithChangeColorNext) ||
-      (muted))
-  {
-    digitalWrite(POWER_AMP_PIN, LOW);
-  }
-  else
-  {
-    digitalWrite(POWER_AMP_PIN, HIGH);
+        soundPlayFlashFXRaw.play(swingString.c_str());
+      }
+      return;
+    case ENT_DISARM:
+      soundPlayFlashRaw.play("POWEROFF_0.RAW");
+      return;
   }
 }
 
@@ -192,38 +120,65 @@ void CoreAudio::beep()
   digitalWrite(POWER_AMP_PIN, LOW);
 }
 
-// Process loop
-void CoreAudio::loop(bool& rNeedSwing, bool& rNeedClash, Status& rStatus, bool& rNeedArm, bool& rNeedDisarm)
-{
-  status = rStatus;
-  if (rNeedClash)
-  {
-    clash();
-  }
+/* Optionally override the default trigger() method
+ * Control how your machine processes triggers
+ */
 
-  checkHum();
-
-  checkPowerAmp();
-
-  changeColorMode();
-
-  if ((rNeedSwing) && (!rNeedClash))
-  {
-    swing();
-  }
-
-  if (rNeedArm)
-  {
-    arm();
-  }
-
-  if (rNeedDisarm)
-  {
-    disarm();
-  }
-
-  checkArming();
-  checkDisarming();
-
-  rStatus = status;
+CoreAudio& CoreAudio::trigger( int event ) {
+  Machine::trigger( event );
+  return *this;
 }
+
+/* Optionally override the default state() method
+ * Control what the machine returns when another process requests its state
+ */
+
+int CoreAudio::state( void ) {
+  return Machine::state();
+}
+
+/* Nothing customizable below this line                          
+ ************************************************************************************************
+*/
+
+/* Public event methods
+ *
+ */
+
+CoreAudio& CoreAudio::mute() {
+  trigger( EVT_MUTE );
+  return *this;
+}
+
+CoreAudio& CoreAudio::arm() {
+  trigger( EVT_ARM );
+  return *this;
+}
+
+CoreAudio& CoreAudio::swing() {
+  trigger( EVT_SWING );
+  return *this;
+}
+
+CoreAudio& CoreAudio::clash() {
+  trigger( EVT_CLASH );
+  return *this;
+}
+
+CoreAudio& CoreAudio::disarm() {
+  trigger( EVT_DISARM );
+  return *this;
+}
+
+/* State trace method
+ * Sets the symbol table and the default logging method for serial monitoring
+ */
+
+CoreAudio& CoreAudio::trace( Stream & stream ) {
+  Machine::setTrace( &stream, atm_serial_debug::trace,
+    "COREAUDIO\0EVT_MUTE\0EVT_ARM\0EVT_SWING\0EVT_CLASH\0EVT_DISARM\0ELSE\0IDLE\0MUTE\0ARM\0ARMED\0CLASH\0SWING\0DISARM" );
+  return *this;
+}
+
+
+
