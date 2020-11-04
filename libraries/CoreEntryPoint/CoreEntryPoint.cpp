@@ -13,9 +13,12 @@ void CoreEntryPoint::init(String pBuild)
   commsModule.init(pBuild);
   audioModule.trace(Serial);
   audioModule.begin();
+  motionModule.begin();
+  imuModule.begin();
+  imuModule.onSample(updateMeasurements);
 
   settingsModule.init();
-  sensorModule.init();
+  //sensorModule.init();
 
   CoreSettings* setPtr;
   setPtr = &settingsModule;
@@ -31,8 +34,13 @@ void CoreEntryPoint::init(String pBuild)
 // Process loop
 void CoreEntryPoint::loop()
 {
-  sensorModule.loop(needSwingEvent, needClashEvent, status, verticalPosition, needArmEvent, horizontalPosition,
-                    needDisarmEvent);
+  //sensorModule.loop(needSwingEvent, needClashEvent, status, verticalPosition, needArmEvent, horizontalPosition,
+  //                  needDisarmEvent);
+  imuModule.cycle();
+  // if (imuModuele.state() == imuModule.SAMPLING
+  // {
+  //   updateMeasurements();
+  // }
   audioModule.cycle();
   if (needArmEvent)
   {
@@ -86,10 +94,21 @@ void CoreEntryPoint::releaseStatus()
 
 int CoreEntryPoint::getInt1Pin()
 {
-  return sensorModule.getInt1Pin();
+  return imuModule.getInt1Pin();
 }
 
 void CoreEntryPoint::incrementInt1ISR()
 {
   sensorModule.int1Status++;
+}
+
+void CoreEntryPoint::updateMeasurements(int idx, int v, int up)
+{
+  motionModule.setGyroX(imuModule.getGyroX());
+  motionModule.setGyroY(imuModule.getGyroY());
+  motionModule.setGyroZ(imuModule.getGyroZ());
+  motionModule.setAccelX(imuModule.getAccelX());
+  motionModule.setAccelY(imuModule.getAccelY());
+  motionModule.setAccelZ(imuModule.getAccelZ());
+  motionModule.setGyrosAvg(imuModule.getGyrosAvg());
 }

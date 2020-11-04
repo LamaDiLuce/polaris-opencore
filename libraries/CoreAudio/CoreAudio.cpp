@@ -13,16 +13,16 @@ CoreAudio& CoreAudio::begin() {
     /*    ARM */    ENT_ARM,        -1,       -1,       -1,      -1,        -1,        -1,         -1, ARMED,
     /*  ARMED */         -1,  LP_ARMED,       -1,       -1,      -1,     SWING,     CLASH,     DISARM,    -1,
     /*  CLASH */  ENT_CLASH,        -1,       -1,       -1,      -1,        -1,        -1,         -1, ARMED,
-    /*  SWING */  ENT_SWING,        -1,       -1,       -1,      -1,        -1,     CLASH,         -1, ARMED,
+    /*  SWING */  ENT_SWING,        -1,       -1,       -1,      -1,     SWING,     CLASH,         -1, ARMED,
     /* DISARM */ ENT_DISARM,        -1,       -1,       -1,      -1,        -1,        -1,         -1,  IDLE,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
+  pinMode(POWER_AMP_PIN, OUTPUT);
+  digitalWrite(POWER_AMP_PIN, LOW);
   SPI.setSCK(SCK_PIN);
   SPI.setMOSI(SI_PIN);
   SPI.setMISO(SO_PIN);
-  pinMode(POWER_AMP_PIN, OUTPUT);
-  digitalWrite(POWER_AMP_PIN, LOW);
   SerialFlash.begin(CS_PIN);
   patchSineMixer = new AudioConnection(soundSine, 0, mainMixer, CHANNEL_SINE);
   patchFlashMixer = new AudioConnection(soundPlayFlashRaw, 0, mainMixer, CHANNEL_HUM);
@@ -64,15 +64,23 @@ int CoreAudio::event( int id ) {
 void CoreAudio::action( int id ) {
   switch ( id ) {
     case ENT_IDLE:
-      digitalWrite(POWER_AMP_PIN, LOW);
+        if (!soundPlayFlashRaw.isPlaying())
+        {
+          digitalWrite(POWER_AMP_PIN, LOW);
+        }
       return;
     case LP_IDLE:
+        if (!soundPlayFlashRaw.isPlaying())
+        {
+          digitalWrite(POWER_AMP_PIN, LOW);
+        } 
       return;
     case EXT_IDLE:
       digitalWrite(POWER_AMP_PIN, HIGH);
       return;
     case ENT_MUTE:
-      digitalWrite(POWER_AMP_PIN, LOW);
+      beep();
+      beep();
       return;
     case ENT_ARM:
       soundPlayFlashRaw.play("POWERON_0.RAW");
@@ -96,11 +104,11 @@ void CoreAudio::action( int id ) {
       if (!soundPlayFlashFXRaw.isPlaying())
       {
         if (soundPlayFlashRaw.isPlaying())
+        {
           soundPlayFlashRaw.stop();
-
+        }
         swingId = random(1, 8);
         swingString = "SWING_" + String(swingId) + "_0.RAW";
-
         soundPlayFlashFXRaw.play(swingString.c_str());
       }
       return;

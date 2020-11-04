@@ -51,7 +51,7 @@ void CoreLed::changeColor(int colorSetId)
   changeColor(moduleSettings->getMainColor(colorSetId));
   if (colorSetId != OFF)
   {
-    CoreLogging::writeLine("CoreLed: Change color to %s", decodeColorSetId(colorSetId));
+    //CoreLogging::writeLine("CoreLed: Change color to %s", decodeColorSetId(colorSetId));
   }
 }
 
@@ -190,7 +190,7 @@ void CoreLed::blinkRecharge(NeedBlinkRecharge needBlinkRecharge)
 {
   if (currentStatus == Status::disarmedInRecharge)
   {
-    CoreLogging::writeLine("CoreLed: Blink recharging");
+    //CoreLogging::writeLine("CoreLed: Blink recharging");
     changeColor(needBlinkRecharge.colorRecharge);
     delay(BLINK_TIME);
     changeColor(OFF);

@@ -41,9 +41,9 @@ class CoreAudio: public Machine {
   void action( int id ); 
   
   int clashId = 1;
-  String clashString = NULL;
+  String clashString;
   int swingId = 1;
-  String swingString = NULL;
+  String swingString;
   AudioSynthWaveformSine soundSine;
   AudioPlaySerialflashRaw soundPlayFlashRaw;
   AudioPlaySerialflashRaw soundPlayFlashFXRaw;

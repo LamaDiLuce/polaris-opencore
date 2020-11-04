@@ -12,6 +12,8 @@
 #include "CoreRecharge.h"
 #include "CoreSensor.h"
 #include "CoreSettings.h"
+#include "CoreImu.h"
+#include "CoreMotion.h"
 
 class CoreEntryPoint
 {
@@ -32,12 +34,15 @@ public:
 private:
   String incomingMessage;
   CoreAudio audioModule;
+  CoreImu imuModule;
+  CoreMotion motionModule;
   CoreSensor sensorModule;
   CoreLed ledModule;
   CoreRecharge rechargeModule;
   CoreComms commsModule;
   CoreSettings settingsModule;
   Requests request;
+  void updateMeasurements(int idx, int v, int up);
 
   // STATUS
   bool needClashEvent;
