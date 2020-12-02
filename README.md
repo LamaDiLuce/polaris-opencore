@@ -77,10 +77,9 @@ This new release candidate is testes by selected developers and, if all the test
 ---
 
 ## Coulcil members
-| Name1 | Name2 |
-| :---: | :---: |
-| ![Polaris Anima EVO](https://www.lamadiluce.it/wp-content/uploads/2020/06/FBcover-01-e1596115323936.png) | ![Polaris Anima EVO](https://www.lamadiluce.it/wp-content/uploads/2020/06/FBcover-01-e1596115323936.png) |
-
+| Daniele *"dankenObi"* | Andrea *"AnFive"* | Carlos *"karldeux"* | Fabio | Davide "*FarFlyer"* | Ian *"Nuntis"* |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| <img src="Documentation/Images/Council/Daniele.jpg" alt="Daniele" title="Daniele" height="80"/> | <img src="Documentation/Images/Council/Andrea.jpg" alt="Andrea" title="Andrea" height="80"/> | <img src="Documentation/Images/Council/Carlos.jpg" alt="Carlos" title="Carlos" height="80"/> | <img src="Documentation/Images/Council/Fabio.jpg" alt="Fabio" title="Fabio" height="80"/> |  <img src="Documentation/Images/Council/Davide.jpg" alt="Davide" title="Davide" height="80"/> | <img src="Documentation/Images/Council/Ian.jpg" alt="Ian" title="Ian" height="80"/> |
 
 ---
 

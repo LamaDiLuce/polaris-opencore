@@ -22,9 +22,17 @@ There follow a quick overview of the first steps for the different OS:
 
 ## Windows setup
 
+The first step is to install [Git bash](https://git-scm.com/download/win).
+
+If you are an experience user or you like the command line you only need to clone the repository:
+
+```
+$ cd myWorkingDir
+$ git clone https://github.com/myGithubUser/polaris-opencore.git && cd polaris-opencore && git submodule update
+```
+
 If you are new to Git we racommand to use [GitHub Desktop](https://desktop.github.com/).
 
-You can also  install the [Git bash](https://git-scm.com/download/win) too so you can perform git command in case of need.
 
 1. Install [GitHub Desktop](https://desktop.github.com/)
 2. Create a ***fork*** of the polaris-opencore repository on the [GitHub website](https://github.com/LamaDiLuce/polaris-opencore)
