@@ -41,8 +41,12 @@ If you are new to Git we racommand to use [GitHub Desktop](https://desktop.githu
 ![GitHub Fork](Images/Git/GitHub_Open.png)
 4. From GitHub desktop select an empty folder for you local repository and click ***Clone***
 ![GitHub Fork](Images/Git/GitHub_Clone.png)
-5. If you are using VSCode (and you should), you can open it from GitHub Desktop with the related button on the home page or in the menu *Repository > Open in Visual Studio Code*
-6. Now you can start coding on you local copy of the repository. You can *commit* you work and then, when finished, create a *pull request*.
+5. From a command promt go in the polaris-opencore folder and send the following command:
+    ```
+    git submodule update
+    ```
+6. If you are using VSCode (and you should), you can open it from GitHub Desktop with the related button on the home page or in the menu *Repository > Open in Visual Studio Code*
+7. Now you can start coding on you local copy of the repository. You can *commit* you work and then, when finished, create a *pull request*.
 
 ## Linux setup
 
