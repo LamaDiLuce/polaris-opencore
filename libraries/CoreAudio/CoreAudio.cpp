@@ -29,8 +29,8 @@ CoreAudio& CoreAudio::begin() {
   patchFlashFXMixer = new AudioConnection(soundPlayFlashFXRaw, 0, mainMixer, CHANNEL_FX);
   patchMixerDac = new AudioConnection(mainMixer, outputDac);
   AudioMemory(AUDIO_BLOCK);
-  mainMixer.gain(CHANNEL_HUM, 0.1); // HUM
-  mainMixer.gain(CHANNEL_FX, 0.1);  // FX: Clash and Swing
+  mainMixer.gain(CHANNEL_HUM, 1); // HUM
+  mainMixer.gain(CHANNEL_FX, 1);  // FX: Clash and Swing
   mainMixer.gain(CHANNEL_SINE, 0);
   soundSine.amplitude(1);
   soundSine.frequency(BEEP_FREQUENCY);

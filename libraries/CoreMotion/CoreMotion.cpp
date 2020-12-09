@@ -68,6 +68,7 @@ void CoreMotion::action( int id ) {
       }
       return;
     case ENT_ARM:
+      int1Status = 0;
       push( connectors, ON_ARM, 0, 0, 0 );
       return;
     case LP_ARM:

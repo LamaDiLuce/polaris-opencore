@@ -20,7 +20,7 @@ CoreAudio audioModule;
 CoreImu imuModule;
 CoreMotion motionModule;
 CoreLed ledModule;
-CoreRecharge rechargeModule;
+//CoreRecharge rechargeModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
 Requests request;
@@ -37,31 +37,56 @@ NeedBlinkRecharge needBlinkRechargeEvent;
 
 void setup()
 {
+  /*   Modules Initialization   */
   commsModule.init(BUILD);
 
   audioModule.trace(Serial);
   audioModule.begin();
+
   motionModule.trace(Serial);
   motionModule.begin();
-  motionModule.onArmed(audioModule,audioModule.EVT_ARM);
-  motionModule.onClash(audioModule,audioModule.EVT_CLASH);
-  motionModule.onSwing(audioModule,audioModule.EVT_SWING);
-  motionModule.onDisarm(audioModule,audioModule.EVT_DISARM);
-  motionModule.onMute(audioModule,audioModule.EVT_MUTE);
+
+  ledModule.trace(Serial);
+  ledModule.begin();
+  
   //imuModule.trace(Serial);
   imuModule.begin();
-  imuModule.onSample(updateMeasurements);
+
+  /*   Modules Connections   */
+  imuModule.onSample(updateMeasurements);                   // Callback
+
+  motionModule.onMute(audioModule,audioModule.EVT_MUTE);    // Simple push connector for only one action
+
+  motionModule.onArm([] (int idx, int v, int up) { // lambda function for more actions
+                        ledModule.trigger(ledModule.EVT_ARM);
+  });  
+  motionModule.onArmed([] (int idx, int v, int up) { // lambda function for more actions
+                        ledModule.trigger(ledModule.EVT_ARMED);
+                        audioModule.trigger(audioModule.EVT_ARM);
+  });
+  motionModule.onClash([] (int idx, int v, int up) { // lambda function for more actions
+                        audioModule.trigger(audioModule.EVT_CLASH);
+                        ledModule.trigger(ledModule.EVT_CLASH);
+  });
+  motionModule.onSwing([] (int idx, int v, int up) { // lambda function for more actions
+                        audioModule.trigger(audioModule.EVT_SWING);
+                        ledModule.trigger(ledModule.EVT_SWING);
+  });
+  motionModule.onDisarm([] (int idx, int v, int up) { // lambda function for more actions
+                        audioModule.trigger(audioModule.EVT_DISARM);
+                        ledModule.trigger(ledModule.EVT_DISARM);
+  });
 
   settingsModule.init();
 
   CoreSettings* setPtr;
   setPtr = &settingsModule;
-  ledModule.init(setPtr);
-  rechargeModule.init();
+  //ledModule.init(setPtr);
+  //rechargeModule.init();
 
-  CoreLed* ledPtr;
-  ledPtr = &ledModule;
-  commsModule.setModule(ledPtr, setPtr);
+  //CoreLed* ledPtr;
+  //ledPtr = &ledModule;
+  commsModule.setModule(setPtr);
   status = Status::disarmed;
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
 }
@@ -71,35 +96,7 @@ void loop()
   imuModule.cycle();
   motionModule.cycle();
   audioModule.cycle();
-  if (audioModule.state() == audioModule.ARMED)
-  {
-    status=Status::armed;
-  }
-  if (audioModule.state() == audioModule.DISARM)
-  {
-    status=Status::disarmed;
-  }
-  if (motionModule.state() == motionModule.EVT_SWING)
-  {
-    needSwingEvent=true;
-  }
-  else
-  {
-    needSwingEvent=false;
-  }
-  if (motionModule.state() == motionModule.EVT_CLASH)
-  {
-    needClashEvent=true;
-  }
-  else
-  {
-    needClashEvent=false;
-  }
-
-  rechargeModule.loop(status, needBlinkRechargeEvent);
-
-  ledModule.loop(needSwingEvent, needClashEvent, status, needArmEvent, needDisarmEvent, needBlinkRechargeEvent);
-  releaseStatus();
+  ledModule.cycle();
 
   commsModule.loop();
 
@@ -108,7 +105,7 @@ void loop()
   {
     settingsModule.saveToStore();
     commsModule.setMode(MODE_NORMAL);
-    ledModule.changeColor({0,0,0,0}); //in case preview has been turned on
+    //ledModule.changeColor({0,0,0,0}); //in case preview has been turned on
   }
 }
 
@@ -126,12 +123,4 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setAccelY(imuModule.getAccelY());
   motionModule.setAccelZ(imuModule.getAccelZ());
   motionModule.setGyrosAvg(imuModule.getGyrosAvg());
-}
-
-void releaseStatus()
-{
-  needSwingEvent = false;
-  needClashEvent = false;
-  verticalPosition = false;
-  needArmEvent = false;
 }

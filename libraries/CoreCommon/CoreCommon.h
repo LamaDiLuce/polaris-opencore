@@ -49,13 +49,6 @@ struct ColorLed
   int white;
 };
 
-struct FilterSensor
-{
-  int readingCount;
-  float progressAverageValue;
-  float previousAverageValue;
-};
-
 struct NeedBlinkRecharge
 {
   bool chargeSequence;

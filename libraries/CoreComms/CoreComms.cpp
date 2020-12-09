@@ -15,9 +15,9 @@ void CoreComms::init(String pBuild)
   CoreLogging::writeLine("CoreComms: Build: %s", build);
   CoreLogging::writeLine("CoreComms: Serial Number: %s", serial);
 }
-void CoreComms::setModule(CoreLed* cled, CoreSettings* cSet)
+void CoreComms::setModule(CoreSettings* cSet)
 {
-  ledmodule = cled;
+  //ledmodule = cled;
   setmodule = cSet;
 }
 
@@ -370,12 +370,12 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   }
   else if (pIncomingMessage.equalsIgnoreCase("P=0"))
   {
-    ledmodule->changeColor({0,0,0,0});
+    //TODO ledmodule->changeColor({0,0,0,0});
     out="OK, P=0";    
   }
   else if (pIncomingMessage.startsWith("P=") || pIncomingMessage.startsWith("p="))
   {
-    ledmodule->changeColor(stringToColorLed(pIncomingMessage.substring(2)));
+    // TODO ledmodule->changeColor(stringToColorLed(pIncomingMessage.substring(2)));
     out="OK, "+pIncomingMessage;    
   }
   else if (pIncomingMessage.startsWith("B="))

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Arduino.h"
-#include "CoreLed.h"
+//#include "CoreLed.h"
+#include "CoreSettings.h"
 #include <CoreLogging.h>
 #include <SerialFlash.h>
 
@@ -22,7 +23,7 @@ public:
   CoreComms();
   // Init
   void init(String pBuild);
-  void setModule(CoreLed* cled, CoreSettings* cSet);
+  void setModule(CoreSettings* cSet);
   // Process loop
   void loop();
   byte getMode();
@@ -34,7 +35,7 @@ private:
   String build = "";
   String serial = "";
   String incomingMessage = "";
-  CoreLed* ledmodule; // for access to color variables, to be moved to a settings module
+  //CoreLed* ledmodule; // for access to color variables, to be moved to a settings module
   CoreSettings* setmodule;
 
   // Hardware Serial Numbers
