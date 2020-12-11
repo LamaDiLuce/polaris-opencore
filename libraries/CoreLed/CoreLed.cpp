@@ -13,7 +13,7 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
     /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
     /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*    CLASH */    ENT_CLASH,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
-    /*    SWING */    ENT_SWING,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,         -1, ARMED,
+    /*    SWING */    ENT_SWING,          -1,      -1,       -1,           -1,      -1,     ARMED,     SWING,     CLASH,         -1,    -1,
     /*   DISARM */   ENT_DISARM,          -1,      -1,       -1,           -1,      -1,        -1,        -1,        -1,         -1,  IDLE,
   };
   // clang-format on
