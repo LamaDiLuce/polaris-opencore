@@ -7,7 +7,6 @@
 #include "CoreComms.h"
 #include "CoreLed.h"
 #include "CoreLogging.h"
-#include "CoreRecharge.h"
 #include "CoreSettings.h"
 #include "CoreImu.h"
 #include "CoreMotion.h"
@@ -20,7 +19,6 @@ CoreAudio audioModule;
 CoreImu imuModule;
 CoreMotion motionModule;
 CoreLed ledModule;
-//CoreRecharge rechargeModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
 Requests request;
@@ -33,7 +31,6 @@ bool verticalPosition;
 bool horizontalPosition;
 bool needArmEvent;
 bool needDisarmEvent;
-NeedBlinkRecharge needBlinkRechargeEvent;
 
 void setup()
 {
@@ -46,8 +43,13 @@ void setup()
   motionModule.trace(Serial);
   motionModule.begin();
 
+  settingsModule.init();
+
+  CoreSettings* setPtr;
+  setPtr = &settingsModule;
+
   ledModule.trace(Serial);
-  ledModule.begin();
+  ledModule.begin(setPtr);
   
   //imuModule.trace(Serial);
   imuModule.begin();
@@ -61,8 +63,8 @@ void setup()
                         ledModule.trigger(ledModule.EVT_ARM);
   });  
   motionModule.onArmed([] (int idx, int v, int up) { // lambda function for more actions
-                        ledModule.trigger(ledModule.EVT_ARMED);
                         audioModule.trigger(audioModule.EVT_ARM);
+                        ledModule.trigger(ledModule.EVT_ARMED);
   });
   motionModule.onClash([] (int idx, int v, int up) { // lambda function for more actions
                         audioModule.trigger(audioModule.EVT_CLASH);
@@ -77,10 +79,6 @@ void setup()
                         ledModule.trigger(ledModule.EVT_DISARM);
   });
 
-  settingsModule.init();
-
-  CoreSettings* setPtr;
-  setPtr = &settingsModule;
   //ledModule.init(setPtr);
   //rechargeModule.init();
 

@@ -13,6 +13,7 @@
 #define CHANNEL_SINE 1
 #define CHANNEL_HUM 0
 #define CHANNEL_FX 2
+#define VOLUME 1
 
 #define BEEP_TIME 125
 #define BEEP_FREQUENCY 1000

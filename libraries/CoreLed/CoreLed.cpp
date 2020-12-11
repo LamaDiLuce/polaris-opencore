@@ -4,7 +4,7 @@
  * Add extra initialization code
  */
 
-CoreLed& CoreLed::begin() {
+CoreLed& CoreLed::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
     /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
@@ -25,6 +25,8 @@ CoreLed& CoreLed::begin() {
   pinMode(CHARGE_PIN, INPUT);
   pinMode(STANDBY_PIN, INPUT);
   pinMode(USB_PIN, INPUT);
+  moduleSettings = cSet;
+  moduleSettings->init();
   return *this;          
 }
 
@@ -73,13 +75,13 @@ void CoreLed::action( int id ) {
     case LP_IDLE:
       return;
     case ENT_RECHARGE:
-      tunrOnRGBW(255,0,0,0); // RED
+      changeColor({255,0,0,0}); // RED
       delay(CHARGE_SEQUENCE_BLINK_TIME);
-      tunrOnRGBW(0,255,0,0); // GREEN
+      changeColor({0,255,0,0}); // GREEN
       delay(CHARGE_SEQUENCE_BLINK_TIME);
-      tunrOnRGBW(0,0,255,0); // BLUE
+      changeColor({0,0,255,0}); // BLUE
       delay(CHARGE_SEQUENCE_BLINK_TIME);
-      tunrOnRGBW(0,0,0,255); // WHITE
+      changeColor({0,0,0,255}); // WHITE
       delay(CHARGE_SEQUENCE_BLINK_TIME);
       turnOff();
       timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
@@ -89,14 +91,14 @@ void CoreLed::action( int id ) {
       {
         if (digitalRead(CHARGE_PIN) == HIGH)
         {
-          tunrOnRGBW(255,0,0,0); // RED
+          changeColor({255,0,0,0}); // RED
           delay(RECHARGING_BLINK_TIME);
           turnOff();
           timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
         }
         if (digitalRead(STANDBY_PIN) == HIGH)
         {
-          tunrOnRGBW(0,0,255,0); // BLUE
+          changeColor({0,0,255,0}); // BLUE
           delay(RECHARGING_BLINK_TIME);
           turnOff();
           timer_blink.setFromNow(this,BLINK_RECHARGED_STATUS_TIMER);
@@ -104,7 +106,8 @@ void CoreLed::action( int id ) {
       }
       return;
     case ENT_ARM:
-      tunrOnRGBW(0,0,0,255); // WHITE
+      getCurrentColorSet();
+      changeColor(mainColor);
       delay(ARMING_BLINK_TIME);
       turnOff();
       timer_color_selection.setFromNow(this,TIME_FOR_COLOR_SELECTION);
@@ -112,56 +115,112 @@ void CoreLed::action( int id ) {
     case LP_ARM:
       if (timer_color_selection.expired( this ))
       {
-        // TODO blink next color and save as current color
+        if (currentColorSetId == COLORS)
+        {
+          currentColorSetId = 0;
+        }
+        else
+        {
+          currentColorSetId = currentColorSetId + 1;
+        }
+        setCurrentColorSet(currentColorSetId);
+        changeColor(mainColor);
+        delay(COLOR_SELECTION_BLINK_TIME);
+        turnOff();
         timer_color_selection.setFromNow(this,TIME_FOR_COLOR_SELECTION);
       }
       return;
     case EXT_ARM:
-      // TODO fadein
+      fadeIn();
       return;
     case ENT_ARMED:
-      // TODO switch ON leds with main color
-      tunrOnRGBW(0,0,0,255); // WHITE
+      changeColor(mainColor);
       return;
     case ENT_CLASH:
-      // TODO change color to clash and wait the clash delay (going back to armed will reset the color to main automatically)
-      tunrOnRGBW(255,0,0,0); // red
+      changeColor(clashColor);
       delay(CLASH_BLINK_TIME);
       return;
     case ENT_SWING:
-      // TODO change color to swing (going back to armed will reset the color to main automatically)
-      tunrOnRGBW(0,255,0,0); // green
+      changeColor(swingColor);
       return;
     case ENT_DISARM:
-      // TODO fadeout
+      fadeOut();
       return;
   }
 }
 
-void CoreLed::tunrOnRGBW(int red, int green, int blue, int white)
-{
-  red = setColorDelta(red);
-  green = setColorDelta(green);
-  blue = setColorDelta(blue);
-  white = setColorDelta(white);
-
-  analogWrite(PIN_RED, !COMMON_GND ? red : 255 - red);
-  analogWrite(PIN_GREEN, !COMMON_GND ? green : 255 - green);
-  analogWrite(PIN_BLUE, !COMMON_GND ? blue : 255 - blue);
-  analogWrite(PIN_WHITE, !COMMON_GND ? white : 255 - white);
-
-  // TODO gradientColorSet = {red, green, blue, white};
-}
-
-int CoreLed::setColorDelta(int color)
-{
-  return (color < 0) ? 0 : (color > 255) ? 255 : color;
-}
-
 void CoreLed::turnOff()
 {
-  tunrOnRGBW(0,0,0,0);
+  changeColor({0,0,0,0});
 }
+
+String CoreLed::decodeColorSetId(int colorSetId)
+{
+  String colors[9] = {"RED", "ORANGE", "YELLOW", "GREEN", "WHITE", "ACQUA", "BLUE", "PURPLE", "OFF"};
+
+  if (colorSetId < int(sizeof(colors) / sizeof(colors[0])))
+  {
+    return colors[colorSetId];
+  }
+  else 
+  {
+    return OFF;
+  }
+}
+
+void CoreLed::getCurrentColorSet()
+{
+  currentColorSetId = moduleSettings->getActiveBank();
+  mainColor = moduleSettings->getMainColor(currentColorSetId);
+  clashColor = moduleSettings->getClashColor(currentColorSetId);
+  swingColor = moduleSettings->getSwingColor(currentColorSetId);
+
+  CoreLogging::writeLine("CoreLed: Color Set: %s", decodeColorSetId(currentColorSetId));
+}
+
+void CoreLed::setCurrentColorSet(int colorSetId)
+{
+  CoreLogging::writeLine("CoreLed: Setting color set...");
+  moduleSettings->setActiveBank(colorSetId);
+  getCurrentColorSet();
+}
+
+void CoreLed::changeColor(const ColorLed& cLed)
+{
+  analogWrite(PIN_RED, !COMMON_GND ? cLed.red : 255 - cLed.red);
+  analogWrite(PIN_GREEN, !COMMON_GND ? cLed.green : 255 - cLed.green);
+  analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
+  analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
+}
+
+void CoreLed::fadeIn()
+{
+  CoreLogging::writeLine("CoreLed: FadeIn");
+  for (int i = 0; i <= FADE_DELAY; i++)
+  {
+    singleStepColor.red = mainColor.red / FADE_DELAY * i;
+    singleStepColor.green = mainColor.green / FADE_DELAY * i;
+    singleStepColor.blue = mainColor.blue / FADE_DELAY * i;
+    singleStepColor.white = mainColor.white / FADE_DELAY * i;
+    changeColor(singleStepColor);
+    delay(FADE_IN_TIME / FADE_DELAY);
+  }
+}
+
+void CoreLed::fadeOut()
+{
+  CoreLogging::writeLine("CoreLed: FadeIn");
+  for (int i = FADE_DELAY; i >= 0; i--)
+  {
+    singleStepColor.red = mainColor.red / FADE_DELAY * i;
+    singleStepColor.green = mainColor.green / FADE_DELAY * i;
+    singleStepColor.blue = mainColor.blue / FADE_DELAY * i;
+    singleStepColor.white = mainColor.white / FADE_DELAY * i;
+    changeColor(singleStepColor);
+    delay(FADE_OUT_TIME / FADE_DELAY);
+  }
+}
+
 
 /* Optionally override the default trigger() method
  * Control how your machine processes triggers

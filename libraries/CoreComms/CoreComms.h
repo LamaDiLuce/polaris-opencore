@@ -43,6 +43,7 @@ private:
 
   void processIncomingMessage(const String& pIncomingMessage);
   void printDevInfo();
+  void changeColor(const ColorLed& cLed);
 
   char hexDigit(int n);
   ColorLed stringToColorLed(String sColor);

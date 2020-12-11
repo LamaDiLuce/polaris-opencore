@@ -1,17 +1,8 @@
 #pragma once
 
 #include <Automaton.h>
-
-// LED RGBW
-#define PIN_RED 3
-#define PIN_GREEN 4
-#define PIN_BLUE 5
-#define PIN_WHITE 6
-#define COMMON_GND false
-
-#define CHARGE_PIN 13
-#define STANDBY_PIN 15
-#define USB_PIN 23
+#include "CoreLogging.h"
+#include "CoreSettings.h"
 
 class CoreLed: public Machine {
 
@@ -19,7 +10,7 @@ class CoreLed: public Machine {
   enum { IDLE, RECHARGE, ARM, ARMED, CLASH, SWING, DISARM }; // STATES
   enum { EVT_IDLE, EVT_RECHARGE, EVT_ARM, EVT_ARMED, EVT_SWING, EVT_CLASH, EVT_DISARM, ELSE }; // EVENTS
   CoreLed( void ) : Machine() {};
-  CoreLed& begin( void );
+  CoreLed& begin( CoreSettings* cSet );
   CoreLed& trace( Stream & stream );
   CoreLed& trigger( int event );
   int state( void );
@@ -51,19 +42,33 @@ class CoreLed: public Machine {
   atm_connector connectors[CONN_MAX];
   int event( int id );
   void action( int id );
-  void tunrOnRGBW(int red, int green, int blue, int white);
-  int setColorDelta(int color);
   void turnOff();
+  String decodeColorSetId(int colorSetId);
+  void getCurrentColorSet();
+  void setCurrentColorSet(int colorSetId);
+  void changeColor(const ColorLed& cLed);
+  void fadeIn();
+  void fadeOut();
   atm_timer_millis timer_blink;
   atm_timer_millis timer_color_selection;
+  int currentColorSetId = OFF;
+  int nextColorSetId = OFF;
+  ColorLed mainColor;
+  ColorLed clashColor;
+  ColorLed swingColor;
+  ColorLed singleStepColor;
   static constexpr int BLINK_RECHARGE_STATUS_TIMER = 8000;
   static constexpr int BLINK_RECHARGED_STATUS_TIMER = 12000;
   static constexpr int CHARGE_SEQUENCE_BLINK_TIME = 300;
   static constexpr int RECHARGING_BLINK_TIME = 300;
-  static constexpr int ARMING_BLINK_TIME = 300;
+  static constexpr int ARMING_BLINK_TIME = 200;
   static constexpr int TIME_FOR_COLOR_SELECTION = 2000;
-  static constexpr int COLOR_SELECTION_BLINK_TIME = 300;
-  static constexpr int CLASH_BLINK_TIME = 300;
+  static constexpr int COLOR_SELECTION_BLINK_TIME = 500;
+  static constexpr int CLASH_BLINK_TIME = 200;
+  static constexpr int FADE_DELAY = 30;
+  static constexpr int FADE_IN_TIME = 300;
+  static constexpr int FADE_OUT_TIME = 1000;
+  CoreSettings* moduleSettings;
 };
 
 /*
