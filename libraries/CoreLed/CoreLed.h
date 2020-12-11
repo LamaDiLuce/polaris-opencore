@@ -69,6 +69,7 @@ class CoreLed: public Machine {
   static constexpr int FADE_IN_TIME = 300;
   static constexpr int FADE_OUT_TIME = 1000;
   CoreSettings* moduleSettings;
+  int numberOfColorChanged = 0;
 };
 
 /*

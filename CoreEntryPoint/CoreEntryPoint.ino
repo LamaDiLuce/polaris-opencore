@@ -78,6 +78,13 @@ void setup()
                         audioModule.trigger(audioModule.EVT_DISARM);
                         ledModule.trigger(ledModule.EVT_DISARM);
   });
+  ledModule.onNextcolor([] (int idx, int v, int up) {
+                        if (v == 0)
+                        {
+                          audioModule.beep();
+                        }
+  });
+
 
   //ledModule.init(setPtr);
   //rechargeModule.init();

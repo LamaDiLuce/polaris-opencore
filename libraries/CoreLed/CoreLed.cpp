@@ -111,10 +111,13 @@ void CoreLed::action( int id ) {
       delay(ARMING_BLINK_TIME);
       turnOff();
       timer_color_selection.setFromNow(this,TIME_FOR_COLOR_SELECTION);
+      numberOfColorChanged = 0;
       return;
     case LP_ARM:
       if (timer_color_selection.expired( this ))
       {
+        push( connectors, ON_NEXTCOLOR, 0, numberOfColorChanged, 0 );
+        numberOfColorChanged = numberOfColorChanged + 1;
         if (currentColorSetId == COLORS)
         {
           currentColorSetId = 0;
