@@ -39,7 +39,7 @@ int CoreMotion::event( int id ) {
       return timer_arm.expired( this );
     case EVT_ARM:
       return (timer_vertical.expired( this ) && 
-             (GyroZ > ARM_THRESHOLD_Z) &&
+             (abs(GyroZ) > ARM_THRESHOLD_Z) &&
              (GyroX < ARM_THRESHOLD_XY) &&
              (GyroY < ARM_THRESHOLD_XY));
   }
