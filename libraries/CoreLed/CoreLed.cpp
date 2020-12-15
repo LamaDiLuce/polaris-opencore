@@ -89,14 +89,14 @@ void CoreLed::action( int id ) {
     case LP_RECHARGE:
       if (timer_blink.expired( this ))
       {
-        if (digitalRead(CHARGE_PIN) == HIGH)
+        if (digitalRead(CHARGE_PIN) == LOW)
         {
           changeColor({255,0,0,0}); // RED
           delay(RECHARGING_BLINK_TIME);
           turnOff();
           timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
         }
-        if (digitalRead(STANDBY_PIN) == HIGH)
+        if (digitalRead(STANDBY_PIN) == LOW)
         {
           changeColor({0,0,255,0}); // BLUE
           delay(RECHARGING_BLINK_TIME);
