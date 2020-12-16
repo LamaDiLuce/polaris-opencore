@@ -4,3 +4,6 @@
 [submodule "libraries/ArduinoJson"]
 	path = libraries/ArduinoJson
 	url = https://github.com/bblanchon/ArduinoJson
+[submodule "libraries/Automaton"]
+	path = libraries/Automaton
+	url = https://github.com/tinkerspy/Automaton

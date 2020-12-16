@@ -1,6 +1,17 @@
 #pragma once
 
-static constexpr bool DEBUG = false;
+static constexpr bool DEBUG = true;
+
+// LED RGBW
+#define PIN_RED 3
+#define PIN_GREEN 4
+#define PIN_BLUE 5
+#define PIN_WHITE 6
+#define COMMON_GND false
+
+#define CHARGE_PIN 13
+#define STANDBY_PIN 15
+#define USB_PIN 23
 
 enum class Status
 {
@@ -37,28 +48,10 @@ enum class Requests
 #define PURPLE 7
 #define OFF 8
 
-#define BLINK_TIME 300
-#define RECHARGE_COLOR RED
-#define RECHARGED_COLOR BLUE
-
 struct ColorLed
 {
   int red;
   int green;
   int blue;
   int white;
-};
-
-struct FilterSensor
-{
-  int readingCount;
-  float progressAverageValue;
-  float previousAverageValue;
-};
-
-struct NeedBlinkRecharge
-{
-  bool chargeSequence;
-  bool needRecharge;
-  int colorRecharge;
 };

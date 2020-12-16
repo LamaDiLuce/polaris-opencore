@@ -15,9 +15,9 @@ void CoreComms::init(String pBuild)
   CoreLogging::writeLine("CoreComms: Build: %s", build);
   CoreLogging::writeLine("CoreComms: Serial Number: %s", serial);
 }
-void CoreComms::setModule(CoreLed* cled, CoreSettings* cSet)
+void CoreComms::setModule(CoreSettings* cSet)
 {
-  ledmodule = cled;
+  //ledmodule = cled;
   setmodule = cSet;
 }
 
@@ -370,12 +370,12 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   }
   else if (pIncomingMessage.equalsIgnoreCase("P=0"))
   {
-    ledmodule->changeColor({0,0,0,0});
+    changeColor({0,0,0,0});
     out="OK, P=0";    
   }
   else if (pIncomingMessage.startsWith("P=") || pIncomingMessage.startsWith("p="))
   {
-    ledmodule->changeColor(stringToColorLed(pIncomingMessage.substring(2)));
+    changeColor(stringToColorLed(pIncomingMessage.substring(2)));
     out="OK, "+pIncomingMessage;    
   }
   else if (pIncomingMessage.startsWith("B="))
@@ -631,4 +631,12 @@ uint32_t CoreComms::getStorageUsed()
 uint32_t CoreComms::getStorageFree()
 {
   return getStorageCapacity()-getStorageUsed();
+}
+
+void CoreComms::changeColor(const ColorLed& cLed)
+{
+  analogWrite(PIN_RED, !COMMON_GND ? cLed.red : 255 - cLed.red);
+  analogWrite(PIN_GREEN, !COMMON_GND ? cLed.green : 255 - cLed.green);
+  analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
+  analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
 }
