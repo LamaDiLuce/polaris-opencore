@@ -4,3 +4,4 @@
 .git
 libraries/readme.txt
 .pio
+.DS_Store
