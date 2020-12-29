@@ -13,30 +13,6 @@ static constexpr bool DEBUG = true;
 #define STANDBY_PIN 15
 #define USB_PIN 23
 
-enum class Status
-{
-  disarmed = 0,
-  armed = 1,
-  waitArm = 2,
-  arming = 3,
-  disarming = 4,
-  waitDisarm = 5,
-  waitArmWithChangeColor = 6,
-  waitArmWithChangeColorNext = 7,
-  armingWithChangeColor = 8,
-  disarmedInRecharge = 9
-};
-
-enum class Requests
-{
-  lowClash = 0,
-  highCLash = 1,
-  swing = 2,
-  arm = 3,
-  disarm = 4,
-  none = 5
-};
-
 #define COLORS 7
 #define RED 0
 #define ORANGE 1

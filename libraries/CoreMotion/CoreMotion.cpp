@@ -41,7 +41,8 @@ int CoreMotion::event( int id ) {
       return (timer_vertical.expired( this ) && 
              (abs(GyroZ) > ARM_THRESHOLD_Z) &&
              (GyroX < ARM_THRESHOLD_XY) &&
-             (GyroY < ARM_THRESHOLD_XY));
+             (GyroY < ARM_THRESHOLD_XY) &&
+             (digitalRead(USB_PIN) == LOW)); // remove this last condition if you want to swtich on the saber while connected to USB port
   }
   return 0;
 }

@@ -8,8 +8,8 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
     /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
-    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,        -1,        -1,        -1,         -1,    -1,   // TODO remove the ARM state for the ARM event or find a way to connect to the DEBUG flag
-    /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,     ARM,        -1,        -1,        -1,         -1,    -1,
+    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,        -1,        -1,        -1,         -1,    -1,   
+    /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,      -1,        -1,        -1,        -1,         -1,    -1,  // add ARM state in the column EVT_ARM if you want to arm the saber while charging
     /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
     /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*    CLASH */    ENT_CLASH,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
