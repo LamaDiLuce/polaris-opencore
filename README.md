@@ -45,6 +45,7 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 - Mute cunction activated by a tap on the hilt during arming
 - Electronic powered by a Cortex-M4
 - Dedicated PC softwares for advanced customization and firmware upgrade
+- Code built with [Automaton](https://github.com/tinkerspy/Automaton/wiki) state machine modules
 
 ---
 
@@ -54,6 +55,7 @@ In order to be able to contributre to this project, compile and upload the FW to
 - be familiar with Arduino
 - download and install a bunch of software
 - get used to Git and GitHub in order to commit your changes
+- get familiar with [Automaton framework](Documentation/Automaton.md)
 
 We strongly recommend to install VS Code and PlatformIO extension.
 
