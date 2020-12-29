@@ -40,10 +40,11 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 - RGBW costomization for the LED
 - No pushbutton required
   - Gestures to arm / disarm
-  - Blade color can be selected with a gesture among pre-sets during arming
+  - Blade color can be selected among pre-sets during arming
+  - Kill switch
 - Mute cunction activated by a tap on the hilt during arming
 - Electronic powered by a Cortex-M4
-- Dedicated Scintilla PC software for advanced customization and firmware upgrade
+- Dedicated PC softwares for advanced customization and firmware upgrade
 
 ---
 
@@ -54,16 +55,10 @@ In order to be able to contributre to this project, compile and upload the FW to
 - download and install a bunch of software
 - get used to Git and GitHub in order to commit your changes
 
-There are two possible scenarios, based on your preferences. You can install Arduino IDE, Teensyduino, and use your preferred text editor for the code OR you can install Visual Studio Code and PlatformIO extension. We strongly recommend the latter, since VS Code plus PlatformIO is a modern, cross-platform and powerful IDE and this scenario requires less configuration steps.
+We strongly recommend to install VS Code and PlatformIO extension.
 
 - [Get ready with GitHub](Documentation/GIT.md)
 - [Configure VS Code plus PlatformIO](Documentation/VSCode-PlatformIO.md)
-- [or] Configure Arduino IDE and Teensyduino
-  - [Windows (or MAC) guide step by step](Documentation/SETUP.md#windows-setup)
-  - [Linux guide step by step](Documentation/SETUP.md#linux-setup)
-
-
-
 
 ---
 
