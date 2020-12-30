@@ -42,7 +42,7 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
   - Gestures to arm / disarm
   - Blade color can be selected among pre-sets during arming
   - Kill switch
-- Mute cunction activated by a tap on the hilt during arming
+- Mute function activated by a tap on the hilt during arming
 - Electronic powered by a Cortex-M4
 - Dedicated PC softwares for advanced customization and firmware upgrade
 - Code built with [Automaton](https://github.com/tinkerspy/Automaton/wiki) state machine modules
@@ -67,14 +67,14 @@ We strongly recommend to install VS Code and PlatformIO extension.
 ## Contributing
 Any developer who wants to contribute to the project shall propose a completed merge into the master as a significant feature update for a release to the public (just one pull request with all the relevant details).
 
-The changes are first reviewed in terms of coding, compatibility with previous versions and Scintilla SW. If the changes are ok and in line with the purpose of the lightsaber FW, the coulcil give the approval and a new release candidate is built.
+The changes are first reviewed in terms of coding, compatibility with previous versions and Scintilla SW. If the changes are ok and in line with the purpose of the lightsaber FW, the council gives the approval and a new release candidate is built.
 
 This new release candidate is testes by selected developers and, if all the tests are passed, the master branch is updated and a new official FW version is released.
 
 ---
 
-## Coulcil members
-| Daniele *"dankenObi"* | Andrea *"AnFive"* | Carlos *"karldeux"* | Fabio | Davide "*FarFlyer"* | Ian *"Nuntis"* |
+## Council members
+| Daniele *"denken0bi"* | Andrea *"AnFive"* | Carlos *"karldeux"* | Fabio "*FlamingBear*" | Davide "*FarFlyer"* | Ian *"Nuntis"* |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | <img src="Documentation/Images/Council/Daniele.jpg" alt="Daniele" title="Daniele" height="80"/> | <img src="Documentation/Images/Council/Andrea.jpg" alt="Andrea" title="Andrea" height="80"/> | <img src="Documentation/Images/Council/Carlos.jpg" alt="Carlos" title="Carlos" height="80"/> | <img src="Documentation/Images/Council/Fabio.jpg" alt="Fabio" title="Fabio" height="80"/> |  <img src="Documentation/Images/Council/Davide.jpg" alt="Davide" title="Davide" height="80"/> | <img src="Documentation/Images/Council/Ian.jpg" alt="Ian" title="Ian" height="80"/> |
 
