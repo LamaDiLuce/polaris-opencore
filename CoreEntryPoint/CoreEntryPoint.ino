@@ -21,12 +21,10 @@ CoreMotion motionModule;
 CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
-Requests request;
 
 // STATUS
 bool needClashEvent;
 bool needSwingEvent;
-Status status;
 bool verticalPosition;
 bool horizontalPosition;
 bool needArmEvent;
@@ -78,21 +76,14 @@ void setup()
                         audioModule.trigger(audioModule.EVT_DISARM);
                         ledModule.trigger(ledModule.EVT_DISARM);
   });
-  ledModule.onNextcolor([] (int idx, int v, int up) {
+  ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
                         if (v == 0)
                         {
                           audioModule.beep();
                         }
   });
 
-
-  //ledModule.init(setPtr);
-  //rechargeModule.init();
-
-  //CoreLed* ledPtr;
-  //ledPtr = &ledModule;
   commsModule.setModule(setPtr);
-  status = Status::disarmed;
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
 }
 
@@ -105,12 +96,11 @@ void loop()
 
   commsModule.loop();
 
-  // if we are out of needBlinkRechargeEvent and communication mode is not normal then save the settings
-  if ((status != Status::disarmedInRecharge) && (commsModule.getMode() != MODE_NORMAL))
+  // if the communication mode is not normal then save the settings
+  if (commsModule.getMode() != MODE_NORMAL)
   {
     settingsModule.saveToStore();
     commsModule.setMode(MODE_NORMAL);
-    //ledModule.changeColor({0,0,0,0}); //in case preview has been turned on
   }
 }
 

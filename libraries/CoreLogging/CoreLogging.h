@@ -20,8 +20,6 @@ public:
   template<typename... Args>
   static void writeLine(const char* message, const Args&... args);
 
-  static const char* statusToString(Status status);
-
 private:
   static void writeToSerial(const char* message);
 };
@@ -57,20 +55,6 @@ template<>
 inline const char* convertArg<String>(const String& arg)
 {
   return arg.c_str();
-}
-
-/* Allow logging Status objects: */
-
-template<>
-struct ConvertedArgType<Status>
-{
-  using type = const char*;
-};
-
-template<>
-inline const char* convertArg<Status>(const Status& arg)
-{
-  return CoreLogging::statusToString(arg);
 }
 
 // Template specialization for no-arguments

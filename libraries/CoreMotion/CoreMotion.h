@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Automaton.h>
+#include "CoreCommon.h"
 
 class CoreMotion: public Machine {
 
