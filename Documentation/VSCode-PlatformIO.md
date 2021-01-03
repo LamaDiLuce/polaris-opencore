@@ -3,7 +3,7 @@ Visual Studio Code is a free source-code editor made by Microsoft for Windows, L
 
 You can download VS Code [here](https://code.visualstudio.com/).
 
-Once you have the repository cloned into your machine (see [Git guide](Documentation/GIT.md)), open it with **Visual Studio Code**.
+Once you have the repository cloned into your machine (see [Git guide](GIT.md)), open it with **Visual Studio Code**.
 
 To do so, just open Visual Studio Code, go to *File > Open Folder* or you can open it from GitHub Desktop with the related button on the home page or in the menu *Repository > Open in Visual Studio Code*
 
