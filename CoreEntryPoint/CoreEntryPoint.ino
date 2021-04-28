@@ -35,10 +35,10 @@ void setup()
   /*   Modules Initialization   */
   commsModule.init(BUILD);
 
-  audioModule.trace(Serial);
+  // audioModule.trace(Serial);
   audioModule.begin();
 
-  motionModule.trace(Serial);
+  // motionModule.trace(Serial);
   motionModule.begin();
 
   settingsModule.init();
@@ -46,7 +46,7 @@ void setup()
   CoreSettings* setPtr;
   setPtr = &settingsModule;
 
-  ledModule.trace(Serial);
+  // ledModule.trace(Serial);
   ledModule.begin(setPtr);
   
   //imuModule.trace(Serial);
@@ -61,7 +61,18 @@ void setup()
                         ledModule.trigger(ledModule.EVT_ARM);
   });  
   motionModule.onArmed([] (int idx, int v, int up) { // lambda function for more actions
-                        audioModule.trigger(audioModule.EVT_ARM);
+                        if (audioModule.state() == audioModule.IDLE)
+                        {
+                          audioModule.trigger(audioModule.EVT_ARM);
+                        }
+                        else
+                        {
+                          audioModule.trigger(audioModule.EVT_ARMED);
+                        }
+                        if (audioModule.USE_SMOOTH_SWING && imuModule.state() != imuModule.HIGH_FREQ_SAMPLING)
+                        {
+                          imuModule.trigger(imuModule.EVT_HIGH_FREQ_SAMPLING);
+                        }
                         ledModule.trigger(ledModule.EVT_ARMED);
   });
   motionModule.onClash([] (int idx, int v, int up) { // lambda function for more actions
@@ -75,6 +86,10 @@ void setup()
   motionModule.onDisarm([] (int idx, int v, int up) { // lambda function for more actions
                         audioModule.trigger(audioModule.EVT_DISARM);
                         ledModule.trigger(ledModule.EVT_DISARM);
+                        if (audioModule.USE_SMOOTH_SWING)
+                        {
+                          imuModule.trigger(imuModule.EVT_START_SAMPLING);
+                        }
   });
   ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
                         if (v == 0)
@@ -89,6 +104,8 @@ void setup()
 
 void loop()
 {
+  // Serial.print(micros());
+  // Serial.println(" New_Cycle");
   imuModule.cycle();
   motionModule.cycle();
   audioModule.cycle();
@@ -118,4 +135,8 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setAccelY(imuModule.getAccelY());
   motionModule.setAccelZ(imuModule.getAccelZ());
   motionModule.setGyrosAvg(imuModule.getGyrosAvg());
+  motionModule.setSwingSpeed(imuModule.getSwingSpeed());
+  audioModule.setSwingSpeed(imuModule.getSwingSpeed());
+  // Serial.print(micros());
+  // Serial.println(" Update_measurements");
 }

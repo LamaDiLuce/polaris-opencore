@@ -38,6 +38,7 @@ class CoreMotion: public Machine {
   void setAccelY(float value);
   void setAccelZ(float value);
   void setGyrosAvg(float value);
+  void setSwingSpeed(float value);
   void incInt1Status( void );
 
  private:
@@ -56,8 +57,9 @@ class CoreMotion: public Machine {
   float GyroY;
   float GyroZ;
   float GyrosAvg;
+  float swingSpeed;
   uint8_t int1Status;
-  static constexpr int SWING_THRESHOLD = 90; // AVG of 3 gyro axes
+  static constexpr int SWING_THRESHOLD = 90;
   static constexpr int ARM_THRESHOLD_Z = 300;
   static constexpr int ARM_THRESHOLD_XY = 100;
   static constexpr float VERTICAL_POSITION = 8.0;

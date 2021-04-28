@@ -13,7 +13,7 @@ CoreMotion& CoreMotion::begin() {
     /*  ARMED */ ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
     /* DISARM */ENT_DISARM,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,  IDLE,
     /*  CLASH */ ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
-    /*  SWING */ ENT_SWING,        -1,      -1,       -1,         -1,     SWING,     CLASH,        -1,      -1, ARMED,
+    /*  SWING */ ENT_SWING,        -1,      -1,       -1,         -1,        -1,     CLASH,     ARMED,      -1,    -1,
     /*   MUTE */  ENT_MUTE,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,   ARM,
   };
   // clang-format on
@@ -32,17 +32,18 @@ int CoreMotion::event( int id ) {
     case EVT_DISARM:
       return timer_horizontal.expired( this );
     case EVT_SWING:
-      return ( GyrosAvg > SWING_THRESHOLD );
+      return (swingSpeed > SWING_THRESHOLD);
     case EVT_CLASH:
       return ( int1Status > 0 );
     case EVT_ARMED:
-      return timer_arm.expired( this );
+      return (timer_arm.expired(this) &&
+             (swingSpeed < SWING_THRESHOLD));
     case EVT_ARM:
       return (timer_vertical.expired( this ) && 
              (abs(GyroZ) > ARM_THRESHOLD_Z) &&
              (GyroX < ARM_THRESHOLD_XY) &&
              (GyroY < ARM_THRESHOLD_XY) &&
-             (digitalRead(USB_PIN) == LOW)); // remove this last condition if you want to swtich on the saber while connected to USB port
+             ((digitalRead(USB_PIN) == LOW) || DEBUG));
   }
   return 0;
 }
@@ -98,6 +99,7 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_CLASH, 0, 0, 0 );
       return;
     case ENT_SWING:
+      timer_arm.set(0); // otherwise there is a delay in triggering the ARMED event. This should be not needed. To be investigated.
       push( connectors, ON_SWING, 0, 0, 0 );
       return;
     case ENT_MUTE:
@@ -133,6 +135,10 @@ void CoreMotion::setAccelZ(float value){
 
 void CoreMotion::setGyrosAvg(float value){
   GyrosAvg = value;
+}
+
+void CoreMotion::setSwingSpeed(float value){
+  swingSpeed = value;
 }
 
 void CoreMotion::incInt1Status( void ){
