@@ -120,10 +120,6 @@ float CoreImu::getAccelZ() {
   return AccelZ;
 }
 
-float CoreImu::getGyrosAvg() {
-  return ((abs(GyroX) + abs(GyroY) + abs(GyroZ)) / 3.0);
-}
-
 float CoreImu::getSwingSpeed() {
   return sqrtf(GyroX * GyroX + GyroY * GyroY);
 }

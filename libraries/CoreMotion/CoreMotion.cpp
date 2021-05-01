@@ -76,7 +76,7 @@ void CoreMotion::action( int id ) {
     case LP_ARM:
       if ((AccelZ < (ARM_POSITION - TOLERANCE_POSITION)) || 
           (AccelZ > (ARM_POSITION + TOLERANCE_POSITION)) || 
-          (GyrosAvg > SWING_THRESHOLD))
+          (swingSpeed > SWING_THRESHOLD))
       {
         timer_arm.setFromNow(this,TIME_FOR_CONFIRM_ARM);
       }
@@ -131,10 +131,6 @@ void CoreMotion::setAccelY(float value){
 
 void CoreMotion::setAccelZ(float value){
   AccelZ = value;
-}
-
-void CoreMotion::setGyrosAvg(float value){
-  GyrosAvg = value;
 }
 
 void CoreMotion::setSwingSpeed(float value){

@@ -31,7 +31,6 @@ class CoreImu: public Machine {
   float getAccelX();
   float getAccelY();
   float getAccelZ();
-  float getGyrosAvg();
   float getSwingSpeed();
   int getInt1Pin();
 

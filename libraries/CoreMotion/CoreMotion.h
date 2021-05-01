@@ -37,7 +37,6 @@ class CoreMotion: public Machine {
   void setAccelX(float value);
   void setAccelY(float value);
   void setAccelZ(float value);
-  void setGyrosAvg(float value);
   void setSwingSpeed(float value);
   void incInt1Status( void );
 
@@ -56,7 +55,6 @@ class CoreMotion: public Machine {
   float GyroX;
   float GyroY;
   float GyroZ;
-  float GyrosAvg;
   float swingSpeed;
   uint8_t int1Status;
   static constexpr int SWING_THRESHOLD = 90;

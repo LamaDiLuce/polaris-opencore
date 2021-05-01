@@ -84,10 +84,10 @@ class CoreAudio: public Machine {
   float swingVolumeA = 0;
   float swingVolumeB = 0;
   // Params that can be tuned
-  static constexpr float MAX_VOLUME = 0.7;              // 1 in the max volume. Use a lower number to be more quite
+  static constexpr float MAX_VOLUME = 1;              // 1 in the max volume. Use a lower number to be more quite
   static constexpr float SWING_SENSITIVITY = 600;       // how hard should be a swing to get the max effect. It's in deg/s
   static constexpr float MAXIMUM_HUM_DUCKING = 0.9;     // how much the main hum is reduced during the swing. Close to 1 means that the main hum is attuanuated a lot during the swing
-  static constexpr float SWING_SHARPNESS = 1.2;         // This gives a nice non-linear swing response. Between 1 and 2
+  static constexpr float SWING_SHARPNESS = 1.5;         // This gives a nice non-linear swing response. Between 1 and 2
   static constexpr float TRANSITION_1_MIN = 40;         // min midpoint angle for first transition
   static constexpr float TRANSITION_1_MAX = 80;         // max midpoint angle for first transition
   static constexpr float TRANSITION_1_WIDTH = 45.0;

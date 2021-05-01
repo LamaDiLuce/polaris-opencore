@@ -98,8 +98,6 @@ void CoreAudio::action( int id ) {
       soundPlayFlashRaw.play("POWERON_0.RAW");
       return;
     case LP_ARMED:
-      // Serial.print(micros());
-      // Serial.println(" LP_ARMED");
       if (!soundPlayFlashRaw.isPlaying())
       {
         soundPlayFlashRaw.play("HUM_0.RAW");
@@ -166,8 +164,6 @@ void CoreAudio::action( int id ) {
       }
       return;
     case LP_SWING:
-      // Serial.print(micros());
-      // Serial.println(" LP_SWING");
       if (USE_SMOOTH_SWING)
       {
         // keep HUM playing
@@ -200,7 +196,7 @@ void CoreAudio::action( int id ) {
           transitionVolume = max(0, transitionVolume);
           transitionVolume = min(1, transitionVolume);
         }
-        // transition 2(transitionVolume from 1 to 0)
+        // transition 2 (transitionVolume from 1 to 0)
         if (totalRotation > (transition2midPoint - TRANSITION_2_WIDTH) &&
             totalRotation < (transition2midPoint + TRANSITION_2_WIDTH))
         {
@@ -210,7 +206,7 @@ void CoreAudio::action( int id ) {
         }
 
         swingStrength = min( 1, swingSpeed / SWING_SENSITIVITY );   // The strength of the swing is a normalized value based on the angular velocity. For example, if you want the swing to be at maximum volume when you're swinging it at 4*PI rad/sec (720 deg/sec), your swing strength is min( 1, angularvelocity / ( 4 * PI ) ). Note, we clamp it to 1. This value is the one that determines how loud to make the swing and how much to duck the main hum.
-        swingStrength = powf(swingStrength, SWING_SHARPNESS);
+        swingStrength = powf(swingStrength, SWING_SHARPNESS);       // Add sharmpess to the swing. Higher value means more pronunced swing
         humVolume = 1.0 - swingStrength * MAXIMUM_HUM_DUCKING;
         swingVolumeA = swingStrength * transitionVolume;
         swingVolumeB = swingStrength * (1 - transitionVolume);

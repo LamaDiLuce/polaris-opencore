@@ -104,8 +104,6 @@ void setup()
 
 void loop()
 {
-  // Serial.print(micros());
-  // Serial.println(" New_Cycle");
   imuModule.cycle();
   motionModule.cycle();
   audioModule.cycle();
@@ -134,9 +132,6 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setAccelX(imuModule.getAccelX());
   motionModule.setAccelY(imuModule.getAccelY());
   motionModule.setAccelZ(imuModule.getAccelZ());
-  motionModule.setGyrosAvg(imuModule.getGyrosAvg());
   motionModule.setSwingSpeed(imuModule.getSwingSpeed());
   audioModule.setSwingSpeed(imuModule.getSwingSpeed());
-  // Serial.print(micros());
-  // Serial.println(" Update_measurements");
 }
