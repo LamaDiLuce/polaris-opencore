@@ -62,7 +62,7 @@ class CoreLed: public Machine {
   static constexpr int CHARGE_SEQUENCE_BLINK_TIME = 300;
   static constexpr int RECHARGING_BLINK_TIME = 300;
   static constexpr int ARMING_BLINK_TIME = 200;
-  static constexpr int TIME_FOR_COLOR_SELECTION = 2000;
+  static constexpr int TIME_FOR_COLOR_SELECTION = 5000; //ex 2000
   static constexpr int COLOR_SELECTION_BLINK_TIME = 500;
   static constexpr int CLASH_BLINK_TIME = 200;
   static constexpr int FADE_DELAY = 30;
