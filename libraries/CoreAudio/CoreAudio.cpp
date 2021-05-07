@@ -95,6 +95,8 @@ void CoreAudio::action( int id ) {
       beep();
       return;
     case ENT_ARM:
+      mainMixer.gain(CHANNEL_HUM, MAX_VOLUME);
+      mainMixer.gain(CHANNEL_FX, MAX_VOLUME);
       soundPlayFlashRaw.play("POWERON_0.RAW");
       return;
     case LP_ARMED:
