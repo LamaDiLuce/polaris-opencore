@@ -110,7 +110,7 @@ void CoreLed::action( int id ) {
       changeColor(mainColor);
       delay(ARMING_BLINK_TIME);
       turnOff();
-      timer_color_selection.setFromNow(this,TIME_FOR_COLOR_SELECTION);
+      timer_color_selection.setFromNow(this,TIME_FOR_START_COLOR_SELECTION);
       numberOfColorChanged = 0;
       return;
     case LP_ARM:
