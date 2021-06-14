@@ -57,6 +57,12 @@ int CoreAudio::event( int id ) {
   return 0;
 }
 
+// give the Audio access to the CoreSettings Module
+void CoreAudio::setModule(CoreSettings* cSet)
+{
+  setmodule = cSet;
+}
+
 /* Add C++ code for each action
  * This generates the 'output' for the state machine
  */
@@ -83,12 +89,14 @@ void CoreAudio::action( int id ) {
       beep();
       return;
     case ENT_ARM:
-      soundPlayFlashRaw.play("POWERON_0.RAW");
+      soundPlayFlashRaw.play(setmodule->getRandomOnSound().c_str());
+      //soundPlayFlashRaw.play("POWERON_0.RAW");
       return;
     case LP_ARMED:
       if (!soundPlayFlashRaw.isPlaying())
       {
-        soundPlayFlashRaw.play("HUM_0.RAW");
+        soundPlayFlashRaw.play(setmodule->getRandomHumSound().c_str());
+        //soundPlayFlashRaw.play("HUM_0.RAW");
       }
       return;
     case ENT_CLASH:
@@ -96,9 +104,10 @@ void CoreAudio::action( int id ) {
       {
         soundPlayFlashRaw.stop();
       }
-      clashId = random(1, 10);
-      clashString = "CLASH_" + String(clashId) + "_0.RAW";
-      soundPlayFlashFXRaw.play(clashString.c_str());
+      //clashId = random(1, 10);
+      //clashString = "CLASH_" + String(clashId) + "_0.RAW";
+      //soundPlayFlashFXRaw.play(clashString.c_str());
+      soundPlayFlashFXRaw.play(setmodule->getRandomClashSound().c_str());
       return;
     case ENT_SWING:
       if (!soundPlayFlashFXRaw.isPlaying())
@@ -107,13 +116,15 @@ void CoreAudio::action( int id ) {
         {
           soundPlayFlashRaw.stop();
         }
-        swingId = random(1, 8);
-        swingString = "SWING_" + String(swingId) + "_0.RAW";
-        soundPlayFlashFXRaw.play(swingString.c_str());
+        soundPlayFlashFXRaw.play(setmodule->getRandomSwingSound().c_str());
+        //swingId = random(1, 8);
+        //swingString = "SWING_" + String(swingId) + "_0.RAW";
+        //soundPlayFlashFXRaw.play(swingString.c_str());
       }
       return;
     case ENT_DISARM:
-      soundPlayFlashRaw.play("POWEROFF_0.RAW");
+      soundPlayFlashRaw.play(setmodule->getRandomOffSound().c_str());
+      //soundPlayFlashRaw.play("POWEROFF_0.RAW");
       return;
   }
 }

@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.0.2"
+#define BUILD "2.0.2-nun-b"
 
 // Modules
 String incomingMessage;
@@ -45,6 +45,9 @@ void setup()
 
   CoreSettings* setPtr;
   setPtr = &settingsModule;
+  
+  audioModule.setModule(setPtr);
+  commsModule.setModule(setPtr);
 
   ledModule.trace(Serial);
   ledModule.begin(setPtr);
@@ -83,7 +86,6 @@ void setup()
                         }
   });
 
-  commsModule.setModule(setPtr);
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
 }
 

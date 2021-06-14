@@ -16,7 +16,33 @@ void CoreSettings::loadDefaults()
 {
   liveSettings.activeBank = BLUE;
   loadDefaultColors();
+  loadDefaultSounds();
 }
+
+void CoreSettings::loadDefaultSounds()
+{
+  liveSettings.soundEngine=0;
+
+  liveSettings.on.count=1;
+  liveSettings.on.sounds[0] ="POWERON_0.RAW";
+
+  liveSettings.off.count=1;
+  liveSettings.off.sounds[0] ="POWEROFF_0.RAW";
+
+  liveSettings.hum.count=1;
+  liveSettings.hum.sounds[0] ="HUM_0.RAW";
+
+  liveSettings.clash.count =10 ;
+  for(int i=0; i<liveSettings.clash.count; i++)
+  { liveSettings.clash.sounds[i] = "CLASH_"+String(i+1)+"_0.RAW";
+  }
+
+  liveSettings.swing.count = 10;
+  for(int i=0; i<liveSettings.swing.count; i++)
+  { liveSettings.swing.sounds[i] = "SWING_"+String(i+1)+"_0.RAW";
+  }
+}
+
 
 void CoreSettings::loadDefaultColors()
 {
@@ -112,6 +138,18 @@ void CoreSettings::readFromStore()
       liveSettings.swingSet[i].blue = doc["bank"][i]["swing"]["blue"] | 0;
       liveSettings.swingSet[i].white = doc["bank"][i]["swing"]["white"] | 0;
     }
+
+    loadDefaultSounds();
+    liveSettings.soundEngine =  doc["sounds"]["soundengine"] | 0;
+    
+    if(doc["sounds"]["swing"])
+    { liveSettings.swing.count = doc["sounds"]["swing"].size();
+      for(unsigned int i=0; i<liveSettings.swing.count; i++)
+      { String s = doc["sounds"]["swing"][i];
+        liveSettings.swing.sounds[i] = s;
+        //doing the above directly gives: more than one user-defined conversion...
+      }
+    }
   }
 }
 void CoreSettings::saveToStore()
@@ -156,6 +194,12 @@ void CoreSettings::saveToStore()
     doc["bank"][i]["swing"]["white"] = liveSettings.swingSet[i].white;
   }
 
+  doc["sounds"]["soundengine"] = liveSettings.soundEngine;    
+
+  for(int i=0; i<liveSettings.swing.count; i++)
+  { doc["sounds"]["swing"][i] = liveSettings.swing.sounds[i];
+  }
+
   // Serialize JSON to file
   char buffer[16384];
   uint32_t sz = serializeJsonPretty(doc, buffer); //<-- writes json in a more human readable format
@@ -168,6 +212,56 @@ void CoreSettings::saveToStore()
 
   // Close the file
   file.close();
+}
+
+String CoreSettings::getOnSounds()
+{ return liveSettings.on.getCSV();
+}
+void CoreSettings::setOnSounds(String csv)
+{ return liveSettings.on.setCSV(csv);
+}
+String CoreSettings::getRandomOnSound()
+{ return liveSettings.on.getRandom();
+}
+
+String CoreSettings::getOffSounds()
+{ return liveSettings.off.getCSV();
+}
+void CoreSettings::setOffSounds(String csv)
+{ return liveSettings.off.setCSV(csv);
+}
+String CoreSettings::getRandomOffSound()
+{ return liveSettings.off.getRandom();
+}
+
+String CoreSettings::getHumSounds()
+{ return liveSettings.hum.getCSV();
+}
+void CoreSettings::setHumSounds(String csv)
+{ return liveSettings.hum.setCSV(csv);
+}
+String CoreSettings::getRandomHumSound()
+{ return liveSettings.hum.getRandom();
+}
+
+String CoreSettings::getSwingSounds()
+{ return liveSettings.swing.getCSV();
+}
+void CoreSettings::setSwingSounds(String csv)
+{ return liveSettings.swing.setCSV(csv);
+}
+String CoreSettings::getRandomSwingSound()
+{ return liveSettings.swing.getRandom();
+}
+
+String CoreSettings::getClashSounds()
+{ return liveSettings.clash.getCSV();
+}
+void CoreSettings::setClashSounds(String csv)
+{ return liveSettings.clash.setCSV(csv);
+}
+String CoreSettings::getRandomClashSound()
+{ return liveSettings.clash.getRandom();
 }
 
 void CoreSettings::printFile(const char* filen, boolean ignore)

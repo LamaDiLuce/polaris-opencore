@@ -2,6 +2,7 @@
 
 #include <Automaton.h>
 #include <Audio.h>
+#include "CoreSettings.h"
 
 #define CS_PIN 10
 #define SI_PIN 11
@@ -34,17 +35,22 @@ class CoreAudio: public Machine {
   CoreAudio& swing( void );
   CoreAudio& clash( void );
   CoreAudio& disarm( void );
+
+  void setModule(CoreSettings* cSet);
   void beep( void );
 
  private:
   enum { ENT_IDLE, LP_IDLE, EXT_IDLE, ENT_MUTE, ENT_ARM, LP_ARMED, ENT_CLASH, ENT_SWING, ENT_DISARM }; // ACTIONS
   int event( int id ); 
   void action( int id ); 
+  CoreSettings* setmodule;
+
   
-  int clashId = 1;
-  String clashString;
-  int swingId = 1;
-  String swingString;
+  //int clashId = 1;
+  //String clashString;
+  //int swingId = 1;
+  //String swingString;
+
   AudioSynthWaveformSine soundSine;
   AudioPlaySerialflashRaw soundPlayFlashRaw;
   AudioPlaySerialflashRaw soundPlayFlashFXRaw;
