@@ -68,57 +68,7 @@ class CoreMotion: public Machine {
   static constexpr int TIME_FOR_DISARM = 4000;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
 };
-/* 
-Automaton::ATML::begin - Automaton Markup Language
 
-<?xml version="1.0" encoding="UTF-8"?>
-<machines>
-  <machine name="CoreMotion">
-    <states>
-      <IDLE index="0" sleep="1" on_loop="LP_IDLE">
-        <EVT_ARM>ARM</EVT_ARM>
-      </IDLE>
-      <ARM index="1" on_loop="LP_ARM">
-        <EVT_MUTE>MUTE</EVT_MUTE>
-        <EVT_ARMED>ARMED</EVT_ARMED>
-      </ARM>
-      <ARMED index="2" on_loop="LP_ARMED">
-        <EVT_DISARM>DISARM</EVT_DISARM>
-        <EVT_SWING>SWING</EVT_SWING>
-        <EVT_CLASH>CLASH</EVT_CLASH>
-      </ARMED>
-      <DISARM index="3">
-        <ELSE>IDLE</ELSE>
-      </DISARM>
-      <CLASH index="4" on_enter="ENT_CLASH">
-        <ELSE>ARMED</ELSE>
-      </CLASH>
-      <SWING index="5">
-        <EVT_SWING>SWING</EVT_SWING>
-        <EVT_CLASH>CLASH</EVT_CLASH>
-        <ELSE>ARMED</ELSE>
-      </SWING>
-      <MUTE index="6" on_enter="ENT_MUTE">
-        <ELSE>ARM</ELSE>
-      </MUTE>
-    </states>
-    <events>
-      <EVT_MUTE index="0" access="MIXED"/>
-      <EVT_DISARM index="1" access="MIXED"/>
-      <EVT_SWING index="2" access="MIXED"/>
-      <EVT_CLASH index="3" access="MIXED"/>
-      <EVT_ARMED index="4" access="MIXED"/>
-      <EVT_ARM index="5" access="MIXED"/>
-    </events>
-    <connectors>
-    </connectors>
-    <methods>
-    </methods>
-  </machine>
-</machines>
-
-Automaton::ATML::end 
-*/
 /* 
 Automaton::ATML::begin - Automaton Markup Language
 
@@ -176,3 +126,4 @@ Automaton::ATML::begin - Automaton Markup Language
 
 Automaton::ATML::end 
 */
+
