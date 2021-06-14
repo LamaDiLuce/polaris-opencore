@@ -14,7 +14,7 @@ CoreAudio& CoreAudio::begin() {
     /*  ARMED */         -1,  LP_ARMED,       -1,       -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*  CLASH */  ENT_CLASH,        -1,       -1,       -1,      -1,        -1,        -1,        -1,         -1, ARMED,
     /*  SWING */  ENT_SWING,  LP_SWING,       -1,       -1,      -1,     ARMED,        -1,     CLASH,         -1,    -1,
-    /* DISARM */ ENT_DISARM,        -1,       -1,       -1,      -1,        -1,        -1,        -1,         -1,  IDLE,
+    /* DISARM */ ENT_DISARM,        -1,       -1,       -1,      -1,       ARM,        -1,        -1,       IDLE,    -1,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
@@ -145,7 +145,7 @@ void CoreAudio::action( int id ) {
         transitionVolume = 0;
         transition1midPoint = random(TRANSITION_1_MIN, TRANSITION_1_MAX);
         transition2midPoint = transition1midPoint + 180;
-        if (DEBUG)
+        if (DEBUG_SMOOTHSWING)
         {
           CoreLogging::writeLine("Transition1midPoint: %f", transition1midPoint);
           CoreLogging::writeLine("totalRotation, swingSpeed, swingStrength, humVolume, transitionVolume, swingVolumeA, swingVolumeB");
@@ -215,7 +215,7 @@ void CoreAudio::action( int id ) {
         mainMixer.gain(CHANNEL_HUM, humVolume * MAX_VOLUME);
         mainMixer.gain(CHANNEL_SMOOTH_SWING_A, swingVolumeA * MAX_VOLUME);
         mainMixer.gain(CHANNEL_SMOOTH_SWING_B, swingVolumeB * MAX_VOLUME);
-        if (DEBUG)
+        if (DEBUG_SMOOTHSWING)
         {
           CoreLogging::writeLine("%f %f %f %f %f %f %f", totalRotation, swingSpeed, swingStrength, humVolume, transitionVolume, swingVolumeA, swingVolumeB);
         }

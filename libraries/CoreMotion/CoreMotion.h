@@ -21,6 +21,8 @@ class CoreMotion: public Machine {
   CoreMotion& onClash( atm_cb_push_t callback, int idx = 0 );
   CoreMotion& onDisarm( Machine& machine, int event = 0 );
   CoreMotion& onDisarm( atm_cb_push_t callback, int idx = 0 );
+  CoreMotion& onIdle( Machine& machine, int event = 0 );
+  CoreMotion& onIdle( atm_cb_push_t callback, int idx = 0 );
   CoreMotion& onMute( Machine& machine, int event = 0 );
   CoreMotion& onMute( atm_cb_push_t callback, int idx = 0 );
   CoreMotion& onSwing( Machine& machine, int event = 0 );
@@ -41,8 +43,8 @@ class CoreMotion: public Machine {
   void incInt1Status( void );
 
  private:
-  enum { LP_IDLE, ENT_ARM, LP_ARM, ENT_ARMED, LP_ARMED, ENT_DISARM, ENT_CLASH, ENT_SWING, ENT_MUTE }; // ACTIONS
-  enum { ON_ARM, ON_ARMED, ON_CLASH, ON_DISARM, ON_MUTE, ON_SWING, CONN_MAX }; // CONNECTORS
+  enum { ENT_IDLE, LP_IDLE, ENT_ARM, LP_ARM, ENT_ARMED, LP_ARMED, ENT_DISARM, LP_DISARM, ENT_CLASH, ENT_SWING, ENT_MUTE }; // ACTIONS
+  enum { ON_ARM, ON_ARMED, ON_CLASH, ON_DISARM, ON_IDLE, ON_MUTE, ON_SWING, CONN_MAX }; // CONNECTORS
   atm_connector connectors[CONN_MAX];
   int event( int id ); 
   void action( int id );
@@ -67,6 +69,7 @@ class CoreMotion: public Machine {
   static constexpr int TIME_FOR_START_ARM = 500;
   static constexpr int TIME_FOR_DISARM = 4000;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
+  static constexpr int TIME_FOR_REARM = 1000;
 };
 
 /* 
@@ -76,7 +79,7 @@ Automaton::ATML::begin - Automaton Markup Language
 <machines>
   <machine name="CoreMotion">
     <states>
-      <IDLE index="0" sleep="1" on_loop="LP_IDLE">
+      <IDLE index="0" sleep="1" on_enter="ENT_IDLE" on_loop="LP_IDLE">
         <EVT_ARM>ARM</EVT_ARM>
       </IDLE>
       <ARM index="1" on_enter="ENT_ARM" on_loop="LP_ARM">
@@ -88,16 +91,16 @@ Automaton::ATML::begin - Automaton Markup Language
         <EVT_SWING>SWING</EVT_SWING>
         <EVT_CLASH>CLASH</EVT_CLASH>
       </ARMED>
-      <DISARM index="3" on_enter="ENT_DISARM">
-        <ELSE>IDLE</ELSE>
+      <DISARM index="3" on_enter="ENT_DISARM" on_loop="LP_DISARM">
+        <EVT_DISARM>IDLE</EVT_DISARM>
+        <EVT_SWING>ARMED</EVT_SWING>
       </DISARM>
       <CLASH index="4" on_enter="ENT_CLASH">
         <ELSE>ARMED</ELSE>
       </CLASH>
       <SWING index="5" on_enter="ENT_SWING">
-        <EVT_SWING>SWING</EVT_SWING>
         <EVT_CLASH>CLASH</EVT_CLASH>
-        <ELSE>ARMED</ELSE>
+        <EVT_ARMED>ARMED</EVT_ARMED>
       </SWING>
       <MUTE index="6" on_enter="ENT_MUTE">
         <ELSE>ARM</ELSE>
@@ -116,6 +119,7 @@ Automaton::ATML::begin - Automaton Markup Language
       <ARMED autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <CLASH autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <DISARM autostore="0" broadcast="0" dir="PUSH" slots="1"/>
+      <IDLE autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <MUTE autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <SWING autostore="0" broadcast="0" dir="PUSH" slots="1"/>
     </connectors>
@@ -126,4 +130,3 @@ Automaton::ATML::begin - Automaton Markup Language
 
 Automaton::ATML::end 
 */
-

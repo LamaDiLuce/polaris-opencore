@@ -7,14 +7,14 @@
 CoreMotion& CoreMotion::begin() {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
-    /*            ON_ENTER    ON_LOOP  ON_EXIT  EVT_MUTE  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
-    /*   IDLE */        -1,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,        -1,     ARM,    -1,
-    /*    ARM */   ENT_ARM,    LP_ARM,      -1,     MUTE,         -1,        -1,        -1,     ARMED,      -1,    -1,
-    /*  ARMED */ ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
-    /* DISARM */ENT_DISARM,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,  IDLE,
-    /*  CLASH */ ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
-    /*  SWING */ ENT_SWING,        -1,      -1,       -1,         -1,        -1,     CLASH,     ARMED,      -1,    -1,
-    /*   MUTE */  ENT_MUTE,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,   ARM,
+    /*             ON_ENTER    ON_LOOP  ON_EXIT  EVT_MUTE  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
+    /*   IDLE */   ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,        -1,     ARM,    -1,
+    /*    ARM */    ENT_ARM,    LP_ARM,      -1,     MUTE,         -1,        -1,        -1,     ARMED,      -1,    -1,
+    /*  ARMED */  ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
+    /* DISARM */ ENT_DISARM,        -1,      -1,       -1,       IDLE,     ARMED,        -1,        -1,      -1,    -1,
+    /*  CLASH */  ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
+    /*  SWING */  ENT_SWING,        -1,      -1,       -1,         -1,        -1,     CLASH,     ARMED,      -1,    -1,
+    /*   MUTE */   ENT_MUTE,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,   ARM,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
@@ -56,12 +56,16 @@ int CoreMotion::event( int id ) {
  *   push( connectors, ON_ARMED, 0, <v>, <up> );
  *   push( connectors, ON_CLASH, 0, <v>, <up> );
  *   push( connectors, ON_DISARM, 0, <v>, <up> );
+ *   push( connectors, ON_IDLE, 0, <v>, <up> );
  *   push( connectors, ON_MUTE, 0, <v>, <up> );
  *   push( connectors, ON_SWING, 0, <v>, <up> );
  */
 
 void CoreMotion::action( int id ) {
   switch ( id ) {
+    case ENT_IDLE:
+      push( connectors, ON_IDLE, 0, 0, 0 );
+      return;
     case LP_IDLE:
       if ((AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) || 
           (AccelZ > (VERTICAL_POSITION + TOLERANCE_POSITION)))
@@ -93,6 +97,7 @@ void CoreMotion::action( int id ) {
       return;
     case ENT_DISARM:
       push( connectors, ON_DISARM, 0, 0, 0 );
+      timer_horizontal.setFromNow(this,TIME_FOR_REARM);
       return;
     case ENT_CLASH:
       int1Status = 0;
@@ -249,6 +254,20 @@ CoreMotion& CoreMotion::onDisarm( Machine& machine, int event ) {
 
 CoreMotion& CoreMotion::onDisarm( atm_cb_push_t callback, int idx ) {
   onPush( connectors, ON_DISARM, 0, 1, 1, callback, idx );
+  return *this;
+}
+
+/*
+ * onIdle() push connector variants ( slots 1, autostore 0, broadcast 0 )
+ */
+
+CoreMotion& CoreMotion::onIdle( Machine& machine, int event ) {
+  onPush( connectors, ON_IDLE, 0, 1, 1, machine, event );
+  return *this;
+}
+
+CoreMotion& CoreMotion::onIdle( atm_cb_push_t callback, int idx ) {
+  onPush( connectors, ON_IDLE, 0, 1, 1, callback, idx );
   return *this;
 }
 

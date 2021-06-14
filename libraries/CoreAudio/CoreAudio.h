@@ -121,11 +121,11 @@ Automaton::ATML::begin - Automaton Markup Language
       </CLASH>
       <SWING index="5" on_enter="ENT_SWING" on_loop="LP_SWING">
         <EVT_ARMED>ARMED</EVT_ARMED>
-        <EVT_SWING>SWING</EVT_SWING>
         <EVT_CLASH>CLASH</EVT_CLASH>
       </SWING>
       <DISARM index="6" on_enter="ENT_DISARM">
-        <ELSE>IDLE</ELSE>
+        <EVT_ARMED>ARM</EVT_ARMED>
+        <EVT_DISARM>IDLE</EVT_DISARM>
       </DISARM>
     </states>
     <events>

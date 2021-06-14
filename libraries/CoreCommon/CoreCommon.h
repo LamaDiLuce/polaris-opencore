@@ -1,6 +1,7 @@
 #pragma once
 
 static constexpr bool DEBUG = false;
+static constexpr bool DEBUG_SMOOTHSWING = false;
 
 // LED RGBW
 #define PIN_RED 3

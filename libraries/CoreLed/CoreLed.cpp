@@ -14,7 +14,7 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
     /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*    CLASH */    ENT_CLASH,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
     /*    SWING */    ENT_SWING,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,     CLASH,         -1,    -1,
-    /*   DISARM */   ENT_DISARM,          -1,      -1,       -1,           -1,      -1,        -1,        -1,        -1,         -1,  IDLE,
+    /*   DISARM */   ENT_DISARM,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,       IDLE,    -1,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );

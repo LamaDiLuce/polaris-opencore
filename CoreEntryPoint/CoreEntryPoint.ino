@@ -84,12 +84,19 @@ void setup()
                         ledModule.trigger(ledModule.EVT_SWING);
   });
   motionModule.onDisarm([] (int idx, int v, int up) { // lambda function for more actions
-                        audioModule.trigger(audioModule.EVT_DISARM);
+                        if (audioModule.state() != audioModule.MUTE)
+                        {
+                          audioModule.trigger(audioModule.EVT_DISARM);
+                        }
                         ledModule.trigger(ledModule.EVT_DISARM);
                         if (audioModule.USE_SMOOTH_SWING)
                         {
                           imuModule.trigger(imuModule.EVT_START_SAMPLING);
                         }
+  });
+  motionModule.onIdle([] (int idx, int v, int up) { // lambda function for more actions
+                        audioModule.trigger(audioModule.EVT_DISARM);
+                        ledModule.trigger(ledModule.EVT_DISARM);
   });
   ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
                         if (v == 0)
