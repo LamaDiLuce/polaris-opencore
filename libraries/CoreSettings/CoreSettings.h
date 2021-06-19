@@ -25,6 +25,8 @@ struct SaberSettings
   SoundList hum;
   SoundList clash;
   SoundList swing;
+  SoundList smoothSwingA;
+  SoundList smoothSwingB;
 };
 
 class CoreSettings
@@ -65,6 +67,14 @@ public:
   String getSwingSounds();
   String getRandomSwingSound();
   void setSwingSounds(String csv);
+
+  String getSmoothSwingSoundsA();
+  void setSmoothSwingSoundsA(String csv);
+  String getSmoothSwingSoundsB();
+  void setSmoothSwingSoundsB(String csv);
+  String getRandomSmoothSwingSoundA();
+  String getMatchingSmoothSwingSoundB();
+  int getSmoothSwingSize();
 
   String getClashSounds();
   String getRandomClashSound();

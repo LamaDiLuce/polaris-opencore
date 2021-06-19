@@ -116,10 +116,19 @@ void CoreAudio::action( int id ) {
         {
           soundPlayFlashRaw.stop();
         }
-        soundPlayFlashFXRaw.play(setmodule->getRandomSwingSound().c_str());
-        //swingId = random(1, 8);
-        //swingString = "SWING_" + String(swingId) + "_0.RAW";
-        //soundPlayFlashFXRaw.play(swingString.c_str());
+        if(setmodule->getSmoothSwingSize()==0)
+        { //play standard swing sound
+          soundPlayFlashFXRaw.play(setmodule->getRandomSwingSound().c_str());
+          //swingId = random(1, 8);
+          //swingString = "SWING_" + String(swingId) + "_0.RAW";
+          //soundPlayFlashFXRaw.play(swingString.c_str());
+        } else
+        {
+          //for smoothswing
+          //  setmodule->getRandomSmoothSwingSoundA();
+          //  setmodule->getMatchingSmoothSwingSoundB();
+
+        }
       }
       return;
     case ENT_DISARM:

@@ -416,6 +416,39 @@ Replies with
   OK sCL=CLASH_1_0.RAW,CLASH_2_0.RAW,CLASH_3_0.RAW
 ```
 
+### Name: List Assigned Smooth Swing 'A' Sound Filenames
+**Comamnd:** sSMA?\n
+**Effect:**  Lists (as a CSV string) the files assigned as Smooth SWing 'A' sounds
+Replies with
+```
+  sSMA=SWING_1A.RAW,SWING_2A.RAW,SWING_3A.RAW
+```
+
+### Name: set List of Smooth Swing 'A' Sound Filenames
+**Comamnd:** sSMA= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as Smooth Swing 'A' sounds, maximum 25
+Replies with
+```
+  OK sSMA=SWING_1A.RAW,SWING_2A.RAW,SWING_3A.RAW
+```
+
+### Name: List Assigned Smooth Swing 'B' Sound Filenames
+**Comamnd:** sSMB?\n
+**Effect:**  Lists (as a CSV string) the files assigned as Smooth SWing 'B' sounds
+Replies with
+```
+  sSMB=SWING_1B.RAW,SWING_2B.RAW,SWING_3B.RAW
+```
+
+### Name: set List of Smooth Swing 'B' Sound Filenames
+**Comamnd:** sSMB= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as Smooth Swing 'B' sounds, maximum 25
+Replies with
+```
+  OK sSMB=SWING_1B.RAW,SWING_2B.RAW,SWING_3B.RAW
+```
+
+
 ---
 ##Storage Management Commands
 

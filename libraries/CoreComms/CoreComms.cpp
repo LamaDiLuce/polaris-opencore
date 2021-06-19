@@ -291,6 +291,24 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     setmodule->setClashSounds(pIncomingMessage.substring(4));
     out = "OK " + pIncomingMessage;
   }
+  else if (pIncomingMessage.equalsIgnoreCase("sSMA?"))
+  { 
+    out = "sSMA=" + setmodule->getSmoothSwingSoundsA();
+  }
+  else if (pIncomingMessage.startsWith("sSMA="))
+  { 
+    setmodule->setSmoothSwingSoundsA(pIncomingMessage.substring(5));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sSMB?"))
+  { 
+    out = "sSMB=" + setmodule->getSmoothSwingSoundsB();
+  }
+  else if (pIncomingMessage.startsWith("sSMB="))
+  { 
+    setmodule->setSmoothSwingSoundsB(pIncomingMessage.substring(5));
+    out = "OK " + pIncomingMessage;
+  }
   else if (pIncomingMessage.charAt(2) == '=')
   {
     // a set somethign command

@@ -15,6 +15,7 @@ public:
 
   String sounds[MAX_SOUNDS];
   int count;
+  int lastRandom;
 
 private:
   
