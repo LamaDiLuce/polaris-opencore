@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.0.2"
+#define BUILD "2.0.3"
 
 // Modules
 String incomingMessage;
@@ -35,16 +35,18 @@ void setup()
   /*   Modules Initialization   */
   commsModule.init(BUILD);
 
+  CoreSettings* setPtr;
+  setPtr = &settingsModule;
+
   // audioModule.trace(Serial);
-  audioModule.begin();
+  audioModule.begin(setPtr);
 
   // motionModule.trace(Serial);
   motionModule.begin();
 
   settingsModule.init();
-
-  CoreSettings* setPtr;
-  setPtr = &settingsModule;
+  
+  commsModule.setModule(setPtr);
 
   // ledModule.trace(Serial);
   ledModule.begin(setPtr);
@@ -69,7 +71,7 @@ void setup()
                         {
                           audioModule.trigger(audioModule.EVT_ARMED);
                         }
-                        if (audioModule.USE_SMOOTH_SWING && imuModule.state() != imuModule.HIGH_FREQ_SAMPLING)
+                        if (audioModule.useSmoothSwing && imuModule.state() != imuModule.HIGH_FREQ_SAMPLING)
                         {
                           imuModule.trigger(imuModule.EVT_HIGH_FREQ_SAMPLING);
                         }
@@ -89,7 +91,7 @@ void setup()
                           audioModule.trigger(audioModule.EVT_DISARM);
                         }
                         ledModule.trigger(ledModule.EVT_DISARM);
-                        if (audioModule.USE_SMOOTH_SWING)
+                        if (audioModule.useSmoothSwing)
                         {
                           imuModule.trigger(imuModule.EVT_START_SAMPLING);
                         }
@@ -105,7 +107,6 @@ void setup()
                         }
   });
 
-  commsModule.setModule(setPtr);
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
 }
 

@@ -4,6 +4,7 @@
 #include <Automaton.h>
 #include <Audio.h>
 #include "CoreLogging.h"
+#include "CoreSettings.h"
 
 #define CS_PIN 10
 #define SI_PIN 11
@@ -28,7 +29,7 @@ class CoreAudio: public Machine {
   enum { IDLE, MUTE, ARM, ARMED, CLASH, SWING, DISARM }; // STATES
   enum { EVT_MUTE, EVT_ARM, EVT_ARMED, EVT_SWING, EVT_CLASH, EVT_DISARM, ELSE }; // EVENTS
   CoreAudio( void ) : Machine() {};
-  CoreAudio& begin( void );
+  CoreAudio& begin( CoreSettings* cSet );
   CoreAudio& trace( Stream & stream );
   CoreAudio& trigger( int event );
   int state( void );
@@ -40,23 +41,16 @@ class CoreAudio: public Machine {
   CoreAudio& disarm( void );
   void beep( void );
   void setSwingSpeed(float s);
-  static constexpr bool USE_SMOOTH_SWING = true;
+  bool useSmoothSwing = true; // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
   // SmoothSwing V2, based on Thexter's excellent work.
   // For more details, see:
   // http://therebelarmory.com/thread/9138/smoothswing-v2-algorithm-description
 
-
-
  private:
   enum { ENT_IDLE, LP_IDLE, EXT_IDLE, ENT_MUTE, ENT_ARM, LP_ARMED, ENT_CLASH, ENT_SWING, LP_SWING, ENT_DISARM }; // ACTIONS
   int event( int id ); 
-  void action( int id ); 
-  int clashId = 1;
-  String clashString;
-  int swingId = 1;
-  String swingString;
-  String smoothSwingStringH;
-  String smoothSwingStringL;
+  void action( int id );
+  CoreSettings* moduleSettings;
   AudioSynthWaveformSine soundSine;
   AudioPlaySerialflashRaw soundPlayFlashRaw;
   AudioPlaySerialflashRaw soundPlayFlashFXRaw;
@@ -74,6 +68,8 @@ class CoreAudio: public Machine {
   uint32_t t0;
   uint32_t delta;
   uint32_t t1;
+  String smoothSwingStringA;
+  String smoothSwingStringB;
   float swingSpeed = 0;
   float totalRotation = 0;
   float transitionVolume = 0;
@@ -84,7 +80,7 @@ class CoreAudio: public Machine {
   float swingVolumeA = 0;
   float swingVolumeB = 0;
   // Params that can be tuned
-  static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
+  static constexpr float MAX_VOLUME = 0.2;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
   static constexpr float SWING_SENSITIVITY = 520;       // how hard should be a swing to get the max effect. It's in deg/s (good values are between 360 and 720)
   static constexpr float MAXIMUM_HUM_DUCKING = 0.85;    // how much the main hum is reduced during the swing. Close to 1 means that the main hum is attuanuated a lot during the swing (good values between 0.7 and 0.9)
   static constexpr float SWING_SHARPNESS = 1.2;         // This gives a nice non-linear swing response. Between 1 and 2

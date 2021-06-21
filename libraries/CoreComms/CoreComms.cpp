@@ -246,6 +246,69 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
   { 
     out = listFiles();
   }
+  else if (pIncomingMessage.equalsIgnoreCase("sON?"))
+  { 
+    out = "sON="+setmodule->getOnSounds();
+  }
+  else if (pIncomingMessage.startsWith("sON="))
+  { 
+    setmodule->setOnSounds(pIncomingMessage.substring(4));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sOFF?"))
+  { 
+    out = "sOFF="+setmodule->getOffSounds();
+  }
+    else if (pIncomingMessage.startsWith("sOFF="))
+  { 
+    setmodule->setOffSounds(pIncomingMessage.substring(5));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sHUM?"))
+  { 
+    out = "sHUM="+setmodule->getHumSounds();
+  }
+  else if (pIncomingMessage.startsWith("sHUM="))
+  { 
+    setmodule->setHumSounds(pIncomingMessage.substring(5));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sSW?"))
+  { 
+    out = "sSW=" + setmodule->getSwingSounds();
+  }
+  else if (pIncomingMessage.startsWith("sSW="))
+  { 
+    setmodule->setSwingSounds(pIncomingMessage.substring(4));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sCL?"))
+  { 
+    out = "sCL=" + setmodule->getClashSounds();
+  }
+  else if (pIncomingMessage.startsWith("sCL="))
+  { 
+    setmodule->setClashSounds(pIncomingMessage.substring(4));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sSMA?"))
+  { 
+    out = "sSMA=" + setmodule->getSmoothSwingSoundsA();
+  }
+  else if (pIncomingMessage.startsWith("sSMA="))
+  { 
+    setmodule->setSmoothSwingSoundsA(pIncomingMessage.substring(5));
+    out = "OK " + pIncomingMessage;
+  }
+  else if (pIncomingMessage.equalsIgnoreCase("sSMB?"))
+  { 
+    out = "sSMB=" + setmodule->getSmoothSwingSoundsB();
+  }
+  else if (pIncomingMessage.startsWith("sSMB="))
+  { 
+    setmodule->setSmoothSwingSoundsB(pIncomingMessage.substring(5));
+    out = "OK " + pIncomingMessage;
+  }
   else if (pIncomingMessage.charAt(2) == '=')
   {
     // a set somethign command

@@ -4,7 +4,7 @@
  * Add extra initialization code
  */
 
-CoreAudio& CoreAudio::begin() {
+CoreAudio& CoreAudio::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
     /*             ON_ENTER    ON_LOOP   ON_EXIT  EVT_MUTE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
@@ -24,10 +24,16 @@ CoreAudio& CoreAudio::begin() {
   SPI.setMOSI(SI_PIN);
   SPI.setMISO(SO_PIN);
   SerialFlash.begin(CS_PIN);
+  moduleSettings = cSet;
+  moduleSettings->init();
   patchSineMixer = new AudioConnection(soundSine, 0, mainMixer, CHANNEL_SINE);
   patchFlashMixer = new AudioConnection(soundPlayFlashRaw, 0, mainMixer, CHANNEL_HUM);
   patchFlashFXMixer = new AudioConnection(soundPlayFlashFXRaw, 0, mainMixer, CHANNEL_FX);
-  if (USE_SMOOTH_SWING)
+  if(moduleSettings->getSmoothSwingSize()==0)
+  {
+    useSmoothSwing = false;
+  }
+  if (useSmoothSwing)
   {
     patchFlashSmoothSwingAMixer = new AudioConnection(soundPlayFlashSmoothSwingARaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_A);
     patchFlashSmoothSwingBMixer = new AudioConnection(soundPlayFlashSmoothSwingBRaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_B);
@@ -37,7 +43,7 @@ CoreAudio& CoreAudio::begin() {
   mainMixer.gain(CHANNEL_HUM, MAX_VOLUME); // HUM
   mainMixer.gain(CHANNEL_FX, MAX_VOLUME);  // FX: Clash and Swing
   mainMixer.gain(CHANNEL_SINE, 0);
-  if (USE_SMOOTH_SWING)
+  if (useSmoothSwing)
   {
     mainMixer.gain(CHANNEL_SMOOTH_SWING_A, 1);
     mainMixer.gain(CHANNEL_SMOOTH_SWING_B, 0);
@@ -97,14 +103,14 @@ void CoreAudio::action( int id ) {
     case ENT_ARM:
       mainMixer.gain(CHANNEL_HUM, MAX_VOLUME);
       mainMixer.gain(CHANNEL_FX, MAX_VOLUME);
-      soundPlayFlashRaw.play("POWERON_0.RAW");
+      soundPlayFlashRaw.play(moduleSettings->getRandomOnSound().c_str());
       return;
     case LP_ARMED:
       if (!soundPlayFlashRaw.isPlaying())
       {
-        soundPlayFlashRaw.play("HUM_0.RAW");
+        soundPlayFlashRaw.play(moduleSettings->getRandomHumSound().c_str());
       }
-      if (USE_SMOOTH_SWING)
+      if (useSmoothSwing)
       {
         soundPlayFlashSmoothSwingARaw.stop();
         soundPlayFlashSmoothSwingBRaw.stop();
@@ -115,30 +121,27 @@ void CoreAudio::action( int id ) {
       {
         soundPlayFlashRaw.stop();
       }
-      if (USE_SMOOTH_SWING)
+      if (useSmoothSwing)
       {
         soundPlayFlashSmoothSwingARaw.stop();
         soundPlayFlashSmoothSwingBRaw.stop();
       }
-      clashId = random(1, 10);
-      clashString = "CLASH_" + String(clashId) + "_0.RAW";
-      soundPlayFlashFXRaw.play(clashString.c_str());
+      soundPlayFlashFXRaw.play(moduleSettings->getRandomClashSound().c_str());
       return;
     case ENT_SWING:
-      if (USE_SMOOTH_SWING)
+      if (useSmoothSwing)
       {
         mainMixer.gain(CHANNEL_SMOOTH_SWING_A, 0);
         mainMixer.gain(CHANNEL_SMOOTH_SWING_B, 0);
-        swingId = random(1, 8);
         if (random(2))
         {
-          smoothSwingStringH = "SMOOTHSWINGH_" + String(swingId) + "_0.RAW";
-          smoothSwingStringL = "SMOOTHSWINGL_" + String(swingId) + "_0.RAW";
+          smoothSwingStringA = moduleSettings->getRandomSmoothSwingSoundA();
+          smoothSwingStringB = moduleSettings->getMatchingSmoothSwingSoundB();
         }
         else
         {
-          smoothSwingStringH = "SMOOTHSWINGL_" + String(swingId) + "_0.RAW";
-          smoothSwingStringL = "SMOOTHSWINGH_" + String(swingId) + "_0.RAW";
+          smoothSwingStringB = moduleSettings->getRandomSmoothSwingSoundA();
+          smoothSwingStringA = moduleSettings->getMatchingSmoothSwingSoundB();
         }
         t0 = micros();
         totalRotation = 0;
@@ -159,14 +162,12 @@ void CoreAudio::action( int id ) {
           {
             soundPlayFlashRaw.stop();
           }
-          swingId = random(1, 8);
-          swingString = "SWING_" + String(swingId) + "_0.RAW";
-          soundPlayFlashFXRaw.play(swingString.c_str());
+          soundPlayFlashFXRaw.play(moduleSettings->getRandomSwingSound().c_str());
         }        
       }
       return;
     case LP_SWING:
-      if (USE_SMOOTH_SWING)
+      if (useSmoothSwing)
       {
         // keep HUM playing
         if (!soundPlayFlashRaw.isPlaying())
@@ -175,11 +176,11 @@ void CoreAudio::action( int id ) {
         }
         if (!soundPlayFlashSmoothSwingARaw.isPlaying())
         {
-          soundPlayFlashSmoothSwingARaw.play(smoothSwingStringH.c_str());
+          soundPlayFlashSmoothSwingARaw.play(smoothSwingStringA.c_str());
         }
         if (!soundPlayFlashSmoothSwingBRaw.isPlaying())
         {
-          soundPlayFlashSmoothSwingBRaw.play(smoothSwingStringL.c_str());
+          soundPlayFlashSmoothSwingBRaw.play(smoothSwingStringB.c_str());
         }
         t1 = micros();
         delta = t1 - t0;
@@ -228,20 +229,18 @@ void CoreAudio::action( int id ) {
           {
             soundPlayFlashRaw.stop();
           }
-          swingId = random(1, 8);
-          swingString = "SWING_" + String(swingId) + "_0.RAW";
-          soundPlayFlashFXRaw.play(swingString.c_str());
+          soundPlayFlashFXRaw.play(moduleSettings->getRandomSwingSound().c_str());
         }        
       }
       return;
     case ENT_DISARM:
       soundPlayFlashFXRaw.stop();
-      if (USE_SMOOTH_SWING)
+      if (useSmoothSwing)
       {
         soundPlayFlashSmoothSwingARaw.stop();
         soundPlayFlashSmoothSwingBRaw.stop();
       }
-      soundPlayFlashRaw.play("POWEROFF_0.RAW");
+      soundPlayFlashRaw.play(moduleSettings->getRandomOffSound().c_str());
       return;
   }
 }
