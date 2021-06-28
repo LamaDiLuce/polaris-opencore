@@ -17,7 +17,6 @@ void CoreComms::init(String pBuild)
 }
 void CoreComms::setModule(CoreSettings* cSet)
 {
-  //ledmodule = cled;
   setmodule = cSet;
 }
 

@@ -231,7 +231,7 @@ where ```x``` is bank number and ```r,g,b,w``` is the colour as a decimal CSV st
 **Notes:**   Build 1.9.12+, Gilthoniel
 
 ---
-##Swing Colour Commands
+## Swing Colour Commands
 
 ### Name:    Write Swing colour to bank
 **Command:** ```Wx=rrggbbww\n```
@@ -297,7 +297,7 @@ where ```x``` is bank number and ```r,g,b,w``` is the colour as a decimal CSV st
 **Notes:**   Build 1.9.15+, Gilthoniel
 
 ---
-##Bank and Colour Preview Commands
+## Bank and Colour Preview Commands
 
 ### Name:    Set active colour bank
 **Command:** B=x\n
@@ -333,7 +333,7 @@ Disconnecting the power (USB cable) also turns off the preview colour.
 Build 1.9.15+, Gilthoniel
 
 ---
-##Sound Lists -- change filenames for sounds
+## Sound Lists -- change filenames for sounds
 
 ### Name: List Assigned On/Activation Sound Filenames
 **Comamnd:** sON?\n
@@ -450,7 +450,7 @@ Replies with
 
 
 ---
-##Storage Management Commands
+## Storage Management Commands
 
 ### Name:    List files in flash memory
 **Command:** LIST?\n
@@ -533,7 +533,7 @@ Completion replies with two lines
 **Notes:**   sendtosaber.exe -erase-all
 
 ---
-##File Read Commands
+## File Read Commands
 
 ### Name:    Read file (text or binary)
 **Command:** ```RD?config.ini\n``` or ```RD?<filename>\n```
@@ -543,7 +543,7 @@ Completion replies with two lines
  For binary files (any ending with RAW) just sends the binary bytes, use timeout to detect end of file -- though downloading binary files is not a normal function.
 
 ---
-##File Write Commands
+## File Write Commands
 
 ### Name:    Detect Write is Read / implemented / available
 **Command:** ```WR?\n```
@@ -581,7 +581,7 @@ Except the config.ini file which is marked as erasable and as long as it remains
 **Notes:**   sendtosaber.exe/sendtosaber <filename>
 
 ---
-##Proposed/Suggested Functionality for future.
+## Proposed/Suggested Functionality for future.
 
 ### Name: Set Volumew / Turn off sound
 **Command:** ```VOL=x\n```

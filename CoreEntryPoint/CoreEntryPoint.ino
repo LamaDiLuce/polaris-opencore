@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.0.3"
+#define BUILD "2.1.0"
 
 // Modules
 String incomingMessage;
@@ -71,7 +71,7 @@ void setup()
                         {
                           audioModule.trigger(audioModule.EVT_ARMED);
                         }
-                        if (audioModule.useSmoothSwing && imuModule.state() != imuModule.HIGH_FREQ_SAMPLING)
+                        if (audioModule.checkSmoothSwing() && imuModule.state() != imuModule.HIGH_FREQ_SAMPLING)
                         {
                           imuModule.trigger(imuModule.EVT_HIGH_FREQ_SAMPLING);
                         }
@@ -91,7 +91,7 @@ void setup()
                           audioModule.trigger(audioModule.EVT_DISARM);
                         }
                         ledModule.trigger(ledModule.EVT_DISARM);
-                        if (audioModule.useSmoothSwing)
+                        if (audioModule.checkSmoothSwing())
                         {
                           imuModule.trigger(imuModule.EVT_START_SAMPLING);
                         }

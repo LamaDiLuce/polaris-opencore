@@ -41,10 +41,7 @@ class CoreAudio: public Machine {
   CoreAudio& disarm( void );
   void beep( void );
   void setSwingSpeed(float s);
-  bool useSmoothSwing = true; // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
-  // SmoothSwing V2, based on Thexter's excellent work.
-  // For more details, see:
-  // http://therebelarmory.com/thread/9138/smoothswing-v2-algorithm-description
+  bool checkSmoothSwing( void );
 
  private:
   enum { ENT_IDLE, LP_IDLE, EXT_IDLE, ENT_MUTE, ENT_ARM, LP_ARMED, ENT_CLASH, ENT_SWING, LP_SWING, ENT_DISARM }; // ACTIONS
@@ -81,6 +78,10 @@ class CoreAudio: public Machine {
   float swingVolumeB = 0;
   // Params that can be tuned
   static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
+  bool useSmoothSwing = true;                           // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
+                                                        // SmoothSwing V2, based on Thexter's excellent work.
+                                                        // For more details, see:
+                                                        // http://therebelarmory.com/thread/9138/smoothswing-v2-algorithm-description
   static constexpr float SWING_SENSITIVITY = 520;       // how hard should be a swing to get the max effect. It's in deg/s (good values are between 360 and 720)
   static constexpr float MAXIMUM_HUM_DUCKING = 0.85;    // how much the main hum is reduced during the swing. Close to 1 means that the main hum is attuanuated a lot during the swing (good values between 0.7 and 0.9)
   static constexpr float SWING_SHARPNESS = 1.2;         // This gives a nice non-linear swing response. Between 1 and 2

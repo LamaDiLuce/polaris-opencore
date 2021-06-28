@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Arduino.h"
-//#include "CoreLed.h"
 #include "CoreSettings.h"
 #include <CoreLogging.h>
 #include <SerialFlash.h>
@@ -35,7 +34,6 @@ private:
   String build = "";
   String serial = "";
   String incomingMessage = "";
-  //CoreLed* ledmodule; // for access to color variables, to be moved to a settings module
   CoreSettings* setmodule;
 
   // Hardware Serial Numbers

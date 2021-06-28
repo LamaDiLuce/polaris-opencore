@@ -29,25 +29,16 @@ CoreAudio& CoreAudio::begin(CoreSettings* cSet) {
   patchSineMixer = new AudioConnection(soundSine, 0, mainMixer, CHANNEL_SINE);
   patchFlashMixer = new AudioConnection(soundPlayFlashRaw, 0, mainMixer, CHANNEL_HUM);
   patchFlashFXMixer = new AudioConnection(soundPlayFlashFXRaw, 0, mainMixer, CHANNEL_FX);
-  if(moduleSettings->getSmoothSwingSize()==0)
-  {
-    useSmoothSwing = false;
-  }
-  if (useSmoothSwing)
-  {
-    patchFlashSmoothSwingAMixer = new AudioConnection(soundPlayFlashSmoothSwingARaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_A);
-    patchFlashSmoothSwingBMixer = new AudioConnection(soundPlayFlashSmoothSwingBRaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_B);
-  }
+  useSmoothSwing = checkSmoothSwing();
+  patchFlashSmoothSwingAMixer = new AudioConnection(soundPlayFlashSmoothSwingARaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_A);
+  patchFlashSmoothSwingBMixer = new AudioConnection(soundPlayFlashSmoothSwingBRaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_B);
   patchMixerDac = new AudioConnection(mainMixer, outputDac);
   AudioMemory(AUDIO_BLOCK);
   mainMixer.gain(CHANNEL_HUM, MAX_VOLUME); // HUM
   mainMixer.gain(CHANNEL_FX, MAX_VOLUME);  // FX: Clash and Swing
   mainMixer.gain(CHANNEL_SINE, 0);
-  if (useSmoothSwing)
-  {
-    mainMixer.gain(CHANNEL_SMOOTH_SWING_A, 1);
-    mainMixer.gain(CHANNEL_SMOOTH_SWING_B, 0);
-  }
+  mainMixer.gain(CHANNEL_SMOOTH_SWING_A, 0);
+  mainMixer.gain(CHANNEL_SMOOTH_SWING_B, 0);
   soundSine.amplitude(1);
   soundSine.frequency(BEEP_FREQUENCY);
   return *this;          
@@ -94,13 +85,14 @@ void CoreAudio::action( int id ) {
         } 
       return;
     case EXT_IDLE:
-      digitalWrite(POWER_AMP_PIN, HIGH);
       return;
     case ENT_MUTE:
       beep();
       beep();
       return;
     case ENT_ARM:
+      useSmoothSwing = checkSmoothSwing();
+      digitalWrite(POWER_AMP_PIN, HIGH);
       mainMixer.gain(CHANNEL_HUM, MAX_VOLUME);
       mainMixer.gain(CHANNEL_FX, MAX_VOLUME);
       soundPlayFlashRaw.play(moduleSettings->getRandomOnSound().c_str());
@@ -257,6 +249,19 @@ void CoreAudio::beep()
 
 void CoreAudio::setSwingSpeed(float s){
   swingSpeed = s;
+}
+
+bool CoreAudio::checkSmoothSwing()
+{
+  if(moduleSettings->getSmoothSwingSize()==0)
+  {
+    useSmoothSwing = false;
+  }
+  else
+  {
+    useSmoothSwing = true;
+  }
+  return useSmoothSwing;
 }
 
 
