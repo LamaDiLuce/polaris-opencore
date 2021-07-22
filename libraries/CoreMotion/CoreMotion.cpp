@@ -32,12 +32,14 @@ int CoreMotion::event( int id ) {
     case EVT_DISARM:
       return timer_horizontal.expired( this );
     case EVT_SWING:
-      return (swingSpeed > SWING_THRESHOLD);
+      return (swingSpeed > SWING_THRESHOLD ||
+              rollSpeed > ROLL_SPEED_THRESHOLD_HIGH);
     case EVT_CLASH:
       return ( int1Status > 0 );
     case EVT_ARMED:
       return (timer_arm.expired(this) &&
-             (swingSpeed < SWING_THRESHOLD));
+             (swingSpeed < SWING_THRESHOLD) &&
+             (rollSpeed < ROLL_SPEED_THRESHOLD_LOW));
     case EVT_ARM:
       return (timer_vertical.expired( this ) && 
              (abs(GyroZ) > ARM_THRESHOLD_Z) &&
@@ -140,6 +142,10 @@ void CoreMotion::setAccelZ(float value){
 
 void CoreMotion::setSwingSpeed(float value){
   swingSpeed = value;
+}
+
+void CoreMotion::setRollSpeed(float value){
+  rollSpeed = value;
 }
 
 void CoreMotion::incInt1Status( void ){

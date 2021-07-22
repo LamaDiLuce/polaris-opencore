@@ -177,7 +177,16 @@ void CoreAudio::action( int id ) {
         t1 = micros();
         delta = t1 - t0;
         t0 = t1;
-        totalRotation += swingSpeed * delta / 1000000;
+        if (swingSpeed > rollSpeed - 250)
+        {
+          totalRotation += swingSpeed * delta / 1000000;
+          swingStrength = min( 1, swingSpeed / SWING_SENSITIVITY );   // The strength of the swing is a normalized value based on the angular velocity. For example, if you want the swing to be at maximum volume when you're swinging it at 4*PI rad/sec (720 deg/sec), your swing strength is min( 1, angularvelocity / ( 4 * PI ) ). Note, we clamp it to 1. This value is the one that determines how loud to make the swing and how much to duck the main hum.
+        }
+        else
+        {
+          totalRotation += rollSpeed * delta / 1000000;
+          swingStrength = min( 1, rollSpeed / ROLL_SENSITIVITY );
+        }
         // warparound
         if (totalRotation > 360)
         {
@@ -200,7 +209,6 @@ void CoreAudio::action( int id ) {
           transitionVolume = min(1, transitionVolume);
         }
 
-        swingStrength = min( 1, swingSpeed / SWING_SENSITIVITY );   // The strength of the swing is a normalized value based on the angular velocity. For example, if you want the swing to be at maximum volume when you're swinging it at 4*PI rad/sec (720 deg/sec), your swing strength is min( 1, angularvelocity / ( 4 * PI ) ). Note, we clamp it to 1. This value is the one that determines how loud to make the swing and how much to duck the main hum.
         swingStrength = powf(swingStrength, SWING_SHARPNESS);       // Add sharmpess to the swing. Higher value means more pronunced swing
         humVolume = 1.0 - swingStrength * MAXIMUM_HUM_DUCKING;
         swingVolumeA = swingStrength * transitionVolume;
@@ -249,6 +257,10 @@ void CoreAudio::beep()
 
 void CoreAudio::setSwingSpeed(float s){
   swingSpeed = s;
+}
+
+void CoreAudio::setRollSpeed(float s){
+  rollSpeed = s;
 }
 
 bool CoreAudio::checkSmoothSwing()

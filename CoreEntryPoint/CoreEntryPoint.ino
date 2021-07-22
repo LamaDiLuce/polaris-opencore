@@ -71,7 +71,7 @@ void setup()
                         {
                           audioModule.trigger(audioModule.EVT_ARMED);
                         }
-                        if (audioModule.checkSmoothSwing() && imuModule.state() != imuModule.HIGH_FREQ_SAMPLING)
+                        if (audioModule.checkSmoothSwing())
                         {
                           imuModule.trigger(imuModule.EVT_HIGH_FREQ_SAMPLING);
                         }
@@ -141,5 +141,7 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setAccelY(imuModule.getAccelY());
   motionModule.setAccelZ(imuModule.getAccelZ());
   motionModule.setSwingSpeed(imuModule.getSwingSpeed());
+  motionModule.setRollSpeed(imuModule.getRollSpeed());
   audioModule.setSwingSpeed(imuModule.getSwingSpeed());
+  audioModule.setRollSpeed(imuModule.getRollSpeed());
 }

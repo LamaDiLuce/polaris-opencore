@@ -41,6 +41,7 @@ class CoreAudio: public Machine {
   CoreAudio& disarm( void );
   void beep( void );
   void setSwingSpeed(float s);
+  void setRollSpeed(float s);
   bool checkSmoothSwing( void );
 
  private:
@@ -68,6 +69,7 @@ class CoreAudio: public Machine {
   String smoothSwingStringA;
   String smoothSwingStringB;
   float swingSpeed = 0;
+  float rollSpeed = 0;
   float totalRotation = 0;
   float transitionVolume = 0;
   float transition1midPoint = 0;
@@ -83,10 +85,11 @@ class CoreAudio: public Machine {
                                                         // For more details, see:
                                                         // http://therebelarmory.com/thread/9138/smoothswing-v2-algorithm-description
   static constexpr float SWING_SENSITIVITY = 520;       // how hard should be a swing to get the max effect. It's in deg/s (good values are between 360 and 720)
+  static constexpr float ROLL_SENSITIVITY = 800;        // how hard should be a roll swing to get the max effect. It's in deg/s
   static constexpr float MAXIMUM_HUM_DUCKING = 0.85;    // how much the main hum is reduced during the swing. Close to 1 means that the main hum is attuanuated a lot during the swing (good values between 0.7 and 0.9)
   static constexpr float SWING_SHARPNESS = 1.2;         // This gives a nice non-linear swing response. Between 1 and 2
-  static constexpr float TRANSITION_1_MIN = 30;         // min midpoint angle in degreese for first transition (it's picked randomly at each swing)
-  static constexpr float TRANSITION_1_MAX = 80;         // max midpoint angle in degreese for first transition (it's picked randomly at each swing)
+  static constexpr float TRANSITION_1_MIN = 25;         // min midpoint angle in degreese for first transition (it's picked randomly at each swing)
+  static constexpr float TRANSITION_1_MAX = 60;         // max midpoint angle in degreese for first transition (it's picked randomly at each swing)
   static constexpr float TRANSITION_1_WIDTH = 45.0;     // width angle in degreese of the first trasition 
   static constexpr float TRANSITION_2_WIDTH = 160.0;    // width angle in degreese of the second trasition, which is 180 deg away from the first transition
 };

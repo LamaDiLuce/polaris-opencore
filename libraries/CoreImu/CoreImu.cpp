@@ -124,6 +124,11 @@ float CoreImu::getSwingSpeed() {
   return sqrtf(GyroX * GyroX + GyroY * GyroY);
 }
 
+float CoreImu::getRollSpeed() {
+  return abs(GyroZ);
+}
+
+
 int CoreImu::getInt1Pin() {
   return IMU_INT1_PIN;
 }

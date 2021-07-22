@@ -40,6 +40,7 @@ class CoreMotion: public Machine {
   void setAccelY(float value);
   void setAccelZ(float value);
   void setSwingSpeed(float value);
+  void setRollSpeed(float value);
   void incInt1Status( void );
 
  private:
@@ -58,8 +59,11 @@ class CoreMotion: public Machine {
   float GyroY;
   float GyroZ;
   float swingSpeed;
+  float rollSpeed;
   uint8_t int1Status;
-  static constexpr int SWING_THRESHOLD = 90;
+  static constexpr int SWING_THRESHOLD = 80;
+  static constexpr int ROLL_SPEED_THRESHOLD_LOW = 40;
+  static constexpr int ROLL_SPEED_THRESHOLD_HIGH = 150;
   static constexpr int ARM_THRESHOLD_Z = 300;
   static constexpr int ARM_THRESHOLD_XY = 100;
   static constexpr float VERTICAL_POSITION = 8.0;
