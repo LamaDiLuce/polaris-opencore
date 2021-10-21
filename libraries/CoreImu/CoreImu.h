@@ -53,7 +53,7 @@ class CoreImu: public Machine {
   float GyroY;
   float GyroZ;
   static constexpr float SMOOTHING_FACTOR = 0.4;  // This is the alpha factor in the exponential moving average
-  static constexpr int CLASH_TRESHOLD = 0x0A; // min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
+  static constexpr int CLASH_TRESHOLD = 0x0B; // min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
 };
 
 /* 
