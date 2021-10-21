@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.0.2"
+#define BUILD "2.1.0"
 
 // Modules
 String incomingMessage;
@@ -35,18 +35,20 @@ void setup()
   /*   Modules Initialization   */
   commsModule.init(BUILD);
 
-  audioModule.trace(Serial);
-  audioModule.begin();
-
-  motionModule.trace(Serial);
-  motionModule.begin();
-
-  settingsModule.init();
-
   CoreSettings* setPtr;
   setPtr = &settingsModule;
 
-  ledModule.trace(Serial);
+  // audioModule.trace(Serial);
+  audioModule.begin(setPtr);
+
+  // motionModule.trace(Serial);
+  motionModule.begin();
+
+  settingsModule.init();
+  
+  commsModule.setModule(setPtr);
+
+  // ledModule.trace(Serial);
   ledModule.begin(setPtr);
   
   //imuModule.trace(Serial);
@@ -61,7 +63,18 @@ void setup()
                         ledModule.trigger(ledModule.EVT_ARM);
   });  
   motionModule.onArmed([] (int idx, int v, int up) { // lambda function for more actions
-                        audioModule.trigger(audioModule.EVT_ARM);
+                        if (audioModule.state() == audioModule.IDLE)
+                        {
+                          audioModule.trigger(audioModule.EVT_ARM);
+                        }
+                        else
+                        {
+                          audioModule.trigger(audioModule.EVT_ARMED);
+                        }
+                        if (audioModule.checkSmoothSwing())
+                        {
+                          imuModule.trigger(imuModule.EVT_HIGH_FREQ_SAMPLING);
+                        }
                         ledModule.trigger(ledModule.EVT_ARMED);
   });
   motionModule.onClash([] (int idx, int v, int up) { // lambda function for more actions
@@ -73,6 +86,17 @@ void setup()
                         ledModule.trigger(ledModule.EVT_SWING);
   });
   motionModule.onDisarm([] (int idx, int v, int up) { // lambda function for more actions
+                        if (audioModule.state() != audioModule.MUTE)
+                        {
+                          audioModule.trigger(audioModule.EVT_DISARM);
+                        }
+                        ledModule.trigger(ledModule.EVT_DISARM);
+                        if (audioModule.checkSmoothSwing())
+                        {
+                          imuModule.trigger(imuModule.EVT_START_SAMPLING);
+                        }
+  });
+  motionModule.onIdle([] (int idx, int v, int up) { // lambda function for more actions
                         audioModule.trigger(audioModule.EVT_DISARM);
                         ledModule.trigger(ledModule.EVT_DISARM);
   });
@@ -83,7 +107,6 @@ void setup()
                         }
   });
 
-  commsModule.setModule(setPtr);
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
 }
 
@@ -117,5 +140,8 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setAccelX(imuModule.getAccelX());
   motionModule.setAccelY(imuModule.getAccelY());
   motionModule.setAccelZ(imuModule.getAccelZ());
-  motionModule.setGyrosAvg(imuModule.getGyrosAvg());
+  motionModule.setSwingSpeed(imuModule.getSwingSpeed());
+  motionModule.setRollSpeed(imuModule.getRollSpeed());
+  audioModule.setSwingSpeed(imuModule.getSwingSpeed());
+  audioModule.setRollSpeed(imuModule.getRollSpeed());
 }

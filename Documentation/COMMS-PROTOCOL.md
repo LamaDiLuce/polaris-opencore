@@ -3,14 +3,16 @@
 ## Specification v.1.5
 
 ### History
-- v1.0   2020-06-28  AnFive
-- v1.1   2020-07-02  AnFive / Nuntis
-- v1.2   2020-07-03  Nuntis, added B?
-- v1.3   2020-08-13  Nuntis, added W & L for swing power clash, and DEBUG mode
+- v1.6   202106-14  Nuntis, added sound list commands
+- v1.5   202012-16  Nuntis, 
+  Converted to markdown & added to repository, moced all 'proposed' not implemented commands to end of document
 - v1.4   2020-08-30  Nuntis,
-added LIST? to get a listing of files, ERASE to erase flash memory, changed r read to RD and WR for writing a file,  space management functions FREE?, SIZE?, USED?
-Split Table/Commands into Categories/Pages
-- v1.5   202012-16   Nuntis, Converted to markdown & added to repository, moced all 'proposed' not implemented commands to end of document
+  added LIST? to get a listing of files, ERASE to erase flash memory, changed r read to RD and WR for writing a file,  space management functions FREE?, SIZE?, USED?
+  Split Table/Commands into Categories/Pages
+- v1.3   2020-08-13  Nuntis, added W & L for swing power clash, and DEBUG mode
+- v1.2   2020-07-03  Nuntis, added B?
+- v1.1   2020-07-02  AnFive / Nuntis
+- v1.0   2020-06-28  AnFive
 
 ### Background
 The Arduino Serial communication allows transmitting characters. The communication is stateless.
@@ -229,7 +231,7 @@ where ```x``` is bank number and ```r,g,b,w``` is the colour as a decimal CSV st
 **Notes:**   Build 1.9.12+, Gilthoniel
 
 ---
-##Swing Colour Commands
+## Swing Colour Commands
 
 ### Name:    Write Swing colour to bank
 **Command:** ```Wx=rrggbbww\n```
@@ -295,7 +297,7 @@ where ```x``` is bank number and ```r,g,b,w``` is the colour as a decimal CSV st
 **Notes:**   Build 1.9.15+, Gilthoniel
 
 ---
-##Bank and Colour Preview Commands
+## Bank and Colour Preview Commands
 
 ### Name:    Set active colour bank
 **Command:** B=x\n
@@ -331,7 +333,124 @@ Disconnecting the power (USB cable) also turns off the preview colour.
 Build 1.9.15+, Gilthoniel
 
 ---
-##Storage Management Commands
+## Sound Lists -- change filenames for sounds
+
+### Name: List Assigned On/Activation Sound Filenames
+**Comamnd:** sON?\n
+**Effect:**  Lists (as a CSV string) the files assigned as on/activation sounds
+Replies with
+```
+  sON=POWERON_1_0.RAW,POWERON_2_0.RAW
+```
+
+### Name: set On/Activation Sound Filenames
+**Comamnd:** sON= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as power on/activation sounds, maximum 25
+Replies with
+```
+  OK sON=POWERON_1_0.RAW,POWERON_2_0.RAW
+```
+
+### Name: List Assigned Off/Deactivate Sound Filenames
+**Comamnd:** sOFF?\n
+**Effect:**  Lists (as a CSV string) the files assigned as off/deactivate sounds
+Replies with
+```
+  sOFF=POWEROFF_1_0.RAW,POWEROFF_2_0.RAW
+```
+
+### Name: set Off/Deactivate Sound Filenames
+**Comamnd:** sOFF= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as power off/deactivate sounds, maximum 25
+Replies with
+```
+  OK sOFF=POWEROFF_1_0.RAW,POWEROFF_2_0.RAW
+```
+
+
+### Name: List Assigned Hum Sound Filenames
+**Comamnd:** sHUM?\n
+**Effect:**  Lists (as a CSV string) the files assigned as hum sounds
+Replies with
+```
+  sHUM=HUM_0.RAW,HUM_1.RAW
+```
+
+### Name: set Hum Sound Filenames
+**Comamnd:** sHUM= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as power hum sounds, maximum 25
+Replies with
+```
+  OK sHUM=POWEROFF_1_0.RAW,POWEROFF_2_0.RAW
+```
+
+### Name: List Assigned Swing Sound Filenames
+**Comamnd:** sSW?\n
+**Effect:**  Lists (as a CSV string) the files assigned as swing sounds
+Replies with
+```
+  sSW=SWING_1_0.RAW,SWING_2_0.RAW,SWING_3_0.RAW
+```
+
+### Name: set Swing Sound Filenames
+**Comamnd:** sSW= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as swing sounds, maximum 25
+Replies with
+```
+  OK sSW= SWING_1_0.RAW,SWING_2_0.RAW,SWING_3_0.RAW
+```
+
+### Name: List Assigned Clash Sound Filenames
+**Comamnd:** sCL?\n
+**Effect:**  Lists (as a CSV string) the files assigned as clash sounds
+Replies with
+```
+  sCL=CLASH_1_0.RAW,CLASH_2_0.RAW,CLASH_3_0.RAW
+```
+
+### Name: set Clash Sound Filenames
+**Comamnd:** sCL= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as clash sounds, maximum 25
+Replies with
+```
+  OK sCL=CLASH_1_0.RAW,CLASH_2_0.RAW,CLASH_3_0.RAW
+```
+
+### Name: List Assigned Smooth Swing 'A' Sound Filenames
+**Comamnd:** sSMA?\n
+**Effect:**  Lists (as a CSV string) the files assigned as Smooth SWing 'A' sounds
+Replies with
+```
+  sSMA=SWING_1A.RAW,SWING_2A.RAW,SWING_3A.RAW
+```
+
+### Name: set List of Smooth Swing 'A' Sound Filenames
+**Comamnd:** sSMA= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as Smooth Swing 'A' sounds, maximum 25
+Replies with
+```
+  OK sSMA=SWING_1A.RAW,SWING_2A.RAW,SWING_3A.RAW
+```
+
+### Name: List Assigned Smooth Swing 'B' Sound Filenames
+**Comamnd:** sSMB?\n
+**Effect:**  Lists (as a CSV string) the files assigned as Smooth SWing 'B' sounds
+Replies with
+```
+  sSMB=SWING_1B.RAW,SWING_2B.RAW,SWING_3B.RAW
+```
+
+### Name: set List of Smooth Swing 'B' Sound Filenames
+**Comamnd:** sSMB= ...CSV list of filenames... \n
+**Effect:**  Sets (from a CSV string) the files assigned as Smooth Swing 'B' sounds, maximum 25
+Replies with
+```
+  OK sSMB=SWING_1B.RAW,SWING_2B.RAW,SWING_3B.RAW
+```
+
+
+---
+## Storage Management Commands
 
 ### Name:    List files in flash memory
 **Command:** LIST?\n
@@ -414,7 +533,7 @@ Completion replies with two lines
 **Notes:**   sendtosaber.exe -erase-all
 
 ---
-##File Read Commands
+## File Read Commands
 
 ### Name:    Read file (text or binary)
 **Command:** ```RD?config.ini\n``` or ```RD?<filename>\n```
@@ -424,7 +543,7 @@ Completion replies with two lines
  For binary files (any ending with RAW) just sends the binary bytes, use timeout to detect end of file -- though downloading binary files is not a normal function.
 
 ---
-##File Write Commands
+## File Write Commands
 
 ### Name:    Detect Write is Read / implemented / available
 **Command:** ```WR?\n```
@@ -462,7 +581,7 @@ Except the config.ini file which is marked as erasable and as long as it remains
 **Notes:**   sendtosaber.exe/sendtosaber <filename>
 
 ---
-##Proposed/Suggested Functionality for future.
+## Proposed/Suggested Functionality for future.
 
 ### Name: Set Volumew / Turn off sound
 **Command:** ```VOL=x\n```

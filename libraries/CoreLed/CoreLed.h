@@ -73,7 +73,7 @@ class CoreLed: public Machine {
   int numberOfColorChanged = 0;
 };
 
-/*
+/* 
 Automaton::ATML::begin - Automaton Markup Language
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -86,6 +86,7 @@ Automaton::ATML::begin - Automaton Markup Language
       </IDLE>
       <RECHARGE index="1" on_enter="ENT_RECHARGE" on_loop="LP_RECHARGE">
         <EVT_IDLE>IDLE</EVT_IDLE>
+        <EVT_ARM>ARM</EVT_ARM>
       </RECHARGE>
       <ARM index="2" on_enter="ENT_ARM" on_loop="LP_ARM" on_exit="EXT_ARM">
         <EVT_ARMED>ARMED</EVT_ARMED>
@@ -99,12 +100,12 @@ Automaton::ATML::begin - Automaton Markup Language
         <EVT_ARMED>ARMED</EVT_ARMED>
       </CLASH>
       <SWING index="5" on_enter="ENT_SWING">
-        <EVT_SWING>SWING</EVT_SWING>
+        <EVT_ARMED>ARMED</EVT_ARMED>
         <EVT_CLASH>CLASH</EVT_CLASH>
-        <ELSE>ARMED</ELSE>
       </SWING>
       <DISARM index="6" on_enter="ENT_DISARM">
-        <ELSE>IDLE</ELSE>
+        <EVT_ARMED>ARMED</EVT_ARMED>
+        <EVT_DISARM>IDLE</EVT_DISARM>
       </DISARM>
     </states>
     <events>
@@ -130,6 +131,6 @@ Automaton::ATML::begin - Automaton Markup Language
   </machine>
 </machines>
 
-Automaton::ATML::end
+Automaton::ATML::end 
 */
 

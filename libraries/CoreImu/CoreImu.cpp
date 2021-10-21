@@ -7,10 +7,11 @@
 CoreImu& CoreImu::begin() {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
-    /*                     ON_ENTER        ON_LOOP  ON_EXIT  EVT_START_SAMPLING  EVT_DEEP_SLEEP  EVT_TIMER_SAMPLE  ELSE */
-    /*       IDLE */             -1,       LP_IDLE,      -1,           SAMPLING,     DEEP_SLEEP,         SAMPLING,   -1,
-    /*   SAMPLING */   ENT_SAMPLING,            -1,      -1,                 -1,     DEEP_SLEEP,               -1, IDLE,
-    /* DEEP_SLEEP */ ENT_DEEP_SLEEP, LP_DEEP_SLEEP,      -1,           SAMPLING,             -1,               -1,   -1,
+    /*                             ON_ENTER                ON_LOOP  ON_EXIT  EVT_START_SAMPLING  EVT_HIGH_FREQ_SAMPLING  EVT_DEEP_SLEEP  EVT_TIMER_SAMPLE  ELSE */
+    /*               IDLE */             -1,               LP_IDLE,      -1,           SAMPLING,     HIGH_FREQ_SAMPLING,     DEEP_SLEEP,         SAMPLING,   -1,
+    /*           SAMPLING */   ENT_SAMPLING,                    -1,      -1,                 -1,     HIGH_FREQ_SAMPLING,     DEEP_SLEEP,               -1, IDLE,
+    /* HIGH_FREQ_SAMPLING */             -1, LP_HIGH_FREQ_SAMPLING,      -1,           SAMPLING,                     -1,     DEEP_SLEEP,               -1,   -1,
+    /*         DEEP_SLEEP */ ENT_DEEP_SLEEP,             ATM_SLEEP,      -1,           SAMPLING,                     -1,     DEEP_SLEEP,               -1,   -1,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
@@ -31,7 +32,7 @@ CoreImu& CoreImu::begin() {
     dataToWrite &= ~((uint8_t)LSM6DS3_ACC_GYRO_BW_SCAL_ODR_ENABLED);
 
     imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, 0x0E);
-    imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, 0x0A); // CLASH_TRESHOLD);
+    imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, CLASH_TRESHOLD);
     imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, 0x7F);
     imu.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, 0x80);
     imu.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, 0x48);
@@ -47,6 +48,8 @@ CoreImu& CoreImu::begin() {
 int CoreImu::event( int id ) {
   switch ( id ) {
     case EVT_START_SAMPLING:
+      return 0;
+    case EVT_HIGH_FREQ_SAMPLING:
       return 0;
     case EVT_DEEP_SLEEP:
       return 0;
@@ -71,6 +74,10 @@ void CoreImu::action( int id ) {
       sample();
       push( connectors, ON_SAMPLE, 0, 0, 0 );
       return;
+    case LP_HIGH_FREQ_SAMPLING:
+      sample();
+      push( connectors, ON_SAMPLE, 0, 0, 0 );
+      return;
     case ENT_DEEP_SLEEP:
       return;
     case LP_DEEP_SLEEP:
@@ -79,6 +86,7 @@ void CoreImu::action( int id ) {
 }
 
 void CoreImu::sample() {
+  // Exponential moving average
   GyroX  = (SMOOTHING_FACTOR * imu.readFloatGyroX())  + (1.0 - SMOOTHING_FACTOR) * GyroX;
   GyroY  = (SMOOTHING_FACTOR * imu.readFloatGyroY())  + (1.0 - SMOOTHING_FACTOR) * GyroY;
   GyroZ  = (SMOOTHING_FACTOR * imu.readFloatGyroZ())  + (1.0 - SMOOTHING_FACTOR) * GyroZ;
@@ -112,9 +120,14 @@ float CoreImu::getAccelZ() {
   return AccelZ;
 }
 
-float CoreImu::getGyrosAvg() {
-  return ((abs(GyroX) + abs(GyroY) + abs(GyroZ)) / 3.0);
+float CoreImu::getSwingSpeed() {
+  return sqrtf(GyroX * GyroX + GyroY * GyroY);
 }
+
+float CoreImu::getRollSpeed() {
+  return abs(GyroZ);
+}
+
 
 int CoreImu::getInt1Pin() {
   return IMU_INT1_PIN;
@@ -150,6 +163,11 @@ CoreImu& CoreImu::start_sampling() {
   return *this;
 }
 
+CoreImu& CoreImu::high_freq_sampling() {
+  trigger( EVT_HIGH_FREQ_SAMPLING );
+  return *this;
+}
+
 CoreImu& CoreImu::deep_sleep() {
   trigger( EVT_DEEP_SLEEP );
   return *this;
@@ -175,9 +193,7 @@ CoreImu& CoreImu::onSample( atm_cb_push_t callback, int idx) {
 
 CoreImu& CoreImu::trace( Stream & stream ) {
   Machine::setTrace( &stream, atm_serial_debug::trace,
-    "COREIMU\0EVT_START_SAMPLING\0EVT_DEEP_SLEEP\0EVT_TIMER_SAMPLE\0ELSE\0IDLE\0SAMPLING\0DEEP_SLEEP" );
+    "COREIMU\0EVT_START_SAMPLING\0EVT_HIGH_FREQ_SAMPLING\0EVT_DEEP_SLEEP\0EVT_TIMER_SAMPLE\0ELSE\0IDLE\0SAMPLING\0HIGH_FREQ_SAMPLING\0DEEP_SLEEP" );
   return *this;
 }
-
-
 
