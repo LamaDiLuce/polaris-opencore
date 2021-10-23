@@ -1,19 +1,19 @@
 #pragma once
 
 #include <Arduino.h>
-//#include <EEPROM.h>
 #include <SerialFlash.h>
 
 #include "ArduinoJson.h"
 #include "CoreLogging.h"
 #include "SoundList.h"
 
-#define CURRENTVERSION "2020.04"
+#define CURRENTVERSION "2021.10"
 
 
 struct SaberSettings
 {
-  String version;
+  int hwVersion;
+  String version;  
   int activeBank;
   ColorLed colorSet[9];
   ColorLed clashSet[9];

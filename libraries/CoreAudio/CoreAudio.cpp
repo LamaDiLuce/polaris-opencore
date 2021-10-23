@@ -75,7 +75,7 @@ void CoreAudio::action( int id ) {
     case ENT_IDLE:
         if (!soundPlayFlashRaw.isPlaying())
         {
-          digitalWrite(POWER_AMP_PIN, LOW);
+          beep(90);
         }
       return;
     case LP_IDLE:
@@ -87,8 +87,8 @@ void CoreAudio::action( int id ) {
     case EXT_IDLE:
       return;
     case ENT_MUTE:
-      beep();
-      beep();
+      beep(125);
+      beep(125);
       return;
     case ENT_ARM:
       useSmoothSwing = checkSmoothSwing();
@@ -245,12 +245,12 @@ void CoreAudio::action( int id ) {
   }
 }
 
-void CoreAudio::beep()
+void CoreAudio::beep(int duration)
 {
   digitalWrite(POWER_AMP_PIN, HIGH);
   delay(50);
   mainMixer.gain(CHANNEL_SINE, MAX_VOLUME);
-  delay(BEEP_TIME);
+  delay(duration);
   mainMixer.gain(CHANNEL_SINE, 0);
   digitalWrite(POWER_AMP_PIN, LOW);
 }

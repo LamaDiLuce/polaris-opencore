@@ -22,9 +22,9 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
   pinMode(PIN_GREEN, OUTPUT);
   pinMode(PIN_BLUE, OUTPUT);
   pinMode(PIN_WHITE, OUTPUT);
-  pinMode(CHARGE_PIN, INPUT);
-  pinMode(STANDBY_PIN, INPUT);
-  pinMode(USB_PIN, INPUT);
+  pinMode(CHARGE_PIN, INPUT_PULLUP);
+  pinMode(STANDBY_PIN, INPUT_PULLUP);
+  pinMode(USB_PIN, INPUT_PULLDOWN);
   moduleSettings = cSet;
   moduleSettings->init();
   return *this;          

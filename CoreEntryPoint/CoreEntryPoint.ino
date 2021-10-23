@@ -22,14 +22,6 @@ CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
 
-// STATUS
-bool needClashEvent;
-bool needSwingEvent;
-bool verticalPosition;
-bool horizontalPosition;
-bool needArmEvent;
-bool needDisarmEvent;
-
 void setup()
 {
   /*   Modules Initialization   */
@@ -103,7 +95,7 @@ void setup()
   ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
                         if (v == 0)
                         {
-                          audioModule.beep();
+                          audioModule.beep(125);
                         }
   });
 

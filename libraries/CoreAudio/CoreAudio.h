@@ -19,7 +19,6 @@
 #define CHANNEL_SMOOTH_SWING_A 3
 #define CHANNEL_SMOOTH_SWING_B 4
 
-#define BEEP_TIME 125
 #define BEEP_FREQUENCY 1000
 #define AUDIO_BLOCK 16
 
@@ -39,7 +38,7 @@ class CoreAudio: public Machine {
   CoreAudio& swing( void );
   CoreAudio& clash( void );
   CoreAudio& disarm( void );
-  void beep( void );
+  void beep(int duration);
   void setSwingSpeed(float s);
   void setRollSpeed(float s);
   bool checkSmoothSwing( void );
