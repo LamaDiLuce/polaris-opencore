@@ -95,11 +95,13 @@ void setup()
   ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
                         if (v == 0)
                         {
-                          audioModule.beep(125);
+                          audioModule.beep(125, 1);
                         }
   });
 
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
+
+  audioModule.beep(100, 0.1);
 }
 
 void loop()
