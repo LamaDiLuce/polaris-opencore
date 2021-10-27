@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.1.0"
+#define BUILD "2.2.0"
 
 // Modules
 String incomingMessage;
