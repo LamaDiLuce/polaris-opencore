@@ -1,6 +1,6 @@
 #pragma once
 
-static constexpr bool DEBUG = true;
+static constexpr bool DEBUG = false;
 static constexpr bool DEBUG_SMOOTHSWING = false;
 
 // LED RGBW
@@ -24,10 +24,6 @@ static constexpr bool DEBUG_SMOOTHSWING = false;
 #define BLUE 6
 #define PURPLE 7
 #define OFF 8
-
-#define HW_VERSION_1 1   // Pin 40
-#define HW_VERSION_2 32  // Pin 41
-#define HW_VERSION_3 25  // Pin 42
 
 struct ColorLed
 {
