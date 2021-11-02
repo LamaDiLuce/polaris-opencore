@@ -16,7 +16,37 @@ void CoreSettings::loadDefaults()
 {
   liveSettings.activeBank = BLUE;
   loadDefaultColors();
+  loadDefaultSounds();
 }
+
+void CoreSettings::loadDefaultSounds()
+{
+  liveSettings.soundEngine=0;
+
+  liveSettings.on.count=1;
+  liveSettings.on.sounds[0] ="POWERON_0.RAW";
+
+  liveSettings.off.count=1;
+  liveSettings.off.sounds[0] ="POWEROFF_0.RAW";
+
+  liveSettings.hum.count=1;
+  liveSettings.hum.sounds[0] ="HUM_0.RAW";
+
+  liveSettings.clash.count =10 ;
+  for(int i=0; i<liveSettings.clash.count; i++)
+  { liveSettings.clash.sounds[i] = "CLASH_"+String(i+1)+"_0.RAW";
+  }
+
+  liveSettings.swing.count = 10;
+  for(int i=0; i<liveSettings.swing.count; i++)
+  { liveSettings.swing.sounds[i] = "SWING_"+String(i+1)+"_0.RAW";
+  }
+
+  liveSettings.smoothSwingA.count=0;
+  liveSettings.smoothSwingB.count=0;
+  
+}
+
 
 void CoreSettings::loadDefaultColors()
 {
@@ -112,6 +142,60 @@ void CoreSettings::readFromStore()
       liveSettings.swingSet[i].blue = doc["bank"][i]["swing"]["blue"] | 0;
       liveSettings.swingSet[i].white = doc["bank"][i]["swing"]["white"] | 0;
     }
+
+    loadDefaultSounds();
+    
+    //on off hum clash swing smoothSwingA smoothSwingB
+    if(doc["sounds"]["on"])
+    { liveSettings.on.count = doc["sounds"]["on"].size();
+      for(unsigned int i=0; i<liveSettings.on.count; i++)
+      { String s = doc["sounds"]["on"][i];
+        liveSettings.on.sounds[i] = s;
+      }
+    }
+    if(doc["sounds"]["off"])
+    { liveSettings.off.count = doc["sounds"]["off"].size();
+      for(unsigned int i=0; i<liveSettings.off.count; i++)
+      { String s = doc["sounds"]["off"][i];
+        liveSettings.off.sounds[i] = s;
+      }
+    }
+    if(doc["sounds"]["hum"])
+    { liveSettings.hum.count = doc["sounds"]["hum"].size();
+      for(unsigned int i=0; i<liveSettings.hum.count; i++)
+      { String s = doc["sounds"]["hum"][i];
+        liveSettings.hum.sounds[i] = s;
+      }
+    }
+    if(doc["sounds"]["clash"])
+    { liveSettings.clash.count = doc["sounds"]["clash"].size();
+      for(unsigned int i=0; i<liveSettings.clash.count; i++)
+      { String s = doc["sounds"]["clash"][i];
+        liveSettings.clash.sounds[i] = s;
+      }
+    }
+    if(doc["sounds"]["swing"])
+    { liveSettings.swing.count = doc["sounds"]["swing"].size();
+      for(unsigned int i=0; i<liveSettings.swing.count; i++)
+      { String s = doc["sounds"]["swing"][i];
+        liveSettings.swing.sounds[i] = s;
+      }
+    }
+    if(doc["sounds"]["smoothSwingA"])
+    { liveSettings.smoothSwingA.count = doc["sounds"]["smoothSwingA"].size();
+      for(unsigned int i=0; i<liveSettings.smoothSwingA.count; i++)
+      { String s = doc["sounds"]["smoothSwingA"][i];
+        liveSettings.smoothSwingA.sounds[i] = s;
+      }
+    }
+    if(doc["sounds"]["smoothSwingB"])
+    { liveSettings.smoothSwingB.count = doc["sounds"]["smoothSwingB"].size();
+      for(unsigned int i=0; i<liveSettings.smoothSwingB.count; i++)
+      { String s = doc["sounds"]["smoothSwingB"][i];
+        liveSettings.smoothSwingB.sounds[i] = s;
+      }
+    }
+
   }
 }
 void CoreSettings::saveToStore()
@@ -156,6 +240,31 @@ void CoreSettings::saveToStore()
     doc["bank"][i]["swing"]["white"] = liveSettings.swingSet[i].white;
   }
 
+  doc["sounds"]["soundengine"] = liveSettings.soundEngine;    
+
+  //on off hum clash swing smoothSwingA smoothSwingB
+  for(int i=0; i<liveSettings.on.count; i++)
+  { doc["sounds"]["on"][i] = liveSettings.on.sounds[i];
+  }
+  for(int i=0; i<liveSettings.off.count; i++)
+  { doc["sounds"]["off"][i] = liveSettings.off.sounds[i];
+  }
+  for(int i=0; i<liveSettings.hum.count; i++)
+  { doc["sounds"]["hum"][i] = liveSettings.hum.sounds[i];
+  }
+  for(int i=0; i<liveSettings.clash.count; i++)
+  { doc["sounds"]["clash"][i] = liveSettings.clash.sounds[i];
+  }
+  for(int i=0; i<liveSettings.swing.count; i++)
+  { doc["sounds"]["swing"][i] = liveSettings.swing.sounds[i];
+  }
+for(int i=0; i<liveSettings.smoothSwingA.count; i++)
+  { doc["sounds"]["smoothSwingA"][i] = liveSettings.smoothSwingA.sounds[i];
+  }
+for(int i=0; i<liveSettings.smoothSwingB.count; i++)
+  { doc["sounds"]["smoothSwingB"][i] = liveSettings.smoothSwingA.sounds[i];
+  }
+
   // Serialize JSON to file
   char buffer[16384];
   uint32_t sz = serializeJsonPretty(doc, buffer); //<-- writes json in a more human readable format
@@ -168,6 +277,79 @@ void CoreSettings::saveToStore()
 
   // Close the file
   file.close();
+}
+
+String CoreSettings::getOnSounds()
+{ return liveSettings.on.getCSV();
+}
+void CoreSettings::setOnSounds(String csv)
+{ return liveSettings.on.setCSV(csv);
+}
+String CoreSettings::getRandomOnSound()
+{ return liveSettings.on.getRandom();
+}
+
+String CoreSettings::getOffSounds()
+{ return liveSettings.off.getCSV();
+}
+void CoreSettings::setOffSounds(String csv)
+{ return liveSettings.off.setCSV(csv);
+}
+String CoreSettings::getRandomOffSound()
+{ return liveSettings.off.getRandom();
+}
+
+String CoreSettings::getHumSounds()
+{ return liveSettings.hum.getCSV();
+}
+void CoreSettings::setHumSounds(String csv)
+{ return liveSettings.hum.setCSV(csv);
+}
+String CoreSettings::getRandomHumSound()
+{ return liveSettings.hum.getRandom();
+}
+
+String CoreSettings::getSwingSounds()
+{ return liveSettings.swing.getCSV();
+}
+void CoreSettings::setSwingSounds(String csv)
+{ return liveSettings.swing.setCSV(csv);
+}
+String CoreSettings::getRandomSwingSound()
+{ return liveSettings.swing.getRandom();
+}
+
+String CoreSettings::getSmoothSwingSoundsA()
+{ return liveSettings.smoothSwingA.getCSV();
+}
+void CoreSettings::setSmoothSwingSoundsA(String csv)
+{ return liveSettings.smoothSwingA.setCSV(csv);
+}
+String CoreSettings::getSmoothSwingSoundsB()
+{ return liveSettings.smoothSwingB.getCSV();
+}
+void CoreSettings::setSmoothSwingSoundsB(String csv)
+{ return liveSettings.smoothSwingB.setCSV(csv);
+}
+String CoreSettings::getRandomSmoothSwingSoundA()
+{ return liveSettings.smoothSwingA.getRandom();
+}
+String CoreSettings::getMatchingSmoothSwingSoundB()
+{ return liveSettings.smoothSwingB.sounds[liveSettings.smoothSwingA.lastRandom];
+}
+int CoreSettings::getSmoothSwingSize()
+{
+  return min(liveSettings.smoothSwingA.count, liveSettings.smoothSwingB.count);
+}
+
+String CoreSettings::getClashSounds()
+{ return liveSettings.clash.getCSV();
+}
+void CoreSettings::setClashSounds(String csv)
+{ return liveSettings.clash.setCSV(csv);
+}
+String CoreSettings::getRandomClashSound()
+{ return liveSettings.clash.getRandom();
 }
 
 void CoreSettings::printFile(const char* filen, boolean ignore)
