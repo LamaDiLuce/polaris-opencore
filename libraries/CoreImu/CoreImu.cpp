@@ -31,12 +31,18 @@ CoreImu& CoreImu::begin() {
     imu.readRegister(&dataToWrite, LSM6DS3_ACC_GYRO_CTRL4_C);
     dataToWrite &= ~((uint8_t)LSM6DS3_ACC_GYRO_BW_SCAL_ODR_ENABLED);
 
-    imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, 0x0E);
+    imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_CFG1, 0x8E);
     imu.writeRegister(LSM6DS3_ACC_GYRO_TAP_THS_6D, CLASH_TRESHOLD);
     imu.writeRegister(LSM6DS3_ACC_GYRO_INT_DUR2, 0x7F);
     imu.writeRegister(LSM6DS3_ACC_GYRO_WAKE_UP_THS, 0x80);
     imu.writeRegister(LSM6DS3_ACC_GYRO_MD1_CFG, 0x48);
   }
+  else
+  {
+    delay(5000);
+    CoreLogging::writeLine("ERROR, IMU cannot be initialized");
+  }
+ 
   pinMode(IMU_INT1_PIN, INPUT);
   return *this;          
 }
