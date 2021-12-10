@@ -61,8 +61,8 @@ void CoreSettings::loadDefaultSounds()
 void CoreSettings::loadDefaultColors()
 {
   liveSettings.version = CURRENTVERSION;
-
-  if (liveSettings.hwVersion = 1)
+  
+  if (liveSettings.hwVersion == 1)
   {  
     liveSettings.colorSet[RED] = {255, 0, 0, 0};        // 0 RED
     liveSettings.colorSet[ORANGE] = {150, 255, 0, 20};  // 1 ORANGE

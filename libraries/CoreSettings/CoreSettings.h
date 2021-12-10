@@ -7,7 +7,7 @@
 #include "CoreLogging.h"
 #include "SoundList.h"
 
-#define CURRENTVERSION "2021.10"
+#define CURRENTVERSION "2021.12"
 
 
 struct SaberSettings
