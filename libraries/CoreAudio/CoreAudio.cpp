@@ -123,28 +123,7 @@ void CoreAudio::action( int id ) {
     case ENT_SWING:
       if (useSmoothSwing)
       {
-        mainMixer.gain(CHANNEL_SMOOTH_SWING_A, 0);
-        mainMixer.gain(CHANNEL_SMOOTH_SWING_B, 0);
-        if (random(2))
-        {
-          smoothSwingStringA = moduleSettings->getRandomSmoothSwingSoundA();
-          smoothSwingStringB = moduleSettings->getMatchingSmoothSwingSoundB();
-        }
-        else
-        {
-          smoothSwingStringB = moduleSettings->getRandomSmoothSwingSoundA();
-          smoothSwingStringA = moduleSettings->getMatchingSmoothSwingSoundB();
-        }
-        t0 = micros();
-        totalRotation = 0;
-        transitionVolume = 0;
-        transition1midPoint = random(TRANSITION_1_MIN, TRANSITION_1_MAX);
-        transition2midPoint = transition1midPoint + 180;
-        if (DEBUG_SMOOTHSWING)
-        {
-          CoreLogging::writeLine("Transition1midPoint: %f", transition1midPoint);
-          CoreLogging::writeLine("totalRotation, swingSpeed, swingStrength, humVolume, transitionVolume, swingVolumeA, swingVolumeB");
-        }
+        resetSmoothSwing();
       }
       else
       {
@@ -161,6 +140,11 @@ void CoreAudio::action( int id ) {
     case LP_SWING:
       if (useSmoothSwing)
       {
+        if (!powerSwing && swingSpeed > POWER_SWING_SENSITIVITY)
+        {
+          resetSmoothSwing();
+          powerSwing = true;
+        }
         // keep HUM playing
         if (!soundPlayFlashRaw.isPlaying())
         {
@@ -242,6 +226,30 @@ void CoreAudio::action( int id ) {
       }
       soundPlayFlashRaw.play(moduleSettings->getRandomOffSound().c_str());
       return;
+  }
+}
+
+void CoreAudio::resetSmoothSwing()
+{
+  if (random(2))
+  {
+    smoothSwingStringA = moduleSettings->getRandomSmoothSwingSoundA();
+    smoothSwingStringB = moduleSettings->getMatchingSmoothSwingSoundB();
+  }
+  else
+  {
+    smoothSwingStringB = moduleSettings->getRandomSmoothSwingSoundA();
+    smoothSwingStringA = moduleSettings->getMatchingSmoothSwingSoundB();
+  }
+  t0 = micros();
+  totalRotation = 0;
+  transitionVolume = 0;
+  transition1midPoint = random(TRANSITION_1_MIN, TRANSITION_1_MAX);
+  transition2midPoint = transition1midPoint + 180;
+  if (DEBUG_SMOOTHSWING)
+  {
+    CoreLogging::writeLine("Transition1midPoint: %f", transition1midPoint);
+    CoreLogging::writeLine("totalRotation, swingSpeed, swingStrength, humVolume, transitionVolume, swingVolumeA, swingVolumeB");
   }
 }
 
