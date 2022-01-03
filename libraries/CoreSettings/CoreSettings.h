@@ -18,6 +18,7 @@ struct SaberSettings
   ColorLed colorSet[9];
   ColorLed clashSet[9];
   ColorLed swingSet[9];
+  bool flickering[9];
 
   int soundEngine;
   SoundList on;

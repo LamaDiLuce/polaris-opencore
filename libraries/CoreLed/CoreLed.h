@@ -37,7 +37,7 @@ class CoreLed: public Machine {
   CoreLed& disarm( void );
 
  private:
-  enum { ENT_IDLE, LP_IDLE, ENT_RECHARGE, LP_RECHARGE, ENT_ARM, LP_ARM, EXT_ARM, ENT_ARMED, ENT_CLASH, ENT_SWING, ENT_DISARM }; // ACTIONS
+  enum { ENT_IDLE, LP_IDLE, ENT_RECHARGE, LP_RECHARGE, ENT_ARM, LP_ARM, EXT_ARM, ENT_ARMED, LP_ARMED, ENT_CLASH, ENT_SWING, LP_SWING, ENT_DISARM }; // ACTIONS
   enum { ON_ARM, ON_ARMED, ON_CLASH, ON_DISARM, ON_NEXTCOLOR, ON_RECHARGE, ON_SWING, CONN_MAX }; // CONNECTORS
   atm_connector connectors[CONN_MAX];
   int event( int id );
@@ -51,6 +51,7 @@ class CoreLed: public Machine {
   void fadeOut();
   atm_timer_millis timer_blink;
   atm_timer_millis timer_color_selection;
+  atm_timer_millis timer_flickering;
   int currentColorSetId = OFF;
   int nextColorSetId = OFF;
   ColorLed mainColor;
@@ -91,7 +92,7 @@ Automaton::ATML::begin - Automaton Markup Language
       <ARM index="2" on_enter="ENT_ARM" on_loop="LP_ARM" on_exit="EXT_ARM">
         <EVT_ARMED>ARMED</EVT_ARMED>
       </ARM>
-      <ARMED index="3" on_enter="ENT_ARMED">
+      <ARMED index="3" on_enter="ENT_ARMED" on_loop="LP_ARMED">
         <EVT_SWING>SWING</EVT_SWING>
         <EVT_CLASH>CLASH</EVT_CLASH>
         <EVT_DISARM>DISARM</EVT_DISARM>
@@ -99,7 +100,7 @@ Automaton::ATML::begin - Automaton Markup Language
       <CLASH index="4" on_enter="ENT_CLASH">
         <EVT_ARMED>ARMED</EVT_ARMED>
       </CLASH>
-      <SWING index="5" on_enter="ENT_SWING">
+      <SWING index="5" on_enter="ENT_SWING" on_loop="LP_SWING">
         <EVT_ARMED>ARMED</EVT_ARMED>
         <EVT_CLASH>CLASH</EVT_CLASH>
       </SWING>
@@ -133,4 +134,3 @@ Automaton::ATML::begin - Automaton Markup Language
 
 Automaton::ATML::end 
 */
-
