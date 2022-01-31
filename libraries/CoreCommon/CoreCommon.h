@@ -14,6 +14,10 @@ static constexpr bool DEBUG_SMOOTHSWING = false;
 #define STANDBY_PIN 15
 #define USB_PIN 23
 
+#define HW_VERSION_1 1   // Pin 40
+#define HW_VERSION_2 32  // Pin 41
+#define HW_VERSION_3 25  // Pin 42
+
 #define COLORS 7
 #define RED 0
 #define ORANGE 1

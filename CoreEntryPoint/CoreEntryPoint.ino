@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.1.0"
+#define BUILD "2.2.4"
 
 // Modules
 String incomingMessage;
@@ -21,14 +21,6 @@ CoreMotion motionModule;
 CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
-
-// STATUS
-bool needClashEvent;
-bool needSwingEvent;
-bool verticalPosition;
-bool horizontalPosition;
-bool needArmEvent;
-bool needDisarmEvent;
 
 void setup()
 {
@@ -103,11 +95,13 @@ void setup()
   ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
                         if (v == 0)
                         {
-                          audioModule.beep();
+                          audioModule.beep(125, 1);
                         }
   });
 
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
+
+  audioModule.beep(100, 0.1);
 }
 
 void loop()

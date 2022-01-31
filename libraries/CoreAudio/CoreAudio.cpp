@@ -87,8 +87,8 @@ void CoreAudio::action( int id ) {
     case EXT_IDLE:
       return;
     case ENT_MUTE:
-      beep();
-      beep();
+      beep(125, MAX_VOLUME);
+      beep(125, MAX_VOLUME);
       return;
     case ENT_ARM:
       useSmoothSwing = checkSmoothSwing();
@@ -253,12 +253,12 @@ void CoreAudio::resetSmoothSwing()
   }
 }
 
-void CoreAudio::beep()
+void CoreAudio::beep(int duration, float volume)
 {
   digitalWrite(POWER_AMP_PIN, HIGH);
   delay(50);
-  mainMixer.gain(CHANNEL_SINE, MAX_VOLUME);
-  delay(BEEP_TIME);
+  mainMixer.gain(CHANNEL_SINE, volume);
+  delay(duration);
   mainMixer.gain(CHANNEL_SINE, 0);
   digitalWrite(POWER_AMP_PIN, LOW);
 }
