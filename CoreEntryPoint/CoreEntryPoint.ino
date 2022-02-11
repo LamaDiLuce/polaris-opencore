@@ -138,4 +138,5 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setRollSpeed(imuModule.getRollSpeed());
   audioModule.setSwingSpeed(imuModule.getSwingSpeed());
   audioModule.setRollSpeed(imuModule.getRollSpeed());
+  audioModule.setAngDotProduct(imuModule.getAngDotProduct());
 }

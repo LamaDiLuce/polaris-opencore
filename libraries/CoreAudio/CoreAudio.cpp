@@ -96,11 +96,12 @@ void CoreAudio::action( int id ) {
       mainMixer.gain(CHANNEL_HUM, MAX_VOLUME);
       mainMixer.gain(CHANNEL_FX, MAX_VOLUME);
       soundPlayFlashRaw.play(moduleSettings->getRandomOnSound().c_str());
+      humString = moduleSettings->getRandomHumSound();
       return;
     case LP_ARMED:
       if (!soundPlayFlashRaw.isPlaying())
       {
-        soundPlayFlashRaw.play(moduleSettings->getRandomHumSound().c_str());
+        soundPlayFlashRaw.play(humString.c_str());
       }
       if (useSmoothSwing)
       {
@@ -140,15 +141,14 @@ void CoreAudio::action( int id ) {
     case LP_SWING:
       if (useSmoothSwing)
       {
-        if (!powerSwing && swingSpeed > POWER_SWING_SENSITIVITY)
+        if (AngDotProduct > 0.01)
         {
           resetSmoothSwing();
-          powerSwing = true;
         }
         // keep HUM playing
         if (!soundPlayFlashRaw.isPlaying())
         {
-          soundPlayFlashRaw.play("HUM_0.RAW");
+          soundPlayFlashRaw.play(humString.c_str());
         }
         if (!soundPlayFlashSmoothSwingARaw.isPlaying())
         {
@@ -203,6 +203,7 @@ void CoreAudio::action( int id ) {
         if (DEBUG_SMOOTHSWING)
         {
           CoreLogging::writeLine("%f %f %f %f %f %f %f", totalRotation, swingSpeed, swingStrength, humVolume, transitionVolume, swingVolumeA, swingVolumeB);
+          // CoreLogging::writeLine("%f %f %f %f", totalRotation, swingSpeed, rollSpeed, AngDotProduct);
         }
       }
       else
@@ -269,6 +270,10 @@ void CoreAudio::setSwingSpeed(float s){
 
 void CoreAudio::setRollSpeed(float s){
   rollSpeed = s;
+}
+
+void CoreAudio::setAngDotProduct(float s){
+  AngDotProduct = s;
 }
 
 bool CoreAudio::checkSmoothSwing()
