@@ -158,7 +158,10 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setRollSpeed(imuModule.getRollSpeed());
   audioModule.setSwingSpeed(imuModule.getSwingSpeed());
   audioModule.setRollSpeed(imuModule.getRollSpeed());
-  audioModule.setAngDotProduct(imuModule.getAngDotProduct());
+  audioModule.setAngDotProduct(imuModule.getAngDotProduct());  
+  ledModule.setAccelX(imuModule.getAccelX());
+  ledModule.setAccelY(imuModule.getAccelY());
+  ledModule.setAccelZ(imuModule.getAccelZ());
 }
 
 void initWatchdog()

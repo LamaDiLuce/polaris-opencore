@@ -7,14 +7,14 @@
 CoreLed& CoreLed::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
-    /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
-    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,        -1,        -1,        -1,         -1,    -1,   
-    /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,     ARM,        -1,        -1,        -1,         -1,    -1,
-    /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
-    /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
-    /*    CLASH */    ENT_CLASH,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
-    /*    SWING */    ENT_SWING,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,     CLASH,         -1,    -1,
-    /*   DISARM */   ENT_DISARM,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,       IDLE,    -1,
+    /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM  ELSE */
+    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,        -1,        -1,        -1,         -1,   -1,
+    /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,     ARM,        -1,        -1,        -1,         -1,   -1,
+    /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,   -1,
+    /*    ARMED */    ENT_ARMED,    LP_ARMED,      -1,       -1,           -1,      -1,        -1,        -1,        -1,     DISARM,   -1,
+    /*    CLASH */    ENT_CLASH,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,   -1,
+    /*    SWING */    ENT_SWING,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,     CLASH,         -1,   -1,
+    /*   DISARM */   ENT_DISARM,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,       IDLE,   -1,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
@@ -139,6 +139,13 @@ void CoreLed::action( int id ) {
     case ENT_ARMED:
       changeColor(mainColor);
       return;
+    case LP_ARMED:
+      for (int angle=0; angle<360; angle++)
+      {
+        changeColor({lights[(angle+120)%360], lights[angle], lights[(angle+240)%360], 0});
+        delay(10);
+      }
+      return;
     case ENT_CLASH:
       changeColor(clashColor);
       delay(CLASH_BLINK_TIME);
@@ -222,6 +229,18 @@ void CoreLed::fadeOut()
     changeColor(singleStepColor);
     delay(FADE_OUT_TIME / FADE_DELAY);
   }
+}
+
+void CoreLed::setAccelX(float value){
+  AccelX = value;
+}
+
+void CoreLed::setAccelY(float value){
+  AccelY = value;
+}
+
+void CoreLed::setAccelZ(float value){
+  AccelZ = value;
 }
 
 
@@ -392,7 +411,3 @@ CoreLed& CoreLed::trace( Stream & stream ) {
     "CORELED\0EVT_IDLE\0EVT_RECHARGE\0EVT_ARM\0EVT_ARMED\0EVT_SWING\0EVT_CLASH\0EVT_DISARM\0ELSE\0IDLE\0RECHARGE\0ARM\0ARMED\0CLASH\0SWING\0DISARM" );
   return *this;
 }
-
-
-
-
