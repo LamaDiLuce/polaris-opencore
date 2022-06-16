@@ -140,11 +140,13 @@ void CoreLed::action( int id ) {
       changeColor(mainColor);
       return;
     case LP_ARMED:
-      for (int angle=0; angle<360; angle++)
+      if (angle == 360)
       {
-        changeColor({lights[(angle+120)%360], lights[angle], lights[(angle+240)%360], 0});
-        delay(10);
+        angle = 0;
       }
+      changeColor({lights[(angle+120)%360], lights[angle], lights[(angle+240)%360], 0});
+      delay(5);
+      angle++;
       return;
     case ENT_CLASH:
       changeColor(clashColor);

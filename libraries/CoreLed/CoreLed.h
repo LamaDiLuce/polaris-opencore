@@ -76,7 +76,8 @@ class CoreLed: public Machine {
   int numberOfColorChanged = 0;  
   float AccelX;
   float AccelY;
-  float AccelZ;
+  float AccelZ;  
+  int angle = 0;
   const int lights[360]={
     0,   0,   0,   0,   0,   1,   1,   2, 
     2,   3,   4,   5,   6,   7,   8,   9, 
