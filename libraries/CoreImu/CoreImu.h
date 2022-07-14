@@ -2,7 +2,7 @@
 
 #include <Automaton.h>
 #include <Wire.h>
-#include "SparkFunLSM6DS3.h"
+#include "LSM6DS3.h"
 #include "CoreLogging.h"
 
 #define IMU_INT1_PIN 0
@@ -44,7 +44,7 @@ class CoreImu: public Machine {
   int event( int id ); 
   void action( int id ); 
   void sample();
-  LSM6DS3 imu;
+  //LSM6DS3 imu(0,0x6B);
   uint8_t dataToWrite = 0;
   atm_timer_millis timer;
   float AccelX;

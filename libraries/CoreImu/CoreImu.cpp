@@ -3,6 +3,7 @@
 /* Add optional parameters for the state machine to begin()
  * Add extra initialization code
  */
+LSM6DS3 imu(0,0x6B);
 
 CoreImu& CoreImu::begin() {
   // clang-format off
