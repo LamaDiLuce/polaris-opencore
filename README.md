@@ -37,15 +37,16 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 
 ## Features
 
-- RGBW costomization for the LED
+- RGBW customization for the LED
 - No pushbutton required
   - Gestures to arm / disarm
   - Blade color can be selected among pre-sets during arming
   - Kill switch
 - Mute function activated by a tap on the hilt during arming
 - Electronic powered by a Cortex-M4
-- Dedicated PC softwares for advanced customization and firmware upgrade
+- Dedicated [PC software](http://sabers.amazer.uk/?p=gilthoniel) for advanced customization and firmware upgrade
 - Code built with [Automaton](https://github.com/tinkerspy/Automaton/wiki) state machine modules
+- [Smoothswing experience](https://github.com/LamaDiLuce/polaris-opencore/wiki/SmoothSwing)
 
 ---
 
@@ -55,12 +56,12 @@ In order to be able to contributre to this project, compile and upload the FW to
 - be familiar with Arduino
 - download and install a bunch of software
 - get used to Git and GitHub in order to commit your changes
-- get familiar with [Automaton framework](Documentation/Automaton.md)
+- get familiar with [Automaton framework](https://github.com/LamaDiLuce/polaris-opencore/wiki/Automaton)
 
 We strongly recommend to install VS Code and PlatformIO extension.
 
-- [Get ready with GitHub](Documentation/GIT.md)
-- [Configure VS Code plus PlatformIO](Documentation/VSCode-PlatformIO.md)
+- [Get ready with GitHub](https://github.com/LamaDiLuce/polaris-opencore/wiki/Git)
+- [Configure VS Code plus PlatformIO](https://github.com/LamaDiLuce/polaris-opencore/wiki/VSCode-PlatformIO)
 
 ---
 
@@ -81,7 +82,7 @@ This new release candidate is testes by selected developers and, if all the test
 ---
 
 ## FAQ
-FAQ and troubleshooting can be found [here](Documentation/FAQ.md)
+FAQ and troubleshooting can be found [here](https://github.com/LamaDiLuce/polaris-opencore/wiki/FAQ)
 
 ---
 
