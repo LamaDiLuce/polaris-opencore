@@ -77,7 +77,7 @@ This new release candidate is testes by selected developers and, if all the test
 ## Council members
 | Daniele *"denken0bi"* | Andrea *"AnFive"* | Carlos *"karldeux"* | Fabio "*FlamingBear*" | Davide "*FarFlyer"* | Ian *"Nuntis"* |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| <img src="Images/Council/Daniele.jpg" alt="Daniele" title="Daniele" height="80"/> | <img src="Images/Council/Andrea.jpg" alt="Andrea" title="Andrea" height="80"/> | <img src="Images/Council/Carlos.jpg" alt="Carlos" title="Carlos" height="80"/> | <img src="Images/Council/Fabio.jpg" alt="Fabio" title="Fabio" height="80"/> |  <img src="Images/Council/Davide.jpg" alt="Davide" title="Davide" height="80"/> | <img src="Images/Council/Ian.jpg" alt="Ian" title="Ian" height="80"/> |
+| <img src="Documentation/Images/Council/Daniele.jpg" alt="Daniele" title="Daniele" height="80"/> | <img src="Documentation/Images/Council/Andrea.jpg" alt="Andrea" title="Andrea" height="80"/> | <img src="Documentation/Images/Council/Carlos.jpg" alt="Carlos" title="Carlos" height="80"/> | <img src="Documentation/Images/Council/Fabio.jpg" alt="Fabio" title="Fabio" height="80"/> |  <img src="Documentation/Images/Council/Davide.jpg" alt="Davide" title="Davide" height="80"/> | <img src="Documentation/Images/Council/Ian.jpg" alt="Ian" title="Ian" height="80"/> |
 
 ---
 
