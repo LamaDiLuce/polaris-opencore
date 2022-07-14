@@ -37,15 +37,16 @@ After 5 years, and after thousands of feedbacks from worldwide users, the new ge
 
 ## Features
 
-- RGBW costomization for the LED
+- RGBW customization for the LED
 - No pushbutton required
   - Gestures to arm / disarm
   - Blade color can be selected among pre-sets during arming
   - Kill switch
 - Mute function activated by a tap on the hilt during arming
 - Electronic powered by a Cortex-M4
-- Dedicated PC softwares for advanced customization and firmware upgrade
+- Dedicated [PC software](http://sabers.amazer.uk/?p=gilthoniel) for advanced customization and firmware upgrade
 - Code built with [Automaton](https://github.com/tinkerspy/Automaton/wiki) state machine modules
+- [Smoothswing experience](SmoothSwing)
 
 ---
 
@@ -55,12 +56,12 @@ In order to be able to contributre to this project, compile and upload the FW to
 - be familiar with Arduino
 - download and install a bunch of software
 - get used to Git and GitHub in order to commit your changes
-- get familiar with [Automaton framework](Documentation/Automaton.md)
+- get familiar with [Automaton framework](Automaton)
 
 We strongly recommend to install VS Code and PlatformIO extension.
 
-- [Get ready with GitHub](Documentation/GIT.md)
-- [Configure VS Code plus PlatformIO](Documentation/VSCode-PlatformIO.md)
+- [Get ready with GitHub](Git)
+- [Configure VS Code plus PlatformIO](VSCode-PlatformIO)
 
 ---
 
@@ -76,12 +77,12 @@ This new release candidate is testes by selected developers and, if all the test
 ## Council members
 | Daniele *"denken0bi"* | Andrea *"AnFive"* | Carlos *"karldeux"* | Fabio "*FlamingBear*" | Davide "*FarFlyer"* | Ian *"Nuntis"* |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| <img src="Documentation/Images/Council/Daniele.jpg" alt="Daniele" title="Daniele" height="80"/> | <img src="Documentation/Images/Council/Andrea.jpg" alt="Andrea" title="Andrea" height="80"/> | <img src="Documentation/Images/Council/Carlos.jpg" alt="Carlos" title="Carlos" height="80"/> | <img src="Documentation/Images/Council/Fabio.jpg" alt="Fabio" title="Fabio" height="80"/> |  <img src="Documentation/Images/Council/Davide.jpg" alt="Davide" title="Davide" height="80"/> | <img src="Documentation/Images/Council/Ian.jpg" alt="Ian" title="Ian" height="80"/> |
+| <img src="Images/Council/Daniele.jpg" alt="Daniele" title="Daniele" height="80"/> | <img src="Images/Council/Andrea.jpg" alt="Andrea" title="Andrea" height="80"/> | <img src="Images/Council/Carlos.jpg" alt="Carlos" title="Carlos" height="80"/> | <img src="Images/Council/Fabio.jpg" alt="Fabio" title="Fabio" height="80"/> |  <img src="Images/Council/Davide.jpg" alt="Davide" title="Davide" height="80"/> | <img src="Images/Council/Ian.jpg" alt="Ian" title="Ian" height="80"/> |
 
 ---
 
 ## FAQ
-FAQ and troubleshooting can be found [here](Documentation/FAQ.md)
+FAQ and troubleshooting can be found [here](FAQ)
 
 ---
 
