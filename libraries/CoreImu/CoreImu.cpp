@@ -3,6 +3,7 @@
 /* Add optional parameters for the state machine to begin()
  * Add extra initialization code
  */
+LSM6DS3 imu(0,0x6B);
 
 CoreImu& CoreImu::begin() {
   // clang-format off
@@ -92,14 +93,26 @@ void CoreImu::action( int id ) {
 }
 
 void CoreImu::sample() {
-  // Exponential moving average
+  PrevGyroX = GyroX;
+  PrevGyroY = GyroY;
+  PrevGyroZ = GyroZ;
   GyroX  = (SMOOTHING_FACTOR * imu.readFloatGyroX())  + (1.0 - SMOOTHING_FACTOR) * GyroX;
   GyroY  = (SMOOTHING_FACTOR * imu.readFloatGyroY())  + (1.0 - SMOOTHING_FACTOR) * GyroY;
   GyroZ  = (SMOOTHING_FACTOR * imu.readFloatGyroZ())  + (1.0 - SMOOTHING_FACTOR) * GyroZ;
   AccelX = (SMOOTHING_FACTOR * imu.readFloatAccelX()) + (1.0 - SMOOTHING_FACTOR) * AccelX;
   AccelY = (SMOOTHING_FACTOR * imu.readFloatAccelY()) + (1.0 - SMOOTHING_FACTOR) * AccelY;
   AccelZ = (SMOOTHING_FACTOR * imu.readFloatAccelZ()) + (1.0 - SMOOTHING_FACTOR) * AccelZ;
-  //CoreLogging::writeLine("%f %f %f %f %f %f", GyroX, GyroY, GyroZ, AccelX, AccelY, AccelZ);
+  float Module = sqrtf(GyroX * GyroX + GyroY * GyroY + GyroZ * GyroZ);
+  AngAccX = (GyroX - PrevGyroX) / Module;
+  AngAccY = (GyroY - PrevGyroY) / Module;
+  AngAccZ = (GyroZ - PrevGyroZ) / Module;  
+  PrevAngAccX = (SMOOTHING_FACTOR * AngAccX)  + (1.0 - SMOOTHING_FACTOR) * PrevAngAccX;
+  PrevAngAccY = (SMOOTHING_FACTOR * AngAccY)  + (1.0 - SMOOTHING_FACTOR) * PrevAngAccY;
+  PrevAngAccZ = (SMOOTHING_FACTOR * AngAccZ)  + (1.0 - SMOOTHING_FACTOR) * PrevAngAccZ;
+  AngDotProduct = AngAccX * PrevAngAccX + AngAccY * PrevAngAccY + AngAccZ * PrevAngAccZ;
+  // CoreLogging::writeLine("%f %f %f %f %f %f", GyroX, GyroY, GyroZ, AccelX, AccelY, AccelZ);
+  // CoreLogging::writeLine("%f %f %f %f", GyroX, GyroY, GyroZ, AngDotProduct);
+  // CoreLogging::writeLine("%f %f %f %f", AngAccX, AngAccY, AngAccZ, AngDotProduct);
 }
 
 float CoreImu::getGyroX() {
@@ -134,6 +147,9 @@ float CoreImu::getRollSpeed() {
   return abs(GyroZ);
 }
 
+float CoreImu::getAngDotProduct() {
+  return AngDotProduct;
+}
 
 int CoreImu::getInt1Pin() {
   return IMU_INT1_PIN;

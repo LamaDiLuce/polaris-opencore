@@ -2,7 +2,7 @@
 
 #include <Automaton.h>
 #include <Wire.h>
-#include "SparkFunLSM6DS3.h"
+#include "LSM6DS3.h"
 #include "CoreLogging.h"
 
 #define IMU_INT1_PIN 0
@@ -33,6 +33,7 @@ class CoreImu: public Machine {
   float getAccelZ();
   float getSwingSpeed();
   float getRollSpeed();
+  float getAngDotProduct();
   int getInt1Pin();
 
 
@@ -43,15 +44,24 @@ class CoreImu: public Machine {
   int event( int id ); 
   void action( int id ); 
   void sample();
-  LSM6DS3 imu;
   uint8_t dataToWrite = 0;
   atm_timer_millis timer;
   float AccelX;
   float AccelY;
   float AccelZ;
-  float GyroX;
-  float GyroY;
-  float GyroZ;
+  float GyroX = 0;
+  float GyroY = 0;
+  float GyroZ = 0;
+  float AngAccX = 0;
+  float AngAccY = 0;
+  float AngAccZ = 0;
+  float PrevGyroX = 0;
+  float PrevGyroY = 0;
+  float PrevGyroZ = 0;
+  float PrevAngAccX = 0;
+  float PrevAngAccY = 0;
+  float PrevAngAccZ = 0;
+  float AngDotProduct = 0;
   static constexpr float SMOOTHING_FACTOR = 0.4;  // This is the alpha factor in the exponential moving average
   static constexpr int CLASH_TRESHOLD = 0x0B; // min 0x00 (0) max 0x1F (31) 5 bits, middle 0x0F (15)
 };

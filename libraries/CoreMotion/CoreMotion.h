@@ -69,9 +69,9 @@ class CoreMotion: public Machine {
   static constexpr float VERTICAL_POSITION = 8.0;
   static constexpr float ARM_POSITION = -6.0;
   static constexpr float HORIZONTAL_POSITION = 0.0;
-  static constexpr float TOLERANCE_POSITION = 1.5;
+  static constexpr float TOLERANCE_POSITION = 2;
   static constexpr int TIME_FOR_START_ARM = 500;
-  static constexpr int TIME_FOR_DISARM = 4000;
+  static constexpr int TIME_FOR_DISARM = 3000;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
   static constexpr int TIME_FOR_REARM = 0; // set to 0 to disable rearm possibility during disarm
 };

@@ -41,12 +41,14 @@ class CoreAudio: public Machine {
   void beep(int duration, float volume);
   void setSwingSpeed(float s);
   void setRollSpeed(float s);
+  void setAngDotProduct(float s);
   bool checkSmoothSwing( void );
 
  private:
   enum { ENT_IDLE, LP_IDLE, EXT_IDLE, ENT_MUTE, ENT_ARM, LP_ARMED, ENT_CLASH, ENT_SWING, LP_SWING, ENT_DISARM }; // ACTIONS
   int event( int id ); 
   void action( int id );
+  void resetSmoothSwing( void );
   CoreSettings* moduleSettings;
   AudioSynthWaveformSine soundSine;
   AudioPlaySerialflashRaw soundPlayFlashRaw;
@@ -65,6 +67,7 @@ class CoreAudio: public Machine {
   uint32_t t0;
   uint32_t delta;
   uint32_t t1;
+  String humString;
   String smoothSwingStringA;
   String smoothSwingStringB;
   float swingSpeed = 0;
@@ -77,6 +80,8 @@ class CoreAudio: public Machine {
   float humVolume = 0;
   float swingVolumeA = 0;
   float swingVolumeB = 0;
+  float AngDotProduct = 0;
+  bool powerSwing = false;
   // Params that can be tuned
   static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
   bool useSmoothSwing = true;                           // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
@@ -91,6 +96,7 @@ class CoreAudio: public Machine {
   static constexpr float TRANSITION_1_MAX = 50;         // max midpoint angle in degreese for first transition (it's picked randomly at each swing)
   static constexpr float TRANSITION_1_WIDTH = 60.0;     // width angle in degreese of the first trasition 
   static constexpr float TRANSITION_2_WIDTH = 160.0;    // width angle in degreese of the second trasition, which is 180 deg away from the first transition
+  static constexpr float SMOOTHING_FACTOR = 0.2;
 };
 
 /* 

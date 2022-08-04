@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.2.4"
+#define BUILD "2.2.5"
 
 // Modules
 String incomingMessage;
@@ -138,4 +138,5 @@ void updateMeasurements(int idx, int v, int up)
   motionModule.setRollSpeed(imuModule.getRollSpeed());
   audioModule.setSwingSpeed(imuModule.getSwingSpeed());
   audioModule.setRollSpeed(imuModule.getRollSpeed());
+  audioModule.setAngDotProduct(imuModule.getAngDotProduct());
 }
