@@ -22,6 +22,9 @@ CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
 
+DMAMEM unsigned int dmaTest;
+DMAMEM unsigned int dmaTestInit;
+
 void setup()
 {
   /*   Modules Initialization   */
@@ -101,11 +104,59 @@ void setup()
 
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
 
+
+  while (!Serial.dtr()) {                                 // wait for terminal to connect
+        }
+    delay(3000);
+    Serial.println("Terminal Connected.");
+
+    // Display reason the Teensy was last reset
+    Serial.println();
+    Serial.println("Reason for last Reset: ");
+
+    if (RCM_SRS1 & RCM_SRS1_SACKERR)   Serial.println("Stop Mode Acknowledge Error Reset");
+    if (RCM_SRS1 & RCM_SRS1_MDM_AP)    Serial.println("MDM-AP Reset");
+    if (RCM_SRS1 & RCM_SRS1_SW)        Serial.println("Software Reset");                   // reboot with SCB_AIRCR = 0x05FA0004
+    if (RCM_SRS1 & RCM_SRS1_LOCKUP)    Serial.println("Core Lockup Event Reset");
+    if (RCM_SRS0 & RCM_SRS0_POR)       Serial.println("Power-on Reset");                   // removed / applied power
+    if (RCM_SRS0 & RCM_SRS0_PIN)       Serial.println("External Pin Reset");               // Reboot with software download
+    if (RCM_SRS0 & RCM_SRS0_WDOG)      Serial.println("Watchdog(COP) Reset");              // WDT timed out
+    if (RCM_SRS0 & RCM_SRS0_LOC)       Serial.println("Loss of External Clock Reset");
+    if (RCM_SRS0 & RCM_SRS0_LOL)       Serial.println("Loss of Lock in PLL Reset");
+    if (RCM_SRS0 & RCM_SRS0_LVD)       Serial.println("Low-voltage Detect Reset");
+    Serial.println();
+
+
+  // Setup WDT
+  noInterrupts();                                         // don't allow interrupts while setting up WDOG
+  WDOG_UNLOCK = WDOG_UNLOCK_SEQ1;                         // unlock access to WDOG registers
+  WDOG_UNLOCK = WDOG_UNLOCK_SEQ2;
+  delayMicroseconds(1);                                   // Need to wait a bit..
+
+  // 4 seconds
+  WDOG_TOVALH = 0x01b7;
+  WDOG_TOVALL = 0x7400;
+
+  // This sets prescale clock so that the watchdog timer ticks at 7.2MHz
+  WDOG_PRESC  = 0x400;
+
+  // Set options to enable WDT. You must always do this as a SINGLE write to WDOG_CTRLH
+  WDOG_STCTRLH |= WDOG_STCTRLH_ALLOWUPDATE |
+      WDOG_STCTRLH_WDOGEN | WDOG_STCTRLH_WAITEN |
+      WDOG_STCTRLH_STOPEN | WDOG_STCTRLH_CLKSRC;
+  interrupts();
+
+
   audioModule.beep(100, 0.1);
 }
 
 void loop()
 {
+  noInterrupts();                                     //   No - reset WDT
+  WDOG_REFRESH = 0xA602;
+  WDOG_REFRESH = 0xB480;
+  interrupts();
+
   imuModule.cycle();
   motionModule.cycle();
   audioModule.cycle();
