@@ -44,7 +44,6 @@ class CoreImu: public Machine {
   int event( int id ); 
   void action( int id ); 
   void sample();
-  //LSM6DS3 imu(0,0x6B);
   uint8_t dataToWrite = 0;
   atm_timer_millis timer;
   float AccelX;
