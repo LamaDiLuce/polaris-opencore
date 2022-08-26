@@ -22,21 +22,62 @@ CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
 
-DMAMEM unsigned int dmaTest;
-DMAMEM unsigned int dmaTestInit;
-
 void setup()
 {
-  /*   Modules Initialization   */
+  modulesInit();
+  
+  modulesConnections();
+
+  attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
+  
+  if (RCM_SRS0 & RCM_SRS0_WDOG)
+  {
+    // FW reset due to watchdog timeout, probably issue with the speaker and audio module
+    recovery();
+  }
+  else
+  {
+    audioModule.beep(100, 0.1);
+  }
+
+  initWatchdog();
+}
+
+void loop()
+{
+  refreshWatchdog();
+
+  imuModule.cycle();
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
+
+  commsModule.loop();
+
+  // if the communication mode is not normal then save the settings
+  if (commsModule.getMode() != MODE_NORMAL)
+  {
+    settingsModule.saveToStore();
+    commsModule.setMode(MODE_NORMAL);
+  }
+}
+
+void int1ISR()
+{
+  motionModule.incInt1Status();
+}
+
+void modulesInit()
+{
   commsModule.init(BUILD);
 
   CoreSettings* setPtr;
   setPtr = &settingsModule;
 
-  // audioModule.trace(Serial);
+  audioModule.trace(Serial);
   audioModule.begin(setPtr);
 
-  // motionModule.trace(Serial);
+  motionModule.trace(Serial);
   motionModule.begin();
 
   settingsModule.init();
@@ -48,8 +89,10 @@ void setup()
   
   //imuModule.trace(Serial);
   imuModule.begin();
+}
 
-  /*   Modules Connections   */
+void modulesConnections()
+{
   imuModule.onSample(updateMeasurements);                   // Callback
 
   motionModule.onMute(audioModule,audioModule.EVT_MUTE);    // Simple push connector for only one action
@@ -101,41 +144,6 @@ void setup()
                           audioModule.beep(125, 1);
                         }
   });
-
-  attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
-  
-  audioModule.beep(100, 0.1);
-
-  if (RCM_SRS0 & RCM_SRS0_WDOG) // FW reset due to watchdog timeout, probably issue with the speaker and audio module
-  {
-    audioModule.trigger(audioModule.EVT_MUTE);
-  }
-
-  initWatchdog();
-}
-
-void loop()
-{
-  refreshWatchdog();
-
-  imuModule.cycle();
-  motionModule.cycle();
-  audioModule.cycle();
-  ledModule.cycle();
-
-  commsModule.loop();
-
-  // if the communication mode is not normal then save the settings
-  if (commsModule.getMode() != MODE_NORMAL)
-  {
-    settingsModule.saveToStore();
-    commsModule.setMode(MODE_NORMAL);
-  }
-}
-
-void int1ISR()
-{
-  motionModule.incInt1Status();
 }
 
 void updateMeasurements(int idx, int v, int up)
@@ -182,4 +190,34 @@ void refreshWatchdog()
   WDOG_REFRESH = 0xA602;
   WDOG_REFRESH = 0xB480;
   interrupts();
+}
+
+void recovery()
+{
+  // we want to go back in ARMED status with all modules, but with audio module in MUTE state
+  // a safe way is to perform the arming procedure with all the modules
+
+  // first cycles of all modules (IDLE state)
+  imuModule.cycle();
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
+
+  // trigger ARM event
+  motionModule.trigger(motionModule.EVT_ARM);
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
+
+  // trigger MUTE event and cycle Motion module two times to go back in ARM
+  motionModule.trigger(motionModule.EVT_MUTE);
+  motionModule.cycle();
+  audioModule.cycle();
+  motionModule.cycle();
+
+  // trigger ARMED event
+  motionModule.trigger(motionModule.EVT_ARMED);
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
 }
