@@ -89,6 +89,7 @@ void CoreMotion::action( int id ) {
       return;
     case ENT_ARMED:
       push( connectors, ON_ARMED, 0, 0, 0 );
+      timer_horizontal.setFromNow(this,TIME_FOR_DISARM);
       return;
     case LP_ARMED:
       if ((AccelZ < (HORIZONTAL_POSITION - TOLERANCE_POSITION)) || 

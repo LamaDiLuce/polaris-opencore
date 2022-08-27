@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.2.5"
+#define BUILD "2.2.6"
 
 // Modules
 String incomingMessage;
@@ -24,16 +24,60 @@ CoreSettings settingsModule;
 
 void setup()
 {
-  /*   Modules Initialization   */
+  modulesInit();
+  
+  modulesConnections();
+
+  attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
+  
+  if (RCM_SRS0 & RCM_SRS0_WDOG)
+  {
+    // FW reset due to watchdog timeout, probably issue with the speaker and audio module
+    recovery();
+  }
+  else
+  {
+    audioModule.beep(100, 0.1);
+  }
+
+  initWatchdog();
+}
+
+void loop()
+{
+  refreshWatchdog();
+
+  imuModule.cycle();
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
+
+  commsModule.loop();
+
+  // if the communication mode is not normal then save the settings
+  if (commsModule.getMode() != MODE_NORMAL)
+  {
+    settingsModule.saveToStore();
+    commsModule.setMode(MODE_NORMAL);
+  }
+}
+
+void int1ISR()
+{
+  motionModule.incInt1Status();
+}
+
+void modulesInit()
+{
   commsModule.init(BUILD);
 
   CoreSettings* setPtr;
   setPtr = &settingsModule;
 
-  // audioModule.trace(Serial);
+  audioModule.trace(Serial);
   audioModule.begin(setPtr);
 
-  // motionModule.trace(Serial);
+  motionModule.trace(Serial);
   motionModule.begin();
 
   settingsModule.init();
@@ -45,8 +89,10 @@ void setup()
   
   //imuModule.trace(Serial);
   imuModule.begin();
+}
 
-  /*   Modules Connections   */
+void modulesConnections()
+{
   imuModule.onSample(updateMeasurements);                   // Callback
 
   motionModule.onMute(audioModule,audioModule.EVT_MUTE);    // Simple push connector for only one action
@@ -98,32 +144,6 @@ void setup()
                           audioModule.beep(125, 1);
                         }
   });
-
-  attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
-
-  audioModule.beep(100, 0.1);
-}
-
-void loop()
-{
-  imuModule.cycle();
-  motionModule.cycle();
-  audioModule.cycle();
-  ledModule.cycle();
-
-  commsModule.loop();
-
-  // if the communication mode is not normal then save the settings
-  if (commsModule.getMode() != MODE_NORMAL)
-  {
-    settingsModule.saveToStore();
-    commsModule.setMode(MODE_NORMAL);
-  }
-}
-
-void int1ISR()
-{
-  motionModule.incInt1Status();
 }
 
 void updateMeasurements(int idx, int v, int up)
@@ -139,4 +159,65 @@ void updateMeasurements(int idx, int v, int up)
   audioModule.setSwingSpeed(imuModule.getSwingSpeed());
   audioModule.setRollSpeed(imuModule.getRollSpeed());
   audioModule.setAngDotProduct(imuModule.getAngDotProduct());
+}
+
+void initWatchdog()
+{
+// Setup WDT
+  noInterrupts();                                         // don't allow interrupts while setting up WDOG
+  WDOG_UNLOCK = WDOG_UNLOCK_SEQ1;                         // unlock access to WDOG registers
+  WDOG_UNLOCK = WDOG_UNLOCK_SEQ2;
+  delayMicroseconds(1);
+
+  // 4 seconds
+  WDOG_TOVALH = 0x01b7;
+  WDOG_TOVALL = 0x7400;
+
+  // This sets prescale clock so that the watchdog timer ticks at 7.2MHz
+  WDOG_PRESC  = 0x400;
+
+  // Set options to enable WDT. You must always do this as a SINGLE write to WDOG_CTRLH
+  WDOG_STCTRLH |= WDOG_STCTRLH_ALLOWUPDATE |
+      WDOG_STCTRLH_WDOGEN | WDOG_STCTRLH_WAITEN |
+      WDOG_STCTRLH_STOPEN | WDOG_STCTRLH_CLKSRC;
+  interrupts();
+
+}
+
+void refreshWatchdog()
+{
+  noInterrupts();
+  WDOG_REFRESH = 0xA602;
+  WDOG_REFRESH = 0xB480;
+  interrupts();
+}
+
+void recovery()
+{
+  // we want to go back in ARMED status with all modules, but with audio module in MUTE state
+  // a safe way is to perform the arming procedure with all the modules
+
+  // first cycles of all modules (IDLE state)
+  imuModule.cycle();
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
+
+  // trigger ARM event
+  motionModule.trigger(motionModule.EVT_ARM);
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
+
+  // trigger MUTE event and cycle Motion module two times to go back in ARM
+  motionModule.trigger(motionModule.EVT_MUTE);
+  motionModule.cycle();
+  audioModule.cycle();
+  motionModule.cycle();
+
+  // trigger ARMED event
+  motionModule.trigger(motionModule.EVT_ARMED);
+  motionModule.cycle();
+  audioModule.cycle();
+  ledModule.cycle();
 }
