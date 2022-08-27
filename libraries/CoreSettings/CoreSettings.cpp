@@ -42,21 +42,26 @@ void CoreSettings::loadDefaultSounds()
   liveSettings.hum.count=1;
   liveSettings.hum.sounds[0] ="HUM_0.RAW";
 
-  liveSettings.clash.count =10 ;
+  liveSettings.clash.count = 10;
   for(int i=0; i<liveSettings.clash.count; i++)
-  { liveSettings.clash.sounds[i] = "CLASH_"+String(i+1)+"_0.RAW";
+  {
+    liveSettings.clash.sounds[i] = "CLASH_"+String(i+1)+"_0.RAW";
   }
 
-  liveSettings.swing.count = 10;
-  for(int i=0; i<liveSettings.swing.count; i++)
-  { liveSettings.swing.sounds[i] = "SWING_"+String(i+1)+"_0.RAW";
+  liveSettings.swing.count = 0;
+
+  liveSettings.smoothSwingA.count=8;
+  for(int i=0; i<liveSettings.smoothSwingA.count; i++)
+  {
+    liveSettings.smoothSwingA.sounds[i] = "SMOOTHSWINGH_"+String(i+1)+"_0.RAW";
   }
 
-  liveSettings.smoothSwingA.count=0;
-  liveSettings.smoothSwingB.count=0;
-  
+  liveSettings.smoothSwingB.count=8;
+  for(int i=0; i<liveSettings.smoothSwingB.count; i++)
+  {
+    liveSettings.smoothSwingB.sounds[i] = "SMOOTHSWINGL_"+String(i+1)+"_0.RAW";
+  }
 }
-
 
 void CoreSettings::loadDefaultColors()
 {
