@@ -419,6 +419,10 @@ void CoreSettings::printFile(const char* filen, boolean ignore)
   SerialFlashFile file = SerialFlash.open(filen);
   while (file.available())
   {
+    noInterrupts();
+    WDOG_REFRESH = 0xA602;
+    WDOG_REFRESH = 0xB480;
+    interrupts();
     file.read(buf, 1);
     if (ignore && ((buf[0] == (char)255) || (buf[0] < 9)))
       break;

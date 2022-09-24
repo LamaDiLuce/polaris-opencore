@@ -23,6 +23,7 @@ void CoreComms::setModule(CoreSettings* cSet)
 // Process loop
 void CoreComms::loop()
 {
+  refreshWatchdog();
   if (Serial.available() > 0)
   {
     int incomingByte;
@@ -81,6 +82,7 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
     Serial.println("Erasing Serial Flash, this may take 20s to 2 minutes");
     while (SerialFlash.ready() == false)
     {
+      refreshWatchdog();
       delay(500);
       i++;
       Serial.print("#");
@@ -164,9 +166,12 @@ void CoreComms::processIncomingMessage(const String& pIncomingMessage)
               unsigned long time = millis();
 
               while (counter<fsize)
-              { 
+              {
+                refreshWatchdog();
                 while(!Serial.available())
-                { delay(5);
+                { 
+                  refreshWatchdog();
+                  delay(5);
                   if((millis()-time)>10000)
                   {
                     //if no comms for 10 seconds then timeout the transfer
@@ -613,6 +618,7 @@ String CoreComms::listFiles()
   uint32_t maxAddr=0;
   while (moreFiles)
   {
+    refreshWatchdog();
     // List all files to PC
     char filename[64];
     uint32_t filesize;
@@ -676,6 +682,7 @@ uint32_t CoreComms::getStorageUsed()
   uint32_t maxAddr=0;
   while (moreFiles)
   {
+    refreshWatchdog();
     char filename[64];
     uint32_t filesize;
     if (SerialFlash.readdir(filename, sizeof(filename), filesize))
@@ -701,4 +708,12 @@ void CoreComms::changeColor(const ColorLed& cLed)
   analogWrite(PIN_GREEN, !COMMON_GND ? cLed.green : 255 - cLed.green);
   analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
   analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
+}
+
+void CoreComms::refreshWatchdog()
+{
+  noInterrupts();
+  WDOG_REFRESH = 0xA602;
+  WDOG_REFRESH = 0xB480;
+  interrupts();
 }
