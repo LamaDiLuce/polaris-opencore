@@ -210,7 +210,8 @@ void recovery()
   ledModule.cycle();
 
   // trigger MUTE event and cycle Motion module two times to go back in ARM
-  motionModule.trigger(motionModule.EVT_MUTE);
+  //motionModule.trigger(motionModule.EVT_MUTE);
+  audioModule.set_mute(); // Manually set to mute rather than cycling through VOLUME settings
   motionModule.cycle();
   audioModule.cycle();
   motionModule.cycle();

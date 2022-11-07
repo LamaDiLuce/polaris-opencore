@@ -38,6 +38,7 @@ class CoreAudio: public Machine {
   CoreAudio& swing( void );
   CoreAudio& clash( void );
   CoreAudio& disarm( void );
+  void set_mute();
   void beep(int duration, float volume);
   void setSwingSpeed(float s);
   void setRollSpeed(float s);

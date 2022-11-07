@@ -274,6 +274,11 @@ void CoreAudio::beep(int duration, float volume)
   digitalWrite(POWER_AMP_PIN, LOW);
 }
 
+void CoreAudio::set_mute()
+{
+  volume = 0;
+}
+
 void CoreAudio::setSwingSpeed(float s){
   swingSpeed = s;
 }
