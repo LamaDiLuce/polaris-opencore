@@ -95,13 +95,13 @@ void modulesConnections()
 {
   imuModule.onSample(updateMeasurements);                   // Callback
 
-  motionModule.onMute(audioModule,audioModule.EVT_MUTE);    // Simple push connector for only one action
+  motionModule.onMute(audioModule,audioModule.EVT_VOLUME);    // Simple push connector for only one action
 
   motionModule.onArm([] (int idx, int v, int up) { // lambda function for more actions
                         ledModule.trigger(ledModule.EVT_ARM);
   });  
   motionModule.onArmed([] (int idx, int v, int up) { // lambda function for more actions
-                        if ((audioModule.state() == audioModule.IDLE) || (audioModule.state() == audioModule.MUTE))
+                        if ((audioModule.state() == audioModule.IDLE) || (audioModule.state() == audioModule.VOLUME))
                         {
                           audioModule.trigger(audioModule.EVT_ARM);
                         }
@@ -124,7 +124,7 @@ void modulesConnections()
                         ledModule.trigger(ledModule.EVT_SWING);
   });
   motionModule.onDisarm([] (int idx, int v, int up) { // lambda function for more actions
-                        if (audioModule.state() != audioModule.MUTE)
+                        if (audioModule.state() != audioModule.VOLUME)
                         {
                           audioModule.trigger(audioModule.EVT_DISARM);
                         }

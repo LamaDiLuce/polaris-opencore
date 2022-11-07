@@ -25,14 +25,14 @@
 class CoreAudio: public Machine {
 
  public:
-  enum { IDLE, MUTE, ARM, ARMED, CLASH, SWING, DISARM }; // STATES
-  enum { EVT_MUTE, EVT_ARM, EVT_ARMED, EVT_SWING, EVT_CLASH, EVT_DISARM, ELSE }; // EVENTS
+  enum { IDLE, VOLUME, ARM, ARMED, CLASH, SWING, DISARM }; // STATES
+  enum { EVT_VOLUME, EVT_ARM, EVT_ARMED, EVT_SWING, EVT_CLASH, EVT_DISARM, ELSE }; // EVENTS
   CoreAudio( void ) : Machine() {};
   CoreAudio& begin( CoreSettings* cSet );
   CoreAudio& trace( Stream & stream );
   CoreAudio& trigger( int event );
   int state( void );
-  CoreAudio& mute( void );
+  CoreAudio& volume( void );
   CoreAudio& arm( void );
   CoreAudio& armed( void );
   CoreAudio& swing( void );
@@ -46,7 +46,7 @@ class CoreAudio: public Machine {
   bool checkSmoothSwing( void );
 
  private:
-  enum { ENT_IDLE, LP_IDLE, EXT_IDLE, ENT_MUTE, ENT_ARM, LP_ARMED, ENT_CLASH, ENT_SWING, LP_SWING, ENT_DISARM }; // ACTIONS
+  enum { ENT_IDLE, LP_IDLE, EXT_IDLE, ENT_VOLUME, ENT_ARM, LP_ARMED, ENT_CLASH, ENT_SWING, LP_SWING, ENT_DISARM }; // ACTIONS
   int event( int id ); 
   void action( int id );
   void resetSmoothSwing( void );
@@ -85,7 +85,7 @@ class CoreAudio: public Machine {
   bool powerSwing = false;
   // Params that can be tuned
   static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
-  float volume = MAX_VOLUME;                            // Initial volume. Initally setting to max volume; may later load this from stored config
+  float currentVolume = MAX_VOLUME;                            // Initial volume. Initally setting to max volume; may later load this from stored config
   bool useSmoothSwing = true;                           // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
                                                         // SmoothSwing V2, based on Thexter's excellent work.
                                                         // For more details, see:
@@ -109,12 +109,12 @@ Automaton::ATML::begin - Automaton Markup Language
   <machine name="CoreAudio">
     <states>
       <IDLE index="0" sleep="1" on_enter="ENT_IDLE" on_loop="LP_IDLE" on_exit="EXT_IDLE">
-        <EVT_MUTE>MUTE</EVT_MUTE>
+        <EVT_VOLUME>VOLUME</EVT_VOLUME>
         <EVT_ARM>ARM</EVT_ARM>
       </IDLE>
-      <MUTE index="1" on_enter="ENT_MUTE">
+      <VOLUME index="1" on_enter="ENT_VOLUME">
         <EVT_DISARM>IDLE</EVT_DISARM>
-      </MUTE>
+      </VOLUME>
       <ARM index="2" on_enter="ENT_ARM">
         <ELSE>ARMED</ELSE>
       </ARM>
@@ -136,7 +136,7 @@ Automaton::ATML::begin - Automaton Markup Language
       </DISARM>
     </states>
     <events>
-      <EVT_MUTE index="0" access="MIXED"/>
+      <EVT_VOLUME index="0" access="MIXED"/>
       <EVT_ARM index="1" access="MIXED"/>
       <EVT_ARMED index="2" access="MIXED"/>
       <EVT_SWING index="3" access="MIXED"/>
