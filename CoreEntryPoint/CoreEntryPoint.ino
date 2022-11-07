@@ -101,7 +101,7 @@ void modulesConnections()
                         ledModule.trigger(ledModule.EVT_ARM);
   });  
   motionModule.onArmed([] (int idx, int v, int up) { // lambda function for more actions
-                        if (audioModule.state() == audioModule.IDLE)
+                        if ((audioModule.state() == audioModule.IDLE) || (audioModule.state() == audioModule.MUTE))
                         {
                           audioModule.trigger(audioModule.EVT_ARM);
                         }
