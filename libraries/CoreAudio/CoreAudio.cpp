@@ -95,7 +95,7 @@ void CoreAudio::action( int id ) {
         currentVolume = 0;
         return;
       }
-      beep(125, currentVolume); // One beep at current volume
+      beep(500*currentVolume, currentVolume); // One beep at current volume, varying length depending on volume setting
       return;
     case ENT_ARM:
       useSmoothSwing = checkSmoothSwing();
