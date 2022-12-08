@@ -138,12 +138,6 @@ void modulesConnections()
                         audioModule.trigger(audioModule.EVT_DISARM);
                         ledModule.trigger(ledModule.EVT_DISARM);
   });
-  ledModule.onNextcolor([] (int idx, int v, int up) { // lambda function for more actions
-                        if (v == 0)
-                        {
-                          audioModule.beep(125, 1);
-                        }
-  });
 }
 
 void updateMeasurements(int idx, int v, int up)

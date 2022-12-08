@@ -37,15 +37,12 @@ int CoreMotion::event( int id ) {
     case EVT_CLASH:
       return ( int1Status > 0 );
     case EVT_ARMED:
-      return (timer_arm.expired(this) &&
-             (swingSpeed < SWING_THRESHOLD) &&
-             (rollSpeed < ROLL_SPEED_THRESHOLD_LOW));
+      return timer_arm.expired(this);
     case EVT_ARM:
-      return (timer_vertical.expired( this ) && 
-             (abs(GyroZ) > ARM_THRESHOLD_Z) &&
-             (GyroX < ARM_THRESHOLD_XY) &&
-             (GyroY < ARM_THRESHOLD_XY) &&
-             ((digitalRead(USB_PIN) == LOW) || DEBUG));
+      return (
+              (abs(GyroZ) > ARM_THRESHOLD_Z) &&
+              ((digitalRead(USB_PIN) == LOW) || DEBUG)
+             );
   }
   return 0;
 }
@@ -69,20 +66,15 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_IDLE, 0, 0, 0 );
       return;
     case LP_IDLE:
-      if ((AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) || 
-          (AccelZ > (VERTICAL_POSITION + TOLERANCE_POSITION)))
-      {
-        timer_vertical.setFromNow(this,TIME_FOR_START_ARM);
-      }
       return;
     case ENT_ARM:
       int1Status = 0;
       push( connectors, ON_ARM, 0, 0, 0 );
       return;
     case LP_ARM:
-      if ((AccelZ < (ARM_POSITION - TOLERANCE_POSITION)) || 
-          (AccelZ > (ARM_POSITION + TOLERANCE_POSITION)) || 
-          (swingSpeed > SWING_THRESHOLD))
+      if (
+          (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION))
+         )
       {
         timer_arm.setFromNow(this,TIME_FOR_CONFIRM_ARM);
       }
