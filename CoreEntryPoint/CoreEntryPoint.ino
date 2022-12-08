@@ -95,8 +95,10 @@ void modulesConnections()
 {
   imuModule.onSample(updateMeasurements);                   // Callback
 
-  motionModule.onMute(audioModule,audioModule.EVT_VOLUME);    // Simple push connector for only one action
-
+  motionModule.onMute([] (int idx, int v, int up) { // lambda function for more actions
+                        audioModule.trigger(audioModule.EVT_VOLUME);
+                        ledModule.reset_color_timer();
+  });  
   motionModule.onArm([] (int idx, int v, int up) { // lambda function for more actions
                         ledModule.trigger(ledModule.EVT_ARM);
   });  
