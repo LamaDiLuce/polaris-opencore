@@ -37,7 +37,9 @@ int CoreMotion::event( int id ) {
     case EVT_CLASH:
       return ( int1Status > 0 );
     case EVT_ARMED:
-      return timer_arm.expired(this);
+      return (timer_arm.expired(this) &&
+             (swingSpeed < SWING_THRESHOLD) &&
+             (rollSpeed < ROLL_SPEED_THRESHOLD_LOW));
     case EVT_ARM:
       return (
               (abs(GyroZ) > ARM_THRESHOLD_Z) &&
