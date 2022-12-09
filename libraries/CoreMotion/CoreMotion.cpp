@@ -42,6 +42,7 @@ int CoreMotion::event( int id ) {
              (rollSpeed < ROLL_SPEED_THRESHOLD_LOW));
     case EVT_ARM:
       return (
+              timer_no_swing.expired(this) &&
               (abs(GyroZ) > ARM_THRESHOLD_Z) &&
               ((digitalRead(USB_PIN) == LOW) || DEBUG)
              );
@@ -68,6 +69,10 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_IDLE, 0, 0, 0 );
       return;
     case LP_IDLE:
+      if (swingSpeed > SWING_THRESHOLD)
+      {
+        timer_no_swing.setFromNow(this,TIME_FOR_START_ARM);
+      }
       return;
     case ENT_ARM:
       int1Status = 0;
