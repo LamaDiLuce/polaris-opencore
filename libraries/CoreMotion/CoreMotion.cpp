@@ -43,7 +43,10 @@ int CoreMotion::event( int id ) {
     case EVT_ARM:
       return (
               timer_no_swing.expired(this) &&
-              (abs(GyroZ) > ARM_THRESHOLD_Z) &&
+              (
+                (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && abs(GyroZ) > ARM_THRESHOLD_Z) ||
+                abs(GyroZ) > ARM_ALT_THRESHOLD_Z
+              ) &&
               ((digitalRead(USB_PIN) == LOW) || DEBUG)
              );
   }

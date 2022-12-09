@@ -64,7 +64,8 @@ class CoreMotion: public Machine {
   static constexpr int SWING_THRESHOLD = 80;
   static constexpr int ROLL_SPEED_THRESHOLD_LOW = 40;
   static constexpr int ROLL_SPEED_THRESHOLD_HIGH = 150;
-  static constexpr int ARM_THRESHOLD_Z = 1000;
+  static constexpr int ARM_THRESHOLD_Z = 300;
+  static constexpr int ARM_ALT_THRESHOLD_Z = 1000;
   static constexpr int ARM_THRESHOLD_XY = 100;
   static constexpr float VERTICAL_POSITION = 8.0;
   static constexpr float HORIZONTAL_POSITION = 0.0;
