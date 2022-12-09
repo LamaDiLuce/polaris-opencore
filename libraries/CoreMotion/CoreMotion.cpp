@@ -75,7 +75,8 @@ void CoreMotion::action( int id ) {
       return;
     case LP_ARM:
       if (
-          (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION))
+          (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) || 
+          (swingSpeed > SWING_THRESHOLD))
          )
       {
         timer_arm.setFromNow(this,TIME_FOR_CONFIRM_ARM);
