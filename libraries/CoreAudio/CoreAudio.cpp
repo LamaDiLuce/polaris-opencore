@@ -89,14 +89,16 @@ void CoreAudio::action( int id ) {
       {
         currentVolume = MAX_VOLUME;
       }
+      firstTap = true;
       return;
     case ENT_VOLUME:
       currentVolume += (MAX_VOLUME * 0.25); // Volume increases in 25% increments, giving 4 levels (25%, 50%, 75%, 100%) plus mute
-      if (currentVolume > MAX_VOLUME) // Mute
+      if (currentVolume > MAX_VOLUME || firstTap) // Mute
       {
         beep(125, MAX_VOLUME); // Two beeps for mute
         beep(125, MAX_VOLUME);
         currentVolume = 0;
+        firstTap = false;
         return;
       }
       beep(500*currentVolume, currentVolume); // One beep at current volume, varying length depending on volume setting
