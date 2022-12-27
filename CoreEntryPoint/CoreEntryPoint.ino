@@ -25,7 +25,7 @@ CoreSettings settingsModule;
 void setup()
 {
   modulesInit();
-  
+    
   modulesConnections();
 
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
@@ -39,6 +39,8 @@ void setup()
   {
     audioModule.beep(100, 0.1);
   }
+
+  initBattery();
 
   initWatchdog();
 }
@@ -74,10 +76,10 @@ void modulesInit()
   CoreSettings* setPtr;
   setPtr = &settingsModule;
 
-  audioModule.trace(Serial);
+  //audioModule.trace(Serial);
   audioModule.begin(setPtr);
 
-  motionModule.trace(Serial);
+  //motionModule.trace(Serial);
   motionModule.begin();
 
   settingsModule.init();
@@ -223,4 +225,15 @@ void recovery()
   motionModule.cycle();
   audioModule.cycle();
   ledModule.cycle();
+}
+
+void initBattery()
+{
+  analogReference(EXTERNAL);
+  analogReadResolution(12);
+  analogReadAveraging(32);
+  if (digitalRead(USB_PIN) == LOW)
+  {
+    ledModule.batteryCheck();
+  }
 }

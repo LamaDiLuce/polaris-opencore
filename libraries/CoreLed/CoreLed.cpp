@@ -224,6 +224,27 @@ void CoreLed::fadeOut()
   }
 }
 
+void CoreLed::batteryCheck()
+{
+  // inspired by https://forum.pjrc.com/threads/26117-Teensy-3-1-Voltage-sensing-and-low-battery-alert
+  uint32_t analogRef = analogRead(39); // this values goes from ~ 1470 at full battery to ~ 2000 at depleted battery. It's not linear.
+
+  if (analogRef < 1480) // full battery
+  {
+    changeColor({0,255,0,0}); // GREEN
+  }
+  else if (analogRef < 1560) // less then 1 hour of battery
+  {
+    changeColor({255,255,0,0}); // ORANGE
+  }
+  else // battery depleted
+  {
+    changeColor({255,0,0,0}); // RED
+  }
+
+  delay(CHARGE_SEQUENCE_BLINK_TIME);
+  turnOff();
+}
 
 /* Optionally override the default trigger() method
  * Control how your machine processes triggers
