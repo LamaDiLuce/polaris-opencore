@@ -83,6 +83,7 @@ Automaton::ATML::begin - Automaton Markup Language
       <IDLE index="0" on_enter="ENT_IDLE" on_loop="LP_IDLE">
         <EVT_RECHARGE>RECHARGE</EVT_RECHARGE>
         <EVT_ARM>ARM</EVT_ARM>
+        <EVT_ARMED>ARMED</EVT_ARM>
       </IDLE>
       <RECHARGE index="1" on_enter="ENT_RECHARGE" on_loop="LP_RECHARGE">
         <EVT_IDLE>IDLE</EVT_IDLE>

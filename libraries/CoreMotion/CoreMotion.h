@@ -68,6 +68,7 @@ class CoreMotion: public Machine {
   static constexpr int ARM_ALT_THRESHOLD_Z = 1000;
   static constexpr int ARM_THRESHOLD_XY = 100;
   static constexpr float VERTICAL_POSITION = 8.0;
+  static constexpr float ARM_POSITION = -6.0;
   static constexpr float HORIZONTAL_POSITION = 0.0;
   static constexpr float TOLERANCE_POSITION = 2;
   static constexpr int TIME_FOR_START_ARM = 500;
@@ -85,6 +86,7 @@ Automaton::ATML::begin - Automaton Markup Language
     <states>
       <IDLE index="0" sleep="1" on_enter="ENT_IDLE" on_loop="LP_IDLE">
         <EVT_ARM>ARM</EVT_ARM>
+        <EVT_ARMED>ARMED</EVT_ARM>
       </IDLE>
       <ARM index="1" on_enter="ENT_ARM" on_loop="LP_ARM">
         <EVT_MUTE>MUTE</EVT_MUTE>

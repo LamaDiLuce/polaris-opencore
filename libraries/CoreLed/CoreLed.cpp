@@ -8,7 +8,7 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
     /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
-    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,        -1,        -1,        -1,         -1,    -1,   
+    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,     ARMED,        -1,        -1,         -1,    -1,   
     /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,     ARM,        -1,        -1,        -1,         -1,    -1,
     /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
     /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
@@ -137,6 +137,7 @@ void CoreLed::action( int id ) {
       fadeIn();
       return;
     case ENT_ARMED:
+      getCurrentColorSet();
       changeColor(mainColor);
       return;
     case ENT_CLASH:

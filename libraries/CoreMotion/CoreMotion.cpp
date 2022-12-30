@@ -8,7 +8,7 @@ CoreMotion& CoreMotion::begin() {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
     /*             ON_ENTER    ON_LOOP  ON_EXIT  EVT_MUTE  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
-    /*   IDLE */   ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,        -1,     ARM,    -1,
+    /*   IDLE */   ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,     ARMED,     ARM,    -1,
     /*    ARM */    ENT_ARM,    LP_ARM,      -1,     MUTE,         -1,        -1,        -1,     ARMED,      -1,    -1,
     /*  ARMED */  ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
     /* DISARM */ ENT_DISARM,        -1,      -1,       -1,       IDLE,     ARMED,        -1,        -1,      -1,    -1,
@@ -37,15 +37,25 @@ int CoreMotion::event( int id ) {
     case EVT_CLASH:
       return ( int1Status > 0 );
     case EVT_ARMED:
-      return (timer_arm.expired(this) &&
-             (swingSpeed < SWING_THRESHOLD) &&
-             (rollSpeed < ROLL_SPEED_THRESHOLD_LOW));
+      return (
+        this->state() == this->ARM && 
+        (
+          timer_arm.expired(this) &&
+          (swingSpeed < SWING_THRESHOLD) &&
+          (rollSpeed < ROLL_SPEED_THRESHOLD_LOW)
+        )
+      ) ||
+      (
+        this->state() == this->IDLE && 
+        abs(GyroZ) > ARM_ALT_THRESHOLD_Z && 
+        !(AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && abs(GyroZ) > ARM_THRESHOLD_Z)
+      );
     case EVT_ARM:
       return (
               timer_no_swing.expired(this) &&
               (
-                (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && abs(GyroZ) > ARM_THRESHOLD_Z) ||
-                abs(GyroZ) > ARM_ALT_THRESHOLD_Z
+                (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && 
+                abs(GyroZ) > ARM_THRESHOLD_Z)
               ) &&
               ((digitalRead(USB_PIN) == LOW) || DEBUG)
              );
@@ -82,10 +92,9 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_ARM, 0, 0, 0 );
       return;
     case LP_ARM:
-      if (
-          (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) || 
+      if ((AccelZ < (ARM_POSITION - TOLERANCE_POSITION)) || 
+          (AccelZ > (ARM_POSITION + TOLERANCE_POSITION)) || 
           (swingSpeed > SWING_THRESHOLD))
-         )
       {
         timer_arm.setFromNow(this,TIME_FOR_CONFIRM_ARM);
       }
