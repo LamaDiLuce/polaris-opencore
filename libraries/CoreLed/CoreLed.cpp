@@ -285,6 +285,11 @@ CoreLed& CoreLed::disarm() {
   return *this;
 }
 
+void CoreLed::reset_color_timer()
+{
+  timer_color_selection.setFromNow(this,TIME_FOR_START_COLOR_SELECTION);
+}
+
 /*
  * onArm() push connector variants ( slots 1, autostore 0, broadcast 0 )
  */
