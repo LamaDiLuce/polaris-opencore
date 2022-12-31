@@ -109,7 +109,6 @@ Automaton::ATML::begin - Automaton Markup Language
       <IDLE index="0" sleep="1" on_enter="ENT_IDLE" on_loop="LP_IDLE" on_exit="EXT_IDLE">
         <EVT_MUTE>MUTE</EVT_MUTE>
         <EVT_ARM>ARM</EVT_ARM>
-        <EVT_ARMED>ARMED</EVT_ARM>
       </IDLE>
       <MUTE index="1" on_enter="ENT_MUTE">
         <EVT_DISARM>IDLE</EVT_DISARM>

@@ -48,7 +48,8 @@ int CoreMotion::event( int id ) {
       (
         this->state() == this->IDLE && 
         abs(GyroZ) > ARM_ALT_THRESHOLD_Z && 
-        !(AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && abs(GyroZ) > ARM_THRESHOLD_Z)
+        timer_no_vertical.expired( this ) &&
+        timer_no_swing.expired(this)
       );
     case EVT_ARM:
       return (
@@ -86,6 +87,9 @@ void CoreMotion::action( int id ) {
       {
         timer_no_swing.setFromNow(this,TIME_FOR_START_ARM);
       }
+      if(AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
+        timer_no_vertical.setFromNow(this,TIME_FOR_START_ARM);
+      }
       return;
     case ENT_ARM:
       int1Status = 0;
@@ -100,6 +104,7 @@ void CoreMotion::action( int id ) {
       }
       return;
     case ENT_ARMED:
+      int1Status = 0;
       push( connectors, ON_ARMED, 0, 0, 0 );
       timer_horizontal.setFromNow(this,TIME_FOR_DISARM);
       return;

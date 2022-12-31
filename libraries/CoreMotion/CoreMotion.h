@@ -50,6 +50,7 @@ class CoreMotion: public Machine {
   int event( int id ); 
   void action( int id );
   atm_timer_millis timer_no_swing;
+  atm_timer_millis timer_no_vertical;
   atm_timer_millis timer_horizontal;
   atm_timer_millis timer_arm;
   float AccelX;
