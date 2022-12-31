@@ -7,14 +7,14 @@
 CoreMotion& CoreMotion::begin() {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
-    /*             ON_ENTER    ON_LOOP  ON_EXIT  EVT_MUTE  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
-    /*   IDLE */   ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,     ARMED,     ARM,    -1,
-    /*    ARM */    ENT_ARM,    LP_ARM,      -1,     MUTE,         -1,        -1,        -1,     ARMED,      -1,    -1,
+    /*             ON_ENTER    ON_LOOP  ON_EXIT  EVT_VOLUME  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
+    /*   IDLE */   ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,       ARMED,     ARM,    -1,
+    /*    ARM */    ENT_ARM,    LP_ARM,      -1,     VOLUME,         -1,        -1,        -1,     ARMED,      -1,    -1,
     /*  ARMED */  ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
     /* DISARM */ ENT_DISARM,        -1,      -1,       -1,       IDLE,     ARMED,        -1,        -1,      -1,    -1,
     /*  CLASH */  ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
     /*  SWING */  ENT_SWING,        -1,      -1,       -1,         -1,        -1,     CLASH,     ARMED,      -1,    -1,
-    /*   MUTE */   ENT_MUTE,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,   ARM,
+    /*   VOLUME */   ENT_VOLUME,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,   ARM,
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
@@ -27,8 +27,8 @@ CoreMotion& CoreMotion::begin() {
 
 int CoreMotion::event( int id ) {
   switch ( id ) {
-    case EVT_MUTE:
-      return AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && int1Status > 0;
+    case EVT_VOLUME:
+      return AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && ( int1Status > 0 );
     case EVT_DISARM:
       return timer_horizontal.expired( this );
     case EVT_SWING:
@@ -127,7 +127,7 @@ void CoreMotion::action( int id ) {
       timer_arm.set(0); // otherwise there is a delay in triggering the ARMED event. This should be not needed. To be investigated.
       push( connectors, ON_SWING, 0, 0, 0 );
       return;
-    case ENT_MUTE:
+    case ENT_VOLUME:
       int1Status = 0;
       push( connectors, ON_MUTE, 0, 0, 0 );
       return;
@@ -195,8 +195,8 @@ int CoreMotion::state( void ) {
  *
  */
 
-CoreMotion& CoreMotion::mute() {
-  trigger( EVT_MUTE );
+CoreMotion& CoreMotion::volume() {
+  trigger( EVT_VOLUME );
   return *this;
 }
 

@@ -6,8 +6,8 @@
 class CoreMotion: public Machine {
 
  public:
-  enum { IDLE, ARM, ARMED, DISARM, CLASH, SWING, MUTE }; // STATES
-  enum { EVT_MUTE, EVT_DISARM, EVT_SWING, EVT_CLASH, EVT_ARMED, EVT_ARM, ELSE }; // EVENTS
+  enum { IDLE, ARM, ARMED, DISARM, CLASH, SWING, VOLUME }; // STATES
+  enum { EVT_VOLUME, EVT_DISARM, EVT_SWING, EVT_CLASH, EVT_ARMED, EVT_ARM, ELSE }; // EVENTS
   CoreMotion( void ) : Machine() {};
   CoreMotion& begin( void );
   CoreMotion& trace( Stream & stream );
@@ -27,7 +27,7 @@ class CoreMotion: public Machine {
   CoreMotion& onMute( atm_cb_push_t callback, int idx = 0 );
   CoreMotion& onSwing( Machine& machine, int event = 0 );
   CoreMotion& onSwing( atm_cb_push_t callback, int idx = 0 );
-  CoreMotion& mute( void );
+  CoreMotion& volume( void );
   CoreMotion& disarm( void );
   CoreMotion& swing( void );
   CoreMotion& clash( void );
@@ -44,7 +44,7 @@ class CoreMotion: public Machine {
   void incInt1Status( void );
 
  private:
-  enum { ENT_IDLE, LP_IDLE, ENT_ARM, LP_ARM, ENT_ARMED, LP_ARMED, ENT_DISARM, LP_DISARM, ENT_CLASH, ENT_SWING, ENT_MUTE }; // ACTIONS
+  enum { ENT_IDLE, LP_IDLE, ENT_ARM, LP_ARM, ENT_ARMED, LP_ARMED, ENT_DISARM, LP_DISARM, ENT_CLASH, ENT_SWING, ENT_VOLUME }; // ACTIONS
   enum { ON_ARM, ON_ARMED, ON_CLASH, ON_DISARM, ON_IDLE, ON_MUTE, ON_SWING, CONN_MAX }; // CONNECTORS
   atm_connector connectors[CONN_MAX];
   int event( int id ); 
@@ -90,7 +90,7 @@ Automaton::ATML::begin - Automaton Markup Language
         <EVT_ARMED>ARMED</EVT_ARM>
       </IDLE>
       <ARM index="1" on_enter="ENT_ARM" on_loop="LP_ARM">
-        <EVT_MUTE>MUTE</EVT_MUTE>
+        <EVT_VOLUME>VOLUME</EVT_VOLUME>
         <EVT_ARMED>ARMED</EVT_ARMED>
       </ARM>
       <ARMED index="2" on_enter="ENT_ARMED" on_loop="LP_ARMED">
@@ -109,12 +109,12 @@ Automaton::ATML::begin - Automaton Markup Language
         <EVT_CLASH>CLASH</EVT_CLASH>
         <EVT_ARMED>ARMED</EVT_ARMED>
       </SWING>
-      <MUTE index="6" on_enter="ENT_MUTE">
+      <VOLUME index="6" on_enter="ENT_VOLUME">
         <ELSE>ARM</ELSE>
-      </MUTE>
+      </VOLUME>
     </states>
     <events>
-      <EVT_MUTE index="0" access="MIXED"/>
+      <EVT_VOLUME index="0" access="MIXED"/>
       <EVT_DISARM index="1" access="MIXED"/>
       <EVT_SWING index="2" access="MIXED"/>
       <EVT_CLASH index="3" access="MIXED"/>
@@ -127,7 +127,7 @@ Automaton::ATML::begin - Automaton Markup Language
       <CLASH autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <DISARM autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <IDLE autostore="0" broadcast="0" dir="PUSH" slots="1"/>
-      <MUTE autostore="0" broadcast="0" dir="PUSH" slots="1"/>
+      <VOLUME autostore="0" broadcast="0" dir="PUSH" slots="1"/>
       <SWING autostore="0" broadcast="0" dir="PUSH" slots="1"/>
     </connectors>
     <methods>

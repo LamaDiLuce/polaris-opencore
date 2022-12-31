@@ -7,9 +7,9 @@
 CoreAudio& CoreAudio::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
-    /*             ON_ENTER    ON_LOOP   ON_EXIT  EVT_MUTE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
-    /*   IDLE */   ENT_IDLE, ATM_SLEEP, EXT_IDLE,     MUTE,     ARM,        -1,        -1,        -1,         -1,    -1,
-    /*   MUTE */   ENT_MUTE,        -1,       -1,       -1,      -1,        -1,        -1,        -1,       IDLE,    -1,
+    /*             ON_ENTER    ON_LOOP   ON_EXIT  EVT_VOLUME  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
+    /*   IDLE */   ENT_IDLE, ATM_SLEEP, EXT_IDLE,     VOLUME,     ARM,        -1,        -1,        -1,         -1,    -1,
+    /*   VOLUME */   ENT_VOLUME,        -1,       -1,     VOLUME,     ARM,        -1,        -1,        -1,       IDLE,    -1,
     /*    ARM */    ENT_ARM,        -1,       -1,       -1,      -1,        -1,        -1,        -1,         -1, ARMED,
     /*  ARMED */         -1,  LP_ARMED,       -1,       -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*  CLASH */  ENT_CLASH,        -1,       -1,       -1,      -1,        -1,        -1,        -1,         -1, ARMED,
@@ -34,8 +34,8 @@ CoreAudio& CoreAudio::begin(CoreSettings* cSet) {
   patchFlashSmoothSwingBMixer = new AudioConnection(soundPlayFlashSmoothSwingBRaw, 0, mainMixer, CHANNEL_SMOOTH_SWING_B);
   patchMixerDac = new AudioConnection(mainMixer, outputDac);
   AudioMemory(AUDIO_BLOCK);
-  mainMixer.gain(CHANNEL_HUM, MAX_VOLUME); // HUM
-  mainMixer.gain(CHANNEL_FX, MAX_VOLUME);  // FX: Clash and Swing
+  mainMixer.gain(CHANNEL_HUM, currentVolume); // HUM
+  mainMixer.gain(CHANNEL_FX, currentVolume);  // FX: Clash and Swing
   mainMixer.gain(CHANNEL_SINE, 0);
   mainMixer.gain(CHANNEL_SMOOTH_SWING_A, 0);
   mainMixer.gain(CHANNEL_SMOOTH_SWING_B, 0);
@@ -50,7 +50,7 @@ CoreAudio& CoreAudio::begin(CoreSettings* cSet) {
 
 int CoreAudio::event( int id ) {
   switch ( id ) {
-    case EVT_MUTE:
+    case EVT_VOLUME:
       return 0;
     case EVT_ARM:
       return 0;
@@ -85,16 +85,32 @@ void CoreAudio::action( int id ) {
         } 
       return;
     case EXT_IDLE:
+      if (currentVolume == 0) // If saber was muted on last disarm, set volume to max
+      {
+        currentVolume = MAX_VOLUME;
+      }
+      firstTap = true;
       return;
-    case ENT_MUTE:
-      beep(125, MAX_VOLUME);
-      beep(125, MAX_VOLUME);
+    case ENT_VOLUME:
+      currentVolume += (MAX_VOLUME * 0.25); // Volume increases in 25% increments, giving 4 levels (25%, 50%, 75%, 100%) plus mute
+      if (currentVolume > MAX_VOLUME || firstTap) // Mute
+      {
+        beep(125, MAX_VOLUME); // Two beeps for mute
+        beep(125, MAX_VOLUME);
+        currentVolume = 0;
+        firstTap = false;
+        return;
+      }
+      beep(500*currentVolume, currentVolume); // One beep at current volume, varying length depending on volume setting
       return;
     case ENT_ARM:
       useSmoothSwing = checkSmoothSwing();
-      digitalWrite(POWER_AMP_PIN, HIGH);
-      mainMixer.gain(CHANNEL_HUM, MAX_VOLUME);
-      mainMixer.gain(CHANNEL_FX, MAX_VOLUME);
+      if (currentVolume > 0)
+      {
+        digitalWrite(POWER_AMP_PIN, HIGH);
+      }
+      mainMixer.gain(CHANNEL_HUM, currentVolume);
+      mainMixer.gain(CHANNEL_FX, currentVolume);
       soundPlayFlashRaw.play(moduleSettings->getRandomOnSound().c_str());
       humString = moduleSettings->getRandomHumSound();
       return;
@@ -197,9 +213,9 @@ void CoreAudio::action( int id ) {
         humVolume = 1.0 - swingStrength * MAXIMUM_HUM_DUCKING;
         swingVolumeA = swingStrength * transitionVolume;
         swingVolumeB = swingStrength * (1 - transitionVolume);
-        mainMixer.gain(CHANNEL_HUM, humVolume * MAX_VOLUME);
-        mainMixer.gain(CHANNEL_SMOOTH_SWING_A, swingVolumeA * MAX_VOLUME);
-        mainMixer.gain(CHANNEL_SMOOTH_SWING_B, swingVolumeB * MAX_VOLUME);
+        mainMixer.gain(CHANNEL_HUM, humVolume * currentVolume);
+        mainMixer.gain(CHANNEL_SMOOTH_SWING_A, swingVolumeA * currentVolume);
+        mainMixer.gain(CHANNEL_SMOOTH_SWING_B, swingVolumeB * currentVolume);
         if (DEBUG_SMOOTHSWING)
         {
           CoreLogging::writeLine("%f %f %f %f %f %f %f", totalRotation, swingSpeed, swingStrength, humVolume, transitionVolume, swingVolumeA, swingVolumeB);
@@ -264,6 +280,11 @@ void CoreAudio::beep(int duration, float volume)
   digitalWrite(POWER_AMP_PIN, LOW);
 }
 
+void CoreAudio::set_mute()
+{
+  currentVolume = 0;
+}
+
 void CoreAudio::setSwingSpeed(float s){
   swingSpeed = s;
 }
@@ -315,8 +336,8 @@ int CoreAudio::state( void ) {
  *
  */
 
-CoreAudio& CoreAudio::mute() {
-  trigger( EVT_MUTE );
+CoreAudio& CoreAudio::volume() {
+  trigger( EVT_VOLUME );
   return *this;
 }
 

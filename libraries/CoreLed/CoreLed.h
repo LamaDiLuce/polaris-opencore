@@ -35,6 +35,7 @@ class CoreLed: public Machine {
   CoreLed& swing( void );
   CoreLed& clash( void );
   CoreLed& disarm( void );
+  void reset_color_timer();
 
  private:
   enum { ENT_IDLE, LP_IDLE, ENT_RECHARGE, LP_RECHARGE, ENT_ARM, LP_ARM, EXT_ARM, ENT_ARMED, ENT_CLASH, ENT_SWING, ENT_DISARM }; // ACTIONS
