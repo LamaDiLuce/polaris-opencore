@@ -91,16 +91,12 @@ void CoreLed::action( int id ) {
       {
         if (digitalRead(CHARGE_PIN) == LOW)
         {
-          changeColor({255,0,0,0}); // RED
-          delay(RECHARGING_BLINK_TIME);
-          turnOff();
+          pulse({255,0,0,0}); // RED
           timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
         }
         if (digitalRead(STANDBY_PIN) == LOW)
         {
-          changeColor({0,0,255,0}); // BLUE
-          delay(RECHARGING_BLINK_TIME);
-          turnOff();
+          pulse({0,0,255,0}); // BLUE
           timer_blink.setFromNow(this,BLINK_RECHARGED_STATUS_TIMER);
         }
       }
@@ -212,7 +208,7 @@ void CoreLed::fadeIn()
 
 void CoreLed::fadeOut()
 {
-  CoreLogging::writeLine("CoreLed: FadeIn");
+  CoreLogging::writeLine("CoreLed: FadeOut");
   for (int i = FADE_DELAY; i >= 0; i--)
   {
     singleStepColor.red = mainColor.red / FADE_DELAY * i;
@@ -224,26 +220,26 @@ void CoreLed::fadeOut()
   }
 }
 
-void CoreLed::batteryCheck()
+void CoreLed::pulse(const ColorLed& cLed)
 {
-  // inspired by https://forum.pjrc.com/threads/26117-Teensy-3-1-Voltage-sensing-and-low-battery-alert
-  uint32_t analogRef = analogRead(39); // this values goes from ~ 1470 at full battery to ~ 2000 at depleted battery. It's not linear.
-
-  if (analogRef < 1480) // full battery
+  for (int i = 0; i <= PULSE_DELAY; i++)
   {
-    changeColor({0,255,0,0}); // GREEN
+    singleStepColor.red = cLed.red / PULSE_DELAY * i;
+    singleStepColor.green = cLed.green / PULSE_DELAY * i;
+    singleStepColor.blue = cLed.blue / PULSE_DELAY * i;
+    singleStepColor.white = cLed.white / PULSE_DELAY * i;
+    changeColor(singleStepColor);
+    delay(PULSE_TIME / 2 / PULSE_DELAY);
   }
-  else if (analogRef < 1560) // less then 1 hour of battery
+  for (int i = FADE_DELAY; i >= 0; i--)
   {
-    changeColor({255,255,0,0}); // ORANGE
+    singleStepColor.red = cLed.red / PULSE_DELAY * i;
+    singleStepColor.green = cLed.green / PULSE_DELAY * i;
+    singleStepColor.blue = cLed.blue / PULSE_DELAY * i;
+    singleStepColor.white = cLed.white / PULSE_DELAY * i;
+    changeColor(singleStepColor);
+    delay(PULSE_TIME / 2 / PULSE_DELAY);
   }
-  else // battery depleted
-  {
-    changeColor({255,0,0,0}); // RED
-  }
-
-  delay(CHARGE_SEQUENCE_BLINK_TIME);
-  turnOff();
 }
 
 /* Optionally override the default trigger() method
