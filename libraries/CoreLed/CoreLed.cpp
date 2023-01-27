@@ -71,6 +71,7 @@ void CoreLed::action( int id ) {
   switch ( id ) {
     case ENT_IDLE:
       turnOff();
+      batteryCharged = false;
       return;
     case LP_IDLE:
       return;
@@ -85,19 +86,21 @@ void CoreLed::action( int id ) {
       delay(CHARGE_SEQUENCE_BLINK_TIME);
       turnOff();
       timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
+      batteryCharged = false;
       return;
     case LP_RECHARGE:
       if (timer_blink.expired( this ))
       {
-        if (digitalRead(CHARGE_PIN) == LOW)
+        if (digitalRead(STANDBY_PIN) == LOW || batteryCharged)
+        {
+          batteryCharged = true;
+          pulse({0,0,255,0}); // BLUE
+          timer_blink.setFromNow(this,BLINK_RECHARGED_STATUS_TIMER);
+        }
+        else if (digitalRead(CHARGE_PIN) == LOW)
         {
           pulse({255,0,0,0}); // RED
           timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
-        }
-        if (digitalRead(STANDBY_PIN) == LOW)
-        {
-          pulse({0,0,255,0}); // BLUE
-          timer_blink.setFromNow(this,BLINK_RECHARGED_STATUS_TIMER);
         }
       }
       return;

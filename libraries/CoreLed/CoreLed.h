@@ -76,6 +76,7 @@ class CoreLed: public Machine {
   static constexpr int PULSE_TIME = 500;
   CoreSettings* moduleSettings;
   int numberOfColorChanged = 0;
+  bool batteryCharged = false;
 };
 
 /* 

@@ -3,7 +3,7 @@
 static constexpr bool DEBUG = false;
 static constexpr bool DEBUG_SMOOTHSWING = false;
 
-static constexpr int ANALOG_REF_BATTERY_LOW = 1480;  // max 1 hour of battery left
+static constexpr int ANALOG_REF_BATTERY_LOW = 1490;  // max 1 hour of battery left
 static constexpr int ANALOG_REF_BATTERY_DEPLETED = 1763; // safe threshold to avoid under discharge
 
 // LED RGBW

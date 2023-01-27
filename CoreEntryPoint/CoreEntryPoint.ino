@@ -27,7 +27,6 @@ void setup()
 {
   modulesInit();
 
-  initBattery();
     
   modulesConnections();
 
@@ -43,6 +42,8 @@ void setup()
     audioModule.beep(100, 0.1);
   }
 
+  initBattery();
+
   initWatchdog();
 
   batteryCheckTime = millis();
@@ -55,11 +56,16 @@ void loop()
   if (millis() - batteryCheckTime > 10000)
   {
     if (analogRead(39) > ANALOG_REF_BATTERY_DEPLETED)
-    {      
-      audioModule.beep(100, 1);
-      audioModule.beep(100, 1);
-      audioModule.beep(100, 1);
-      motionModule.trigger(motionModule.EVT_DISARM);
+    {
+      if (motionModule.state() == motionModule.ARMED)
+      {
+        audioModule.treeplebeep(125, 1);
+        motionModule.trigger(motionModule.EVT_DISARM);
+      }
+      else if (motionModule.state() == motionModule.IDLE)
+      {
+        ledModule.pulse({255,0,0,0}); // RED
+      }
     }    
     batteryCheckTime = millis();
   }
@@ -249,25 +255,18 @@ void initBattery()
   analogReadResolution(12);
   analogReadAveraging(32);
 
-  if (digitalRead(USB_PIN) == LOW)
-  {
-    delay(200);
-
+  // if (digitalRead(USB_PIN) == LOW)
+  // {
+    delay(100);
     int analogRef = analogRead(39); // this values goes from ~ 1470 at full battery to ~ 2000 at depleted battery. It's not linear.
     CoreLogging::writeLine("Analog read: %d", analogRef);
     if (analogRef > ANALOG_REF_BATTERY_DEPLETED)
     {
-      audioModule.beep(100, 1);
-      audioModule.beep(100, 1);
-      audioModule.beep(100, 1);
-      while (true)
-      {
-        // I know this is very sad, the best way would be to put all state machines in deep sleep. TODO
-      }
+      ledModule.pulse({255,0,0,0}); // RED
     }
     else if (analogRef > ANALOG_REF_BATTERY_LOW)
     {
-      ledModule.pulse({255,0,0,0}); // RED
+      ledModule.pulse({0,0,0,255}); // WHITE
     }
-  }
+  // }
 }
