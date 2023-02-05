@@ -49,7 +49,7 @@ class CoreMotion: public Machine {
   atm_connector connectors[CONN_MAX];
   int event( int id ); 
   void action( int id );
-  atm_timer_millis timer_no_swing;
+  atm_timer_millis timer_vertical;
   atm_timer_millis timer_no_vertical;
   atm_timer_millis timer_horizontal;
   atm_timer_millis timer_arm;

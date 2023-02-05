@@ -38,7 +38,7 @@ int CoreMotion::event( int id ) {
       return ( int1Status > 0 );
     case EVT_ARMED:
       return (
-        this->state() == this->ARM && 
+        (this->state() == this->ARM || this->state() == this->SWING) && 
         (
           timer_arm.expired(this) &&
           (swingSpeed < SWING_THRESHOLD) &&
@@ -48,12 +48,11 @@ int CoreMotion::event( int id ) {
       (
         this->state() == this->IDLE && 
         abs(GyroZ) > ARM_ALT_THRESHOLD_Z && 
-        timer_no_vertical.expired( this ) &&
-        timer_no_swing.expired(this)
+        timer_no_vertical.expired( this )
       );
     case EVT_ARM:
       return (
-              timer_no_swing.expired(this) &&
+              timer_vertical.expired( this ) &&
               (
                 (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && 
                 abs(GyroZ) > ARM_THRESHOLD_Z)
@@ -83,12 +82,11 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_IDLE, 0, 0, 0 );
       return;
     case LP_IDLE:
-      if (swingSpeed > SWING_THRESHOLD)
-      {
-        timer_no_swing.setFromNow(this,TIME_FOR_START_ARM);
-      }
-      if(AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
+      if(swingSpeed < SWING_THRESHOLD && AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
         timer_no_vertical.setFromNow(this,TIME_FOR_START_ARM);
+      } 
+      if(swingSpeed < SWING_THRESHOLD && AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) {
+        timer_vertical.setFromNow(this,TIME_FOR_START_ARM);
       }
       return;
     case ENT_ARM:
