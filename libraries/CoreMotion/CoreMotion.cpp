@@ -48,7 +48,8 @@ int CoreMotion::event( int id ) {
       (
         this->state() == this->IDLE && 
         abs(GyroZ) > ARM_ALT_THRESHOLD_Z && 
-        timer_no_vertical.expired( this )
+        timer_no_vertical.expired( this ) &&
+        ((digitalRead(USB_PIN) == LOW) || DEBUG)
       );
     case EVT_ARM:
       return (
