@@ -28,7 +28,7 @@ CoreMotion& CoreMotion::begin() {
 int CoreMotion::event( int id ) {
   switch ( id ) {
     case EVT_VOLUME:
-      return AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && ( int1Status > 0 );
+      return int1Status > 0;
     case EVT_DISARM:
       return timer_horizontal.expired( this );
     case EVT_SWING:
