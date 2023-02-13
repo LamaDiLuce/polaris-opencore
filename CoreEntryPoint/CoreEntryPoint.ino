@@ -53,7 +53,7 @@ void loop()
 {
   refreshWatchdog();
 
-  if (millis() - batteryCheckTime > 10000)
+  if (millis() - batteryCheckTime > 30000)
   {
     if (analogRead(39) > ANALOG_REF_BATTERY_DEPLETED)
     {
