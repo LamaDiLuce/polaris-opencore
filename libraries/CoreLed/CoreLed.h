@@ -36,6 +36,8 @@ class CoreLed: public Machine {
   CoreLed& clash( void );
   CoreLed& disarm( void );
   void reset_color_timer();
+  void batteryCheck( void );
+  void pulse(const ColorLed& cLed);
 
  private:
   enum { ENT_IDLE, LP_IDLE, ENT_RECHARGE, LP_RECHARGE, ENT_ARM, LP_ARM, EXT_ARM, ENT_ARMED, ENT_CLASH, ENT_SWING, ENT_DISARM }; // ACTIONS
@@ -70,8 +72,11 @@ class CoreLed: public Machine {
   static constexpr int FADE_DELAY = 30;
   static constexpr int FADE_IN_TIME = 300;
   static constexpr int FADE_OUT_TIME = 1000;
+  static constexpr int PULSE_DELAY = 30;
+  static constexpr int PULSE_TIME = 500;
   CoreSettings* moduleSettings;
   int numberOfColorChanged = 0;
+  bool batteryCharged = false;
 };
 
 /* 
