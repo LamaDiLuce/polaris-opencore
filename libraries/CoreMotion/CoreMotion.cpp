@@ -28,7 +28,7 @@ CoreMotion& CoreMotion::begin() {
 int CoreMotion::event( int id ) {
   switch ( id ) {
     case EVT_VOLUME:
-      return ( int1Status > 0 );
+      return AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && ( int1Status > 0 );
     case EVT_DISARM:
       return timer_horizontal.expired( this );
     case EVT_SWING:
@@ -41,11 +41,14 @@ int CoreMotion::event( int id ) {
              (swingSpeed < SWING_THRESHOLD) &&
              (rollSpeed < ROLL_SPEED_THRESHOLD_LOW));
     case EVT_ARM:
-      return (timer_vertical.expired( this ) && 
-             (abs(GyroZ) > ARM_THRESHOLD_Z) &&
-             (GyroX < ARM_THRESHOLD_XY) &&
-             (GyroY < ARM_THRESHOLD_XY) &&
-             ((digitalRead(USB_PIN) == LOW) || DEBUG));
+      return (
+              timer_no_swing.expired(this) &&
+              (
+                (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && abs(GyroZ) > ARM_THRESHOLD_Z) ||
+                abs(GyroZ) > ARM_ALT_THRESHOLD_Z
+              ) &&
+              ((digitalRead(USB_PIN) == LOW) || DEBUG)
+             );
   }
   return 0;
 }
@@ -69,10 +72,9 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_IDLE, 0, 0, 0 );
       return;
     case LP_IDLE:
-      if ((AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) || 
-          (AccelZ > (VERTICAL_POSITION + TOLERANCE_POSITION)))
+      if (swingSpeed > SWING_THRESHOLD)
       {
-        timer_vertical.setFromNow(this,TIME_FOR_START_ARM);
+        timer_no_swing.setFromNow(this,TIME_FOR_START_ARM);
       }
       return;
     case ENT_ARM:
@@ -80,9 +82,10 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_ARM, 0, 0, 0 );
       return;
     case LP_ARM:
-      if ((AccelZ < (ARM_POSITION - TOLERANCE_POSITION)) || 
-          (AccelZ > (ARM_POSITION + TOLERANCE_POSITION)) || 
+      if (
+          (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) || 
           (swingSpeed > SWING_THRESHOLD))
+         )
       {
         timer_arm.setFromNow(this,TIME_FOR_CONFIRM_ARM);
       }
