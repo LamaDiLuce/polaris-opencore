@@ -83,10 +83,10 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_IDLE, 0, 0, 0 );
       return;
     case LP_IDLE:
-      if(swingSpeed < SWING_THRESHOLD && AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
+      if(swingSpeed > SWING_THRESHOLD || AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
         timer_no_vertical.setFromNow(this,TIME_FOR_START_ARM);
       } 
-      if(swingSpeed < SWING_THRESHOLD && AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) {
+      if(swingSpeed > SWING_THRESHOLD || AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) {
         timer_vertical.setFromNow(this,TIME_FOR_START_ARM);
       }
       return;
