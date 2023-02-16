@@ -272,6 +272,8 @@ void CoreAudio::resetSmoothSwing()
 
 void CoreAudio::beep(int duration, float volume)
 {
+  soundPlayFlashFXRaw.stop();
+  soundPlayFlashRaw.stop();
   digitalWrite(POWER_AMP_PIN, HIGH);
   delay(50);
   mainMixer.gain(CHANNEL_SINE, volume);
@@ -283,6 +285,27 @@ void CoreAudio::beep(int duration, float volume)
 void CoreAudio::set_mute()
 {
   currentVolume = 0;
+}
+
+void CoreAudio::treeplebeep(int duration, float volume)
+{
+  soundPlayFlashFXRaw.stop();
+  soundPlayFlashRaw.stop();
+  delay(100);
+  digitalWrite(POWER_AMP_PIN, HIGH);
+  delay(50);
+  mainMixer.gain(CHANNEL_SINE, volume);
+  delay(duration);
+  mainMixer.gain(CHANNEL_SINE, 0);
+  delay(50);
+  mainMixer.gain(CHANNEL_SINE, volume);
+  delay(duration);
+  mainMixer.gain(CHANNEL_SINE, 0);
+  delay(50);
+  mainMixer.gain(CHANNEL_SINE, volume);
+  delay(duration);
+  mainMixer.gain(CHANNEL_SINE, 0);
+  digitalWrite(POWER_AMP_PIN, LOW);
 }
 
 void CoreAudio::setSwingSpeed(float s){

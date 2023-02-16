@@ -40,6 +40,7 @@ class CoreAudio: public Machine {
   CoreAudio& disarm( void );
   void set_mute();
   void beep(int duration, float volume);
+  void treeplebeep(int duration, float volume);
   void setSwingSpeed(float s);
   void setRollSpeed(float s);
   void setAngDotProduct(float s);

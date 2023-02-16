@@ -71,6 +71,7 @@ void CoreLed::action( int id ) {
   switch ( id ) {
     case ENT_IDLE:
       turnOff();
+      batteryCharged = false;
       return;
     case LP_IDLE:
       return;
@@ -85,23 +86,21 @@ void CoreLed::action( int id ) {
       delay(CHARGE_SEQUENCE_BLINK_TIME);
       turnOff();
       timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
+      batteryCharged = false;
       return;
     case LP_RECHARGE:
       if (timer_blink.expired( this ))
       {
-        if (digitalRead(CHARGE_PIN) == LOW)
+        if (digitalRead(STANDBY_PIN) == LOW || batteryCharged)
         {
-          changeColor({255,0,0,0}); // RED
-          delay(RECHARGING_BLINK_TIME);
-          turnOff();
-          timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
-        }
-        if (digitalRead(STANDBY_PIN) == LOW)
-        {
-          changeColor({0,0,255,0}); // BLUE
-          delay(RECHARGING_BLINK_TIME);
-          turnOff();
+          batteryCharged = true;
+          pulse({0,0,255,0}); // BLUE
           timer_blink.setFromNow(this,BLINK_RECHARGED_STATUS_TIMER);
+        }
+        else if (digitalRead(CHARGE_PIN) == LOW)
+        {
+          pulse({255,0,0,0}); // RED
+          timer_blink.setFromNow(this,BLINK_RECHARGE_STATUS_TIMER);
         }
       }
       return;
@@ -213,7 +212,7 @@ void CoreLed::fadeIn()
 
 void CoreLed::fadeOut()
 {
-  CoreLogging::writeLine("CoreLed: FadeIn");
+  CoreLogging::writeLine("CoreLed: FadeOut");
   for (int i = FADE_DELAY; i >= 0; i--)
   {
     singleStepColor.red = mainColor.red / FADE_DELAY * i;
@@ -225,6 +224,27 @@ void CoreLed::fadeOut()
   }
 }
 
+void CoreLed::pulse(const ColorLed& cLed)
+{
+  for (int i = 0; i <= PULSE_DELAY; i++)
+  {
+    singleStepColor.red = cLed.red / PULSE_DELAY * i;
+    singleStepColor.green = cLed.green / PULSE_DELAY * i;
+    singleStepColor.blue = cLed.blue / PULSE_DELAY * i;
+    singleStepColor.white = cLed.white / PULSE_DELAY * i;
+    changeColor(singleStepColor);
+    delay(PULSE_TIME / 2 / PULSE_DELAY);
+  }
+  for (int i = FADE_DELAY; i >= 0; i--)
+  {
+    singleStepColor.red = cLed.red / PULSE_DELAY * i;
+    singleStepColor.green = cLed.green / PULSE_DELAY * i;
+    singleStepColor.blue = cLed.blue / PULSE_DELAY * i;
+    singleStepColor.white = cLed.white / PULSE_DELAY * i;
+    changeColor(singleStepColor);
+    delay(PULSE_TIME / 2 / PULSE_DELAY);
+  }
+}
 
 /* Optionally override the default trigger() method
  * Control how your machine processes triggers

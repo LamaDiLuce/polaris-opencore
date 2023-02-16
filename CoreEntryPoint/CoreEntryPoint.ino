@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "2.2.7"
+#define BUILD "3.0.0"
 
 // Modules
 String incomingMessage;
@@ -21,11 +21,13 @@ CoreMotion motionModule;
 CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
+uint32_t batteryCheckTime;
 
 void setup()
 {
   modulesInit();
-  
+
+    
   modulesConnections();
 
   attachInterrupt(digitalPinToInterrupt(imuModule.getInt1Pin()), int1ISR, RISING);
@@ -40,12 +42,33 @@ void setup()
     audioModule.beep(100, 0.1);
   }
 
+  initBattery();
+
   initWatchdog();
+
+  batteryCheckTime = millis();
 }
 
 void loop()
 {
   refreshWatchdog();
+
+  if (millis() - batteryCheckTime > 30000)
+  {
+    if (analogRead(39) > ANALOG_REF_BATTERY_DEPLETED)
+    {
+      if (motionModule.state() == motionModule.ARMED)
+      {
+        audioModule.treeplebeep(125, 1);
+        motionModule.trigger(motionModule.EVT_DISARM);
+      }
+      else if (motionModule.state() == motionModule.IDLE)
+      {
+        ledModule.pulse({255,0,0,0}); // RED
+      }
+    }    
+    batteryCheckTime = millis();
+  }
 
   imuModule.cycle();
   motionModule.cycle();
@@ -74,10 +97,10 @@ void modulesInit()
   CoreSettings* setPtr;
   setPtr = &settingsModule;
 
-  audioModule.trace(Serial);
+  //audioModule.trace(Serial);
   audioModule.begin(setPtr);
 
-  motionModule.trace(Serial);
+  //motionModule.trace(Serial);
   motionModule.begin();
 
   settingsModule.init();
@@ -223,4 +246,27 @@ void recovery()
   motionModule.cycle();
   audioModule.cycle();
   ledModule.cycle();
+}
+
+void initBattery()
+{
+  // inspired by https://forum.pjrc.com/threads/26117-Teensy-3-1-Voltage-sensing-and-low-battery-alert
+  analogReference(EXTERNAL);
+  analogReadResolution(12);
+  analogReadAveraging(32);
+
+  // if (digitalRead(USB_PIN) == LOW)
+  // {
+    delay(100);
+    int analogRef = analogRead(39); // this values goes from ~ 1470 at full battery to ~ 2000 at depleted battery. It's not linear.
+    CoreLogging::writeLine("Analog read: %d", analogRef);
+    if (analogRef > ANALOG_REF_BATTERY_DEPLETED)
+    {
+      ledModule.pulse({255,0,0,0}); // RED
+    }
+    else if (analogRef > ANALOG_REF_BATTERY_LOW)
+    {
+      ledModule.pulse({0,0,0,255}); // WHITE
+    }
+  // }
 }
