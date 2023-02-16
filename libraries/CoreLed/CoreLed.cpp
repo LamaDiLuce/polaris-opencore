@@ -8,7 +8,7 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
     /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
-    /*     IDLE */     ENT_IDLE,     LP_IDLE,      -1,       -1,     RECHARGE,     ARM,     ARMED,        -1,        -1,         -1,    -1,   
+    /*     IDLE */     ENT_IDLE,     LP_IDLE,      EXT_IDLE,       -1,     RECHARGE,     ARM,     ARMED,        -1,        -1,         -1,    -1,   
     /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,     ARM,        -1,        -1,        -1,         -1,    -1,
     /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
     /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
@@ -72,6 +72,7 @@ void CoreLed::action( int id ) {
     case ENT_IDLE:
       turnOff();
       batteryCharged = false;
+      getCurrentColorSet();
       return;
     case LP_IDLE:
       return;
@@ -105,10 +106,8 @@ void CoreLed::action( int id ) {
       }
       return;
     case ENT_ARM:
-      getCurrentColorSet();
-      changeColor(mainColor);
       delay(ARMING_BLINK_TIME);
-      turnOff();
+      fadeOut();
       timer_color_selection.setFromNow(this,TIME_FOR_START_COLOR_SELECTION);
       numberOfColorChanged = 0;
       return;
@@ -127,16 +126,19 @@ void CoreLed::action( int id ) {
         }
         setCurrentColorSet(currentColorSetId);
         changeColor(mainColor);
+        fadeIn();
         delay(COLOR_SELECTION_BLINK_TIME);
-        turnOff();
+        fadeOut();
         timer_color_selection.setFromNow(this,TIME_FOR_COLOR_SELECTION);
       }
+      return;
+    case EXT_IDLE:
+      fadeIn();
       return;
     case EXT_ARM:
       fadeIn();
       return;
     case ENT_ARMED:
-      getCurrentColorSet();
       changeColor(mainColor);
       return;
     case ENT_CLASH:
