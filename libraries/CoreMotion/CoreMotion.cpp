@@ -81,6 +81,8 @@ void CoreMotion::action( int id ) {
   switch ( id ) {
     case ENT_IDLE:
       push( connectors, ON_IDLE, 0, 0, 0 );
+      timer_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
+      timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
       return;
     case LP_IDLE:
       if(swingSpeed > SWING_THRESHOLD || AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
