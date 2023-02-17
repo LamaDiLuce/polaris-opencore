@@ -63,6 +63,7 @@ class CoreMotion: public Machine {
   float rollSpeed;
   uint8_t int1Status;
   static constexpr int SWING_THRESHOLD = 80;
+  static constexpr int SWING_THRESHOLD_HIGH = 300;
   static constexpr int ROLL_SPEED_THRESHOLD_LOW = 40;
   static constexpr int ROLL_SPEED_THRESHOLD_HIGH = 150;
   static constexpr int ARM_THRESHOLD_Z = 300;
@@ -72,8 +73,9 @@ class CoreMotion: public Machine {
   static constexpr float ARM_POSITION = -6.0;
   static constexpr float HORIZONTAL_POSITION = 0.0;
   static constexpr float TOLERANCE_POSITION = 2;
+  static constexpr float TOLERANCE_VERTICAL_POSITION = 0.25;
   static constexpr int TIME_FOR_START_ARM = 500;
-  static constexpr int TIME_FOR_ALT_START_ARM = 50;
+  static constexpr int TIME_FOR_ALT_START_ARM = 300;
   static constexpr int TIME_FOR_DISARM = 3000;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
   static constexpr int TIME_FOR_REARM = 0; // set to 0 to disable rearm possibility during disarm

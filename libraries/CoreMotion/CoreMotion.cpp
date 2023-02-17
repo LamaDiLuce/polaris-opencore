@@ -7,13 +7,13 @@
 CoreMotion& CoreMotion::begin() {
   // clang-format off
   const static state_t state_table[] PROGMEM = {
-    /*             ON_ENTER    ON_LOOP  ON_EXIT  EVT_VOLUME  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
-    /*   IDLE */   ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,       ARMED,     ARM,    -1,
-    /*    ARM */    ENT_ARM,    LP_ARM,      -1,     VOLUME,         -1,        -1,        -1,     ARMED,      -1,    -1,
-    /*  ARMED */  ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
-    /* DISARM */ ENT_DISARM,        -1,      -1,       -1,       IDLE,     ARMED,        -1,        -1,      -1,    -1,
-    /*  CLASH */  ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
-    /*  SWING */  ENT_SWING,        -1,      -1,       -1,         -1,        -1,     CLASH,     ARMED,      -1,    -1,
+    /*                 ON_ENTER    ON_LOOP  ON_EXIT  EVT_VOLUME  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
+    /*   IDLE */       ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,     ARMED,     ARM,    -1,
+    /*    ARM */        ENT_ARM,    LP_ARM,      -1,   VOLUME,         -1,        -1,        -1,     ARMED,      -1,    -1,
+    /*  ARMED */      ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
+    /* DISARM */     ENT_DISARM,        -1,      -1,       -1,       IDLE,     ARMED,        -1,        -1,      -1,    -1,
+    /*  CLASH */      ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
+    /*  SWING */      ENT_SWING,        -1,      -1,       -1,         -1,        -1,     CLASH,     ARMED,      -1,    -1,
     /*   VOLUME */   ENT_VOLUME,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1,   ARM,
   };
   // clang-format on
@@ -48,16 +48,15 @@ int CoreMotion::event( int id ) {
       (
         this->state() == this->IDLE && 
         abs(GyroZ) > ARM_ALT_THRESHOLD_Z && 
-        timer_no_vertical.expired( this ) &&
+        swingSpeed < SWING_THRESHOLD_HIGH &&
+        (!timer_no_vertical.expired( this )) &&
         ((digitalRead(USB_PIN) == LOW) || DEBUG)
       );
     case EVT_ARM:
       return (
-              timer_vertical.expired( this ) &&
-              (
-                (AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION) && 
-                abs(GyroZ) > ARM_THRESHOLD_Z)
-              ) &&
+              swingSpeed < SWING_THRESHOLD &&
+              abs(GyroZ) > ARM_THRESHOLD_Z &&
+              (!timer_vertical.expired( this )) &&
               ((digitalRead(USB_PIN) == LOW) || DEBUG)
              );
   }
@@ -81,15 +80,15 @@ void CoreMotion::action( int id ) {
   switch ( id ) {
     case ENT_IDLE:
       push( connectors, ON_IDLE, 0, 0, 0 );
-      timer_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
-      timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
+      timer_vertical.setFromNow(this,0);
+      timer_no_vertical.setFromNow(this,0);
       return;
     case LP_IDLE:
-      if(swingSpeed > SWING_THRESHOLD || AccelZ > (VERTICAL_POSITION - TOLERANCE_POSITION)) {
-        timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
-      } 
-      if(swingSpeed > SWING_THRESHOLD || AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION)) {
+      if(abs(GyroZ) < ROLL_SPEED_THRESHOLD_LOW && AccelZ >= (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
         timer_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
+      } 
+      if(abs(GyroZ) < ROLL_SPEED_THRESHOLD_LOW && AccelZ < (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
+        timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
       }
       return;
     case ENT_ARM:
