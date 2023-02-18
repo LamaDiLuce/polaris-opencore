@@ -53,6 +53,7 @@ class CoreMotion: public Machine {
   atm_timer_millis timer_no_vertical;
   atm_timer_millis timer_horizontal;
   atm_timer_millis timer_arm;
+  atm_timer_millis timer_rolling;
   float AccelX;
   float AccelY;
   float AccelZ;
@@ -75,7 +76,7 @@ class CoreMotion: public Machine {
   static constexpr float TOLERANCE_POSITION = 2;
   static constexpr float TOLERANCE_VERTICAL_POSITION = 0.25;
   static constexpr int TIME_FOR_START_ARM = 500;
-  static constexpr int TIME_FOR_ALT_START_ARM = 300;
+  static constexpr int TIME_FOR_ALT_START_ARM = 1000;
   static constexpr int TIME_FOR_DISARM = 3000;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
   static constexpr int TIME_FOR_REARM = 0; // set to 0 to disable rearm possibility during disarm
