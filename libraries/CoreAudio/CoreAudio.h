@@ -85,7 +85,7 @@ class CoreAudio: public Machine {
   float AngDotProduct = 0;
   bool powerSwing = false;
   // Params that can be tuned
-  static constexpr float MAX_VOLUME = 0;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
+  static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
   float currentVolume = MAX_VOLUME;                            // Initial volume. Initally setting to max volume; may later load this from stored config
   bool firstTap = true;                                 // used to check for the first tap of a mute cycle
   bool useSmoothSwing = true;                           // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
