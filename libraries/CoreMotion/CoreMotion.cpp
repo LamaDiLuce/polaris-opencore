@@ -82,16 +82,12 @@ void CoreMotion::action( int id ) {
       push( connectors, ON_IDLE, 0, 0, 0 );
       timer_vertical.setFromNow(this,0);
       timer_no_vertical.setFromNow(this,0);
-      timer_rolling.setFromNow(this,0);
       return;
     case LP_IDLE:
-      if(abs(GyroZ) > ROLL_SPEED_THRESHOLD_LOW) {
-        timer_rolling.setFromNow(this, 25);
-      }
-      if(timer_rolling.expired( this ) && AccelZ >= (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
+      if(AccelZ >= (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
         timer_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
       } 
-      if(timer_rolling.expired( this ) && AccelZ < (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
+      if(AccelZ < (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
         timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
       }
       return;

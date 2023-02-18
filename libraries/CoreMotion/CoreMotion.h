@@ -53,7 +53,6 @@ class CoreMotion: public Machine {
   atm_timer_millis timer_no_vertical;
   atm_timer_millis timer_horizontal;
   atm_timer_millis timer_arm;
-  atm_timer_millis timer_rolling;
   float AccelX;
   float AccelY;
   float AccelZ;
@@ -67,19 +66,19 @@ class CoreMotion: public Machine {
   static constexpr int SWING_THRESHOLD_HIGH = 300;
   static constexpr int ROLL_SPEED_THRESHOLD_LOW = 40;
   static constexpr int ROLL_SPEED_THRESHOLD_HIGH = 150;
-  static constexpr int ARM_THRESHOLD_Z = 300;
-  static constexpr int ARM_ALT_THRESHOLD_Z = 1000;
+  static constexpr int ARM_THRESHOLD_Z = 800;
+  static constexpr int ARM_ALT_THRESHOLD_Z = 800;
   static constexpr int ARM_THRESHOLD_XY = 100;
   static constexpr float VERTICAL_POSITION = 8.0;
   static constexpr float ARM_POSITION = -6.0;
   static constexpr float HORIZONTAL_POSITION = 0.0;
   static constexpr float TOLERANCE_POSITION = 2;
   static constexpr float TOLERANCE_VERTICAL_POSITION = 0.25;
-  static constexpr int TIME_FOR_START_ARM = 500;
-  static constexpr int TIME_FOR_ALT_START_ARM = 1000;
-  static constexpr int TIME_FOR_DISARM = 3000;
+  static constexpr int TIME_FOR_START_ARM = 150;
+  static constexpr int TIME_FOR_ALT_START_ARM = 300;
+  static constexpr int TIME_FOR_DISARM = 1500;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
-  static constexpr int TIME_FOR_REARM = 0; // set to 0 to disable rearm possibility during disarm
+  static constexpr int TIME_FOR_REARM = 100; // set to 0 to disable rearm possibility during disarm
 };
 
 /* 
