@@ -107,7 +107,7 @@ void CoreLed::action( int id ) {
       return;
     case ENT_ARM:
       delay(ARMING_BLINK_TIME);
-      fadeOut();
+      turnOff();
       timer_color_selection.setFromNow(this,TIME_FOR_START_COLOR_SELECTION);
       numberOfColorChanged = 0;
       return;
