@@ -76,6 +76,12 @@ void CoreLed::action( int id ) {
       return;
     case LP_IDLE:
       return;
+    case EXT_IDLE:
+      if (digitalRead(USB_PIN) == LOW || DEBUG)
+      {
+        fadeIn();
+      }
+      return;
     case ENT_RECHARGE:
       changeColor({255,0,0,0}); // RED
       delay(CHARGE_SEQUENCE_BLINK_TIME);
@@ -131,9 +137,6 @@ void CoreLed::action( int id ) {
         fadeOut();
         timer_color_selection.setFromNow(this,TIME_FOR_COLOR_SELECTION);
       }
-      return;
-    case EXT_IDLE:
-      fadeIn();
       return;
     case EXT_ARM:
       fadeIn();
