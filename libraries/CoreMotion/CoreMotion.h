@@ -49,7 +49,8 @@ class CoreMotion: public Machine {
   atm_connector connectors[CONN_MAX];
   int event( int id ); 
   void action( int id );
-  atm_timer_millis timer_no_swing;
+  atm_timer_millis timer_vertical;
+  atm_timer_millis timer_no_vertical;
   atm_timer_millis timer_horizontal;
   atm_timer_millis timer_arm;
   float AccelX;
@@ -62,15 +63,19 @@ class CoreMotion: public Machine {
   float rollSpeed;
   uint8_t int1Status;
   static constexpr int SWING_THRESHOLD = 80;
+  static constexpr int SWING_THRESHOLD_HIGH = 300;
   static constexpr int ROLL_SPEED_THRESHOLD_LOW = 40;
   static constexpr int ROLL_SPEED_THRESHOLD_HIGH = 150;
   static constexpr int ARM_THRESHOLD_Z = 300;
   static constexpr int ARM_ALT_THRESHOLD_Z = 1000;
   static constexpr int ARM_THRESHOLD_XY = 100;
   static constexpr float VERTICAL_POSITION = 8.0;
+  static constexpr float ARM_POSITION = -6.0;
   static constexpr float HORIZONTAL_POSITION = 0.0;
   static constexpr float TOLERANCE_POSITION = 2;
+  static constexpr float TOLERANCE_VERTICAL_POSITION = 0.25;
   static constexpr int TIME_FOR_START_ARM = 500;
+  static constexpr int TIME_FOR_ALT_START_ARM = 300;
   static constexpr int TIME_FOR_DISARM = 3000;
   static constexpr int TIME_FOR_CONFIRM_ARM = 200;
   static constexpr int TIME_FOR_REARM = 0; // set to 0 to disable rearm possibility during disarm
@@ -85,6 +90,7 @@ Automaton::ATML::begin - Automaton Markup Language
     <states>
       <IDLE index="0" sleep="1" on_enter="ENT_IDLE" on_loop="LP_IDLE">
         <EVT_ARM>ARM</EVT_ARM>
+        <EVT_ARMED>ARMED</EVT_ARM>
       </IDLE>
       <ARM index="1" on_enter="ENT_ARM" on_loop="LP_ARM">
         <EVT_VOLUME>VOLUME</EVT_VOLUME>
