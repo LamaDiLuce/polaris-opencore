@@ -95,6 +95,7 @@ Automaton::ATML::begin - Automaton Markup Language
       <ARM index="1" on_enter="ENT_ARM" on_loop="LP_ARM">
         <EVT_VOLUME>VOLUME</EVT_VOLUME>
         <EVT_ARMED>ARMED</EVT_ARMED>
+        <EVT_DISARM>DISARM</EVT_ARMED>
       </ARM>
       <ARMED index="2" on_enter="ENT_ARMED" on_loop="LP_ARMED">
         <EVT_DISARM>DISARM</EVT_DISARM>

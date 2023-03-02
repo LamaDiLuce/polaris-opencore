@@ -9,7 +9,7 @@ CoreMotion& CoreMotion::begin() {
   const static state_t state_table[] PROGMEM = {
     /*                 ON_ENTER    ON_LOOP  ON_EXIT  EVT_VOLUME  EVT_DISARM  EVT_SWING  EVT_CLASH  EVT_ARMED  EVT_ARM   ELSE */
     /*   IDLE */       ENT_IDLE,   LP_IDLE,      -1,       -1,         -1,        -1,        -1,     ARMED,     ARM,    -1,
-    /*    ARM */        ENT_ARM,    LP_ARM,      -1,   VOLUME,         -1,        -1,        -1,     ARMED,      -1,    -1,
+    /*    ARM */        ENT_ARM,    LP_ARM,      -1,   VOLUME,     DISARM,        -1,        -1,     ARMED,      -1,    -1,
     /*  ARMED */      ENT_ARMED,  LP_ARMED,      -1,       -1,     DISARM,     SWING,     CLASH,        -1,      -1,    -1,
     /* DISARM */     ENT_DISARM,        -1,      -1,       -1,       IDLE,     ARMED,        -1,        -1,      -1,    -1,
     /*  CLASH */      ENT_CLASH,        -1,      -1,       -1,         -1,        -1,        -1,        -1,      -1, ARMED,
@@ -94,6 +94,7 @@ void CoreMotion::action( int id ) {
     case ENT_ARM:
       int1Status = 0;
       push( connectors, ON_ARM, 0, 0, 0 );
+      timer_horizontal.setFromNow(this,TIME_FOR_DISARM);
       return;
     case LP_ARM:
       if ((AccelZ < (ARM_POSITION - TOLERANCE_POSITION)) || 
@@ -101,6 +102,11 @@ void CoreMotion::action( int id ) {
           (swingSpeed > SWING_THRESHOLD))
       {
         timer_arm.setFromNow(this,TIME_FOR_CONFIRM_ARM);
+      }
+      if ((AccelZ < (HORIZONTAL_POSITION - TOLERANCE_POSITION)) || 
+          (AccelZ > (HORIZONTAL_POSITION + TOLERANCE_POSITION)))
+      {
+        timer_horizontal.setFromNow(this,TIME_FOR_DISARM);
       }
       return;
     case ENT_ARMED:

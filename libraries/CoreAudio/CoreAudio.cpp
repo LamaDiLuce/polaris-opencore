@@ -10,7 +10,7 @@ CoreAudio& CoreAudio::begin(CoreSettings* cSet) {
     /*             ON_ENTER    ON_LOOP   ON_EXIT  EVT_VOLUME  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
     /*   IDLE */   ENT_IDLE, ATM_SLEEP, EXT_IDLE,     VOLUME,     ARM,        -1,        -1,        -1,         -1,    -1,
     /*   VOLUME */   ENT_VOLUME,        -1,       -1,     VOLUME,     ARM,        -1,        -1,        -1,       IDLE,    -1,
-    /*    ARM */    ENT_ARM,        -1,       -1,       -1,      -1,        -1,        -1,        -1,         -1, ARMED,
+    /*    ARM */    ENT_ARM,        -1,       -1,       -1,      -1,        -1,        -1,        -1,     DISARM, ARMED,
     /*  ARMED */         -1,  LP_ARMED,       -1,       -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*  CLASH */  ENT_CLASH,        -1,       -1,       -1,      -1,        -1,        -1,        -1,         -1, ARMED,
     /*  SWING */  ENT_SWING,  LP_SWING,       -1,       -1,      -1,     ARMED,        -1,     CLASH,         -1,    -1,
@@ -104,6 +104,7 @@ void CoreAudio::action( int id ) {
       beep(500*currentVolume, currentVolume); // One beep at current volume, varying length depending on volume setting
       return;
     case ENT_ARM:
+      originalVolume = currentVolume;
       useSmoothSwing = checkSmoothSwing();
       if (currentVolume > 0)
       {
@@ -115,6 +116,7 @@ void CoreAudio::action( int id ) {
       humString = moduleSettings->getRandomHumSound();
       return;
     case LP_ARMED:
+      originalVolume = currentVolume;
       if (!soundPlayFlashRaw.isPlaying())
       {
         soundPlayFlashRaw.play(humString.c_str());
@@ -235,6 +237,7 @@ void CoreAudio::action( int id ) {
       }
       return;
     case ENT_DISARM:
+      currentVolume = originalVolume;
       soundPlayFlashFXRaw.stop();
       if (useSmoothSwing)
       {
