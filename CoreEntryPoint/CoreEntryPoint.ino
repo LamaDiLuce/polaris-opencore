@@ -11,7 +11,7 @@
 #include "CoreImu.h"
 #include "CoreMotion.h"
 
-#define BUILD "3.0.0"
+#define BUILD "3.0.1"
 
 // Modules
 String incomingMessage;
@@ -255,8 +255,8 @@ void initBattery()
   analogReadResolution(12);
   analogReadAveraging(32);
 
-  // if (digitalRead(USB_PIN) == LOW)
-  // {
+  if (digitalRead(USB_PIN) == LOW)
+  {
     delay(100);
     int analogRef = analogRead(39); // this values goes from ~ 1470 at full battery to ~ 2000 at depleted battery. It's not linear.
     CoreLogging::writeLine("Analog read: %d", analogRef);
@@ -268,5 +268,5 @@ void initBattery()
     {
       ledModule.pulse({0,0,0,255}); // WHITE
     }
-  // }
+  }
 }

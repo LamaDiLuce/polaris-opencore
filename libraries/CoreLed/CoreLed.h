@@ -40,7 +40,7 @@ class CoreLed: public Machine {
   void pulse(const ColorLed& cLed);
 
  private:
-  enum { ENT_IDLE, LP_IDLE, ENT_RECHARGE, LP_RECHARGE, ENT_ARM, LP_ARM, EXT_ARM, ENT_ARMED, ENT_CLASH, ENT_SWING, ENT_DISARM }; // ACTIONS
+  enum { ENT_IDLE, LP_IDLE, ENT_RECHARGE, LP_RECHARGE, ENT_ARM, LP_ARM, EXT_IDLE, EXT_ARM, ENT_ARMED, ENT_CLASH, ENT_SWING, ENT_DISARM }; // ACTIONS
   enum { ON_ARM, ON_ARMED, ON_CLASH, ON_DISARM, ON_NEXTCOLOR, ON_RECHARGE, ON_SWING, CONN_MAX }; // CONNECTORS
   atm_connector connectors[CONN_MAX];
   int event( int id );
@@ -86,9 +86,10 @@ Automaton::ATML::begin - Automaton Markup Language
 <machines>
   <machine name="CoreLed">
     <states>
-      <IDLE index="0" on_enter="ENT_IDLE" on_loop="LP_IDLE">
+      <IDLE index="0" on_enter="ENT_IDLE" on_loop="LP_IDLE" on_exit="EXT_IDLE">
         <EVT_RECHARGE>RECHARGE</EVT_RECHARGE>
         <EVT_ARM>ARM</EVT_ARM>
+        <EVT_ARMED>ARMED</EVT_ARM>
       </IDLE>
       <RECHARGE index="1" on_enter="ENT_RECHARGE" on_loop="LP_RECHARGE">
         <EVT_IDLE>IDLE</EVT_IDLE>
