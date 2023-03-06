@@ -18,11 +18,7 @@ CoreNeopixel& CoreNeopixel::begin(CoreSettings* cSet) {
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
-  pinMode(PIN_RED, OUTPUT);
-  pinMode(PIN_GREEN, OUTPUT);
-  pinMode(PIN_BLUE, OUTPUT);
-  pinMode(PIN_WHITE, OUTPUT);
-  Adafruit_NeoPixel pixels(NEO_NUMPIXELS, NEO_PIN, NEO_GRB + NEO_KHZ800);
+  Adafruit_NeoPixel pixels(NEO_NUMPIXELS, NEO_PIN, NEO_GRBW + NEO_KHZ800);
   pixels.begin();
   pinMode(CHARGE_PIN, INPUT_PULLUP);
   pinMode(STANDBY_PIN, INPUT_PULLUP);
@@ -197,10 +193,11 @@ void CoreNeopixel::setCurrentColorSet(int colorSetId)
 
 void CoreNeopixel::changeColor(const ColorLed& cLed)
 {
-  analogWrite(PIN_RED, !COMMON_GND ? cLed.red : 255 - cLed.red);
-  analogWrite(PIN_GREEN, !COMMON_GND ? cLed.green : 255 - cLed.green);
-  analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
-  analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
+  pixels.fill(pixels.Color(!COMMON_GND ? cLed.red : 255 - cLed.red,
+   !COMMON_GND ? cLed.green : 255 - cLed.green,
+   !COMMON_GND ? cLed.blue : 255 - cLed.blue,
+   !COMMON_GND ? cLed.white : 255 - cLed.white));
+  pixels.show();
 }
 
 void CoreNeopixel::fadeIn()
