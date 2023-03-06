@@ -48,6 +48,10 @@ AudioConnection patchCord3(mixer1, dac1);
 #define PIN_BLUE 5
 #define PIN_WHITE 6
 
+// NeoPixel strip
+#define NEO_PIN 3
+#define NEO_NUMPIXELS 30
+
 // Init serial connections
 #define SerialData Serial
 #define SerialDebug Serial1

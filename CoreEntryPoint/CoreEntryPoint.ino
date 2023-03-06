@@ -6,6 +6,7 @@
 #include "CoreCommon.h"
 #include "CoreComms.h"
 #include "CoreLed.h"
+#include "CoreNeopixel.h"
 #include "CoreLogging.h"
 #include "CoreSettings.h"
 #include "CoreImu.h"
