@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef LED_H
+  #define NEO_H
+  #define LED_TYPE CoreNeopixel
+#endif
+
 #include <Automaton.h>
 #include <Adafruit_NeoPixel.h>
 #include "CoreLogging.h"

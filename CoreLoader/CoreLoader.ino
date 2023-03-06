@@ -49,6 +49,7 @@ AudioConnection patchCord3(mixer1, dac1);
 #define PIN_WHITE 6
 
 // NeoPixel strip
+//#define ENABLE_NEOPIXEL
 #define NEO_PIN 3
 #define NEO_NUMPIXELS 30
 

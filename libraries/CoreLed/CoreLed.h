@@ -1,5 +1,10 @@
 #pragma once
 
+#ifndef NEO_H
+  #define LED_H
+  #define LED_TYPE CoreLed
+#endif
+
 #include <Automaton.h>
 #include "CoreLogging.h"
 #include "CoreSettings.h"
