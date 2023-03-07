@@ -1,8 +1,7 @@
 #pragma once
 
-#ifndef NEO_H
-  #define LED_H
-  #define LED_TYPE CoreLed
+#ifdef ENABLE_NEOPIXEL
+  #include <Adafruit_NeoPixel.h>
 #endif
 
 #include <Automaton.h>

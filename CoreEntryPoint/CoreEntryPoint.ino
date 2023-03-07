@@ -5,12 +5,7 @@
 #include "CoreAudio.h"
 #include "CoreCommon.h"
 #include "CoreComms.h"
-
-// Comment either Led or Neopixel: if both libs are present
-// only the first one is taken into account
 #include "CoreLed.h"
-#include "CoreNeopixel.h"
-
 #include "CoreLogging.h"
 #include "CoreSettings.h"
 #include "CoreImu.h"
@@ -23,7 +18,7 @@ String incomingMessage;
 CoreAudio audioModule;
 CoreImu imuModule;
 CoreMotion motionModule;
-LED_TYPE ledModule;
+CoreLed ledModule;
 CoreComms commsModule;
 CoreSettings settingsModule;
 uint32_t batteryCheckTime;
