@@ -26,6 +26,7 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
   #else
     Adafruit_NeoPixel pixels(NEO_NUMPIXELS, NEO_PIN, NEO_GRBW + NEO_KHZ800);
     pixels.begin();
+    //pixels.setBrightness(NEO_BRIGHT) // in case strip is too bright
   #endif
   pinMode(CHARGE_PIN, INPUT_PULLUP);
   pinMode(STANDBY_PIN, INPUT_PULLUP);
@@ -227,6 +228,34 @@ void CoreLed::fadeIn()
     delay(FADE_IN_TIME / FADE_DELAY);
   }
 }
+
+#ifdef ENABLE_NEOPIXEL
+
+  void CoreLed::NeoOpen()
+  {
+    CoreLogging::writeLine("CoreLed: open Neopixel");
+    pixels.clear();
+    for (int i = 0; i < NEO_NUMPIXELS; i++)
+    {
+      pixels.setPixelColor(i, pixels.Color(mainColor.red, mainColor.green, mainColor.blue, mainColor.white));
+      pixels.show();
+      delay(FADE_IN_TIME / FADE_DELAY);
+    }
+  }
+
+  void CoreLed::NeoClose()
+  {
+    CoreLogging::writeLine("CoreLed: close Neopixel");
+    pixels.clear();
+    for (int i = NEO_NUMPIXELS - 1; i >= 0; i--)
+    {
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0));
+      pixels.show();
+      delay(FADE_IN_TIME / FADE_DELAY);
+    }
+  }
+
+#endif
 
 void CoreLed::fadeOut()
 {

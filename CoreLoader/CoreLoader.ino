@@ -50,8 +50,6 @@ AudioConnection patchCord3(mixer1, dac1);
 
 // NeoPixel strip
 #define ENABLE_NEOPIXEL // comment to disable
-#define NEO_PIN 3
-#define NEO_NUMPIXELS 30
 
 // Init serial connections
 #define SerialData Serial
