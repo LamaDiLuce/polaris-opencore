@@ -246,7 +246,6 @@ void CoreLed::fadeIn()
   void CoreLed::NeoClose()
   {
     CoreLogging::writeLine("CoreLed: close Neopixel");
-    pixels.clear();
     for (int i = NEO_NUMPIXELS - 1; i >= 0; i--)
     {
       pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0));
