@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef ENABLE_NEOPIXEL
-  #include <Adafruit_NeoPixel.h>
+  #include <WS2812Serial.h>
 #endif
 
 #include <Automaton.h>
@@ -67,7 +67,7 @@ class CoreLed: public Machine {
   #ifdef ENABLE_NEOPIXEL
     void NeoOpen();
     void NeoClose();
-    static constexpr int NEO_PIN = 3;
+    static constexpr int NEO_PIN = 5; //Teensy 3.1 2nd Serial port
     static constexpr int NEO_NUMPIXELS = 144;
     static constexpr int NEO_BRIGHT = 127;
   #endif

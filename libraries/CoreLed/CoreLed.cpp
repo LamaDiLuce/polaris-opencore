@@ -24,7 +24,9 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
     pinMode(PIN_BLUE, OUTPUT);
     pinMode(PIN_WHITE, OUTPUT);
   #else
-    Adafruit_NeoPixel pixels(NEO_NUMPIXELS, NEO_PIN, NEO_GRBW + NEO_KHZ800);
+    byte drawingMemory[NEO_NUMPIXELS*4]; // 4 bytes per LED for RGBW
+    DMAMEM byte displayMemory[NEO_NUMPIXELS*16]; // 16 bytes per LED for RGBW
+    WS2812Serial pixels(NEO_NUMPIXELS, displayMemory, drawingMemory, NEO_PIN, WS2812_GRBW);
     pixels.begin();
     //pixels.setBrightness(NEO_BRIGHT) // in case strip is too bright
   #endif
@@ -207,10 +209,12 @@ void CoreLed::changeColor(const ColorLed& cLed)
     analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
     analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
   #else
-    pixels.fill(pixels.Color(!COMMON_GND ? cLed.red : 255 - cLed.red,
-    !COMMON_GND ? cLed.green : 255 - cLed.green,
-    !COMMON_GND ? cLed.blue : 255 - cLed.blue,
-    !COMMON_GND ? cLed.white : 255 - cLed.white));
+    for (int i = 0; i < NEO_NUMPIXELS; i++){
+      pixels.setPixel(i,pixels.Color(!COMMON_GND ? cLed.red : 255 - cLed.red,
+      !COMMON_GND ? cLed.green : 255 - cLed.green,
+      !COMMON_GND ? cLed.blue : 255 - cLed.blue,
+      !COMMON_GND ? cLed.white : 255 - cLed.white));
+    }
     pixels.show();
   #endif
 }
@@ -237,7 +241,7 @@ void CoreLed::fadeIn()
     pixels.clear();
     for (int i = 0; i < NEO_NUMPIXELS; i++)
     {
-      pixels.setPixelColor(i, pixels.Color(mainColor.red, mainColor.green, mainColor.blue, mainColor.white));
+      pixels.setPixel(i, pixels.Color(mainColor.red, mainColor.green, mainColor.blue, mainColor.white));
       pixels.show();
       delay(FADE_IN_TIME / FADE_DELAY);
     }
@@ -248,7 +252,7 @@ void CoreLed::fadeIn()
     CoreLogging::writeLine("CoreLed: close Neopixel");
     for (int i = NEO_NUMPIXELS - 1; i >= 0; i--)
     {
-      pixels.setPixelColor(i, pixels.Color(0, 0, 0, 0));
+      pixels.setPixel(i, pixels.Color(0, 0, 0, 0));
       pixels.show();
       delay(FADE_IN_TIME / FADE_DELAY);
     }
