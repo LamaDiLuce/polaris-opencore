@@ -10,7 +10,7 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
     /*                 ON_ENTER      ON_LOOP  ON_EXIT  EVT_IDLE  EVT_RECHARGE  EVT_ARM  EVT_ARMED  EVT_SWING  EVT_CLASH  EVT_DISARM   ELSE */
     /*     IDLE */     ENT_IDLE,     LP_IDLE,      EXT_IDLE,       -1,     RECHARGE,     ARM,     ARMED,        -1,        -1,         -1,    -1,   
     /* RECHARGE */ ENT_RECHARGE, LP_RECHARGE,      -1,     IDLE,           -1,     ARM,        -1,        -1,        -1,         -1,    -1,
-    /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
+    /*      ARM */      ENT_ARM,      LP_ARM, EXT_ARM,       -1,           -1,      -1,     ARMED,        -1,        -1,     DISARM,    -1,
     /*    ARMED */    ENT_ARMED,          -1,      -1,       -1,           -1,      -1,        -1,     SWING,     CLASH,     DISARM,    -1,
     /*    CLASH */    ENT_CLASH,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,        -1,         -1,    -1,
     /*    SWING */    ENT_SWING,          -1,      -1,       -1,           -1,      -1,     ARMED,        -1,     CLASH,         -1,    -1,
@@ -120,6 +120,7 @@ void CoreLed::action( int id ) {
       }
       return;
     case ENT_ARM:
+      originalColorSetId = currentColorSetId;
       delay(ARMING_BLINK_TIME);
       turnOff();
       timer_color_selection.setFromNow(this,TIME_FOR_START_COLOR_SELECTION);
@@ -150,6 +151,7 @@ void CoreLed::action( int id ) {
       fadeIn();
       return;
     case ENT_ARMED:
+      originalColorSetId = currentColorSetId;
       changeColor(mainColor);
       return;
     case ENT_CLASH:
@@ -160,6 +162,8 @@ void CoreLed::action( int id ) {
       changeColor(swingColor);
       return;
     case ENT_DISARM:
+      currentColorSetId = originalColorSetId;
+      setCurrentColorSet(currentColorSetId);
       fadeOut();
       return;
   }

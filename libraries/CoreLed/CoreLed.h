@@ -59,6 +59,7 @@ class CoreLed: public Machine {
   atm_timer_millis timer_blink;
   atm_timer_millis timer_color_selection;
   int currentColorSetId = OFF;
+  int originalColorSetId;
   int nextColorSetId = OFF;
   ColorLed mainColor;
   ColorLed clashColor;
@@ -108,6 +109,7 @@ Automaton::ATML::begin - Automaton Markup Language
       </RECHARGE>
       <ARM index="2" on_enter="ENT_ARM" on_loop="LP_ARM" on_exit="EXT_ARM">
         <EVT_ARMED>ARMED</EVT_ARMED>
+        <EVT_DISARM>DISARM</EVT_ARMED>
       </ARM>
       <ARMED index="3" on_enter="ENT_ARMED">
         <EVT_SWING>SWING</EVT_SWING>

@@ -87,6 +87,7 @@ class CoreAudio: public Machine {
   // Params that can be tuned
   static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
   float currentVolume = MAX_VOLUME;                            // Initial volume. Initally setting to max volume; may later load this from stored config
+  float originalVolume;
   bool firstTap = true;                                 // used to check for the first tap of a mute cycle
   bool useSmoothSwing = true;                           // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
                                                         // SmoothSwing V2, based on Thexter's excellent work.
@@ -119,6 +120,7 @@ Automaton::ATML::begin - Automaton Markup Language
       </VOLUME>
       <ARM index="2" on_enter="ENT_ARM">
         <ELSE>ARMED</ELSE>
+        <EVT_DISARM>DISARM</EVT_DISARM>
       </ARM>
       <ARMED index="3" on_loop="LP_ARMED">
         <EVT_SWING>SWING</EVT_SWING>
