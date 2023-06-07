@@ -128,10 +128,10 @@ void CoreAudio::action( int id ) {
       }
       return;
     case ENT_CLASH:
-      if (soundPlayFlashRaw.isPlaying())
+      /*if (soundPlayFlashRaw.isPlaying())
       {
         soundPlayFlashRaw.stop();
-      }
+      }*/
       if (useSmoothSwing)
       {
         soundPlayFlashSmoothSwingARaw.stop();
@@ -148,10 +148,10 @@ void CoreAudio::action( int id ) {
       {
         if (!soundPlayFlashFXRaw.isPlaying())
         {
-          if (soundPlayFlashRaw.isPlaying())
+          /*if (soundPlayFlashRaw.isPlaying())
           {
             soundPlayFlashRaw.stop();
-          }
+          }*/
           soundPlayFlashFXRaw.play(moduleSettings->getRandomSwingSound().c_str());
         }        
       }
