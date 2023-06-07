@@ -30,7 +30,15 @@ int CoreMotion::event( int id ) {
     case EVT_VOLUME:
       return int1Status > 0;
     case EVT_DISARM:
-      return timer_horizontal.expired( this );
+      return (
+        timer_horizontal.expired( this ))
+        ||
+        (
+        (this->state() == this->ARMED || this->state() == this->SWING) && 
+        abs(GyroZ) > ARM_ALT_THRESHOLD_Z && 
+        swingSpeed < SWING_THRESHOLD_HIGH &&
+        ((digitalRead(USB_PIN) == LOW) || DEBUG)
+      );     
     case EVT_SWING:
       return (swingSpeed > SWING_THRESHOLD ||
               rollSpeed > ROLL_SPEED_THRESHOLD_HIGH);
