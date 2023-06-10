@@ -62,6 +62,7 @@ class CoreMotion: public Machine {
   float swingSpeed;
   float rollSpeed;
   uint8_t int1Status;
+  bool firstArm;
   static constexpr int SWING_THRESHOLD = 80;
   static constexpr int SWING_THRESHOLD_HIGH = 300;
   static constexpr int ROLL_SPEED_THRESHOLD_LOW = 40;
