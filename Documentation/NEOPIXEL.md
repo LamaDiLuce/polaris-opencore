@@ -2,7 +2,7 @@
 
 It is possible to use either the classic RGBW LED or a NeoPixel strip that fits into the blade.
 
-To put the firmware into NeoPixel mode, uncomment the `ENABLE_NEOPIXEL` definition in `CoreLoader.ino`.
+To put the firmware into NeoPixel mode, uncomment the `ENABLE_NEOPIXEL` definition in `CoreCommon.h`.
 
 ## Pinout
 
