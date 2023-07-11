@@ -13,8 +13,8 @@ static constexpr int ANALOG_REF_BATTERY_DEPLETED = 1763; // safe threshold to av
 #define PIN_WHITE 6
 #define COMMON_GND false
 
-// Neopixel
-#define ENABLE_NEOPIXEL
+// Neopixel: uncomment to enable
+// #define ENABLE_NEOPIXEL
 
 #define CHARGE_PIN 13
 #define STANDBY_PIN 15
