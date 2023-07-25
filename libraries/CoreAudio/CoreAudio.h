@@ -88,6 +88,7 @@ class CoreAudio: public Machine {
   static constexpr float MAX_VOLUME = 1;                // 1 is the max volume. Use a lower number to be more quite e.g. at home
   float currentVolume = MAX_VOLUME;                            // Initial volume. Initally setting to max volume; may later load this from stored config
   float originalVolume;
+  bool lowHum = false;                                  // switch to check hum volume 
   bool firstTap = true;                                 // used to check for the first tap of a mute cycle
   bool useSmoothSwing = true;                           // smoothswing is used by default of proper files are loaded. If no smoothswing are present, then the normal swing is used automatically
                                                         // SmoothSwing V2, based on Thexter's excellent work.
@@ -102,6 +103,7 @@ class CoreAudio: public Machine {
   static constexpr float TRANSITION_1_WIDTH = 60.0;     // width angle in degreese of the first trasition 
   static constexpr float TRANSITION_2_WIDTH = 160.0;    // width angle in degreese of the second trasition, which is 180 deg away from the first transition
   static constexpr float SMOOTHING_FACTOR = 0.2;
+  static constexpr float ATTENUATION_RATE = 0.5;        // Attenuation rate in linear (here -3dB)
 };
 
 /* 
