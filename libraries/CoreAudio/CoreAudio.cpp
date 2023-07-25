@@ -135,8 +135,7 @@ void CoreAudio::action( int id ) {
     case ENT_CLASH:
       if (soundPlayFlashRaw.isPlaying())
       {
-        //soundPlayFlashRaw.stop();
-        mainMixer.gain(CHANNEL_HUM, ATT * currentVolume); //allows the clash to be heard while hum continues -3dB lower
+        mainMixer.gain(CHANNEL_HUM, ATTENUATION_RATE * currentVolume); //allows the clash to be heard while hum continues -3dB lower
         lowHum = true;
       }
       if (useSmoothSwing)
@@ -157,8 +156,7 @@ void CoreAudio::action( int id ) {
         {
           if (soundPlayFlashRaw.isPlaying())
           {
-            // soundPlayFlashRaw.stop();
-            mainMixer.gain(CHANNEL_HUM, ATT * currentVolume);
+            mainMixer.gain(CHANNEL_HUM, ATTENUATION_RATE * currentVolume);
             lowHum = true;
           }
           soundPlayFlashFXRaw.play(moduleSettings->getRandomSwingSound().c_str());
@@ -239,8 +237,7 @@ void CoreAudio::action( int id ) {
         {
           if (soundPlayFlashRaw.isPlaying())
           {
-            //soundPlayFlashRaw.stop();
-            mainMixer.gain(CHANNEL_HUM, ATT * currentVolume); //allows the clash to be heard while hum continues 10log(ATT) dB lower
+            mainMixer.gain(CHANNEL_HUM, ATTENUATION_RATE * currentVolume); //allows the clash to be heard while hum continues 10log(ATTENUATION_RATE) dB lower
             lowHum = true;
           }
           soundPlayFlashFXRaw.play(moduleSettings->getRandomSwingSound().c_str());
