@@ -84,10 +84,15 @@ void CoreMotion::action( int id ) {
       timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
       return;
     case LP_IDLE:
-      if(AccelZ >= (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION)) {
+      if(AccelZ > (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION) &&
+         AccelZ < (VERTICAL_POSITION + TOLERANCE_VERTICAL_POSITION))
+      {
         timer_no_vertical.setFromNow(this,TIME_FOR_ALT_START_ARM);
       } 
-      if(AccelZ < (VERTICAL_POSITION - TOLERANCE_VERTICAL_POSITION) && abs(GyroZ) < ARM_THRESHOLD_Z) {
+      if ((AccelZ < (VERTICAL_POSITION - TOLERANCE_POSITION) || 
+           AccelZ > (VERTICAL_POSITION + TOLERANCE_POSITION)) && 
+           rollSpeed < ARM_THRESHOLD_Z)
+      {
         timer_vertical.setFromNow(this,TIME_FOR_START_ARM);
       }
       return;
