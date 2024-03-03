@@ -18,10 +18,18 @@ CoreLed& CoreLed::begin(CoreSettings* cSet) {
   };
   // clang-format on
   Machine::begin( state_table, ELSE );
-  pinMode(PIN_RED, OUTPUT);
-  pinMode(PIN_GREEN, OUTPUT);
-  pinMode(PIN_BLUE, OUTPUT);
-  pinMode(PIN_WHITE, OUTPUT);
+  #ifndef ENABLE_NEOPIXEL
+    pinMode(PIN_RED, OUTPUT);
+    pinMode(PIN_GREEN, OUTPUT);
+    pinMode(PIN_BLUE, OUTPUT);
+    pinMode(PIN_WHITE, OUTPUT);
+  #else
+    byte drawingMemory[NEO_NUMPIXELS*4]; // 4 bytes per LED for RGBW
+    DMAMEM byte displayMemory[NEO_NUMPIXELS*16]; // 16 bytes per LED for RGBW
+    WS2812Serial pixels(NEO_NUMPIXELS, displayMemory, drawingMemory, NEO_PIN, WS2812_GRBW);
+    pixels.begin();
+    //pixels.setBrightness(NEO_BRIGHT) // in case strip is too bright
+  #endif
   pinMode(CHARGE_PIN, INPUT_PULLUP);
   pinMode(STANDBY_PIN, INPUT_PULLUP);
   pinMode(USB_PIN, INPUT_PULLDOWN);
@@ -199,10 +207,20 @@ void CoreLed::setCurrentColorSet(int colorSetId)
 
 void CoreLed::changeColor(const ColorLed& cLed)
 {
-  analogWrite(PIN_RED, !COMMON_GND ? cLed.red : 255 - cLed.red);
-  analogWrite(PIN_GREEN, !COMMON_GND ? cLed.green : 255 - cLed.green);
-  analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
-  analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
+  #ifndef ENABLE_NEOPIXEL
+    analogWrite(PIN_RED, !COMMON_GND ? cLed.red : 255 - cLed.red);
+    analogWrite(PIN_GREEN, !COMMON_GND ? cLed.green : 255 - cLed.green);
+    analogWrite(PIN_BLUE, !COMMON_GND ? cLed.blue : 255 - cLed.blue);
+    analogWrite(PIN_WHITE, !COMMON_GND ? cLed.white : 255 - cLed.white);
+  #else
+    for (int i = 0; i < NEO_NUMPIXELS; i++){
+      pixels.setPixel(i,pixels.Color(!COMMON_GND ? cLed.red : 255 - cLed.red,
+      !COMMON_GND ? cLed.green : 255 - cLed.green,
+      !COMMON_GND ? cLed.blue : 255 - cLed.blue,
+      !COMMON_GND ? cLed.white : 255 - cLed.white));
+    }
+    pixels.show();
+  #endif
 }
 
 void CoreLed::fadeIn()
@@ -218,6 +236,33 @@ void CoreLed::fadeIn()
     delay(FADE_IN_TIME / FADE_DELAY);
   }
 }
+
+#ifdef ENABLE_NEOPIXEL
+
+  void CoreLed::NeoOpen()
+  {
+    CoreLogging::writeLine("CoreLed: open Neopixel");
+    pixels.clear();
+    for (int i = 0; i < NEO_NUMPIXELS; i++)
+    {
+      pixels.setPixel(i, pixels.Color(mainColor.red, mainColor.green, mainColor.blue, mainColor.white));
+      pixels.show();
+      delay(FADE_IN_TIME / FADE_DELAY);
+    }
+  }
+
+  void CoreLed::NeoClose()
+  {
+    CoreLogging::writeLine("CoreLed: close Neopixel");
+    for (int i = NEO_NUMPIXELS - 1; i >= 0; i--)
+    {
+      pixels.setPixel(i, pixels.Color(0, 0, 0, 0));
+      pixels.show();
+      delay(FADE_IN_TIME / FADE_DELAY);
+    }
+  }
+
+#endif
 
 void CoreLed::fadeOut()
 {
