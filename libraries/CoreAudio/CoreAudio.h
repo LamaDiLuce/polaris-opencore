@@ -103,7 +103,7 @@ class CoreAudio: public Machine {
   static constexpr float TRANSITION_1_WIDTH = 60.0;     // width angle in degreese of the first trasition 
   static constexpr float TRANSITION_2_WIDTH = 160.0;    // width angle in degreese of the second trasition, which is 180 deg away from the first transition
   static constexpr float SMOOTHING_FACTOR = 0.2;
-  static constexpr float ATTENUATION_RATE = 0.5;        // Attenuation rate in linear (here -3dB)
+  static constexpr float ATTENUATION_RATE = 0;        // Attenuation rate in linear (here -3dB)
 };
 
 /* 

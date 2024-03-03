@@ -121,7 +121,7 @@ void CoreAudio::action( int id ) {
       {
         soundPlayFlashRaw.play(humString.c_str());
       }
-      if (lowHum){
+      if (lowHum && !soundPlayFlashFXRaw.isPlaying()){
         //we are coming from a clash or legacy swing: set high hum back
         mainMixer.gain(CHANNEL_HUM, currentVolume);
         lowHum = false;
@@ -164,7 +164,7 @@ void CoreAudio::action( int id ) {
       }
       return;
     case LP_SWING:
-      if (useSmoothSwing)
+      if (useSmoothSwing && !soundPlayFlashFXRaw.isPlaying())
       {
         if (AngDotProduct > 0.01)
         {
