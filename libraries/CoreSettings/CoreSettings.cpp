@@ -313,7 +313,7 @@ for(int i=0; i<liveSettings.smoothSwingA.count; i++)
   { doc["sounds"]["smoothSwingA"][i] = liveSettings.smoothSwingA.sounds[i];
   }
 for(int i=0; i<liveSettings.smoothSwingB.count; i++)
-  { doc["sounds"]["smoothSwingB"][i] = liveSettings.smoothSwingA.sounds[i];
+  { doc["sounds"]["smoothSwingB"][i] = liveSettings.smoothSwingB.sounds[i];
   }
 
   // Serialize JSON to file
